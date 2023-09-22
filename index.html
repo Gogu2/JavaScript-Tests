@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+function canta(nota){
+// create a new AudioContext
+const audioContext = new AudioContext();
+
+// create a new oscillator node
+const oscillator = audioContext.createOscillator();
+
+// set the frequency to 440Hz (A4)
+oscillator.frequency.value = nota; //440;
+
+// connect the oscillator node to the destination (speakers)
+oscillator.connect(audioContext.destination);
+
+// start the oscillator
+oscillator.start();
+
+// stop the oscillator after 1 second
+setTimeout(() => {
+  oscillator.stop();
+}, 300);
+}
+</script>
+</head>
+<body>
+<input type="button" onclick="canta(262)" value="Do"/>
+<input type="button" onclick="canta(294)" value="Re"/>
+<input type="button" onclick="canta(330)" value="Mi"/>
+<input type="button" onclick="canta(349)" value="Fa"/>
+<input type="button" onclick="canta(392)" value="Sol"/>
+<input type="button" onclick="canta(440)" value="La"/>
+<input type="button" onclick="canta(494)" value="Si"/>
+<input type="button" onclick="canta(523)" value="Do"/>
+
+</body>
+</html>
