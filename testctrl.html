@@ -1,0 +1,23 @@
+<html>
+    <head>
+      <title>ctrlKey example</title>
+
+      <script type="text/javascript">
+
+      function checkKeyPress(e){
+
+        if (event.ctrlKey ) {
+          event.preventDefault();
+          alert(
+            "CTRL key pressed: " + e.ctrlKey + "\n" + e.keyCode
+          );
+        }
+      }
+
+      </script>
+    </head>
+
+    <body onkeydown="checkKeyPress(event);">
+      <p>Press CTRL</p>
+    </body>
+</html>
