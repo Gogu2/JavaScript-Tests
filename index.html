@@ -2126,7 +2126,7 @@ if (event.keyCode == 65  && !event.shiftKey) {
 			}
 		}
           //jump left
-          if (event.ctrlKey && event.keyCode === 37) 
+          if (event.ctrlKey && event.keyCode === 37 || event.keyCode == 17 && bool_moveLeft) 
           {
                 kirbydirection = -1;
                 v0y = -75;
@@ -2158,7 +2158,7 @@ if (event.keyCode == 65  && !event.shiftKey) {
                 return;
           }
             //jump right
-          if (event.keyCode == 39 && event.ctrlKey) 
+          if (event.keyCode == 39 && event.ctrlKey || event.keyCode == 17 && bool_moveRight) 
           {
               kirbydirection = 1;
               v0y = -75;
