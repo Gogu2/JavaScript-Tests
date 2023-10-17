@@ -426,7 +426,8 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 				// tx = coinx[i];ty = coiny[y];
 				coinx[i][level] = coinx[coins - 1][level];
 				coiny[i][level] = coiny[coins - 1][level];
-				//TODO !! jLabel3.setText("Coins: " + String.valueOf(coinsTaken + coinsTakenb));
+				var c = coinsTaken + coinsTakenb;
+				document.getElementById("jLabel3").innerText ="Coins: " + c;
 
 			}
 
@@ -449,7 +450,8 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 				coinx[i][level] = coinx[coins - 1][level];
 				coiny[i][level] = coiny[coins - 1][level];
 				// lblNewLabel.setText("Coins Waddle: " + coinsTakenb);
-			//TODO !!	jLabel3.setText("Coins: " + String.valueOf(coinsTaken + coinsTakenb));
+				c = coinsTaken + coinsTakenb;
+				document.getElementById("jLabel3").innerText ="Coins: " + c;
 			}
 		}
 
@@ -503,8 +505,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 				initlevel();
 				level++;
-
-				//TODO !! jLabel1.setText("Level: " + level);
+				document.getElementById("jLabel1").innerText ="Level: " + level;
 				return;
 			}
 
@@ -1188,7 +1189,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   function initlevel() {
 		drawImage("imgBlankK", xkirby, ykirby, null);
 		drawImage("imgBlankB", xb, yb, null);
-	//TODO 	jLabel1.setText("Level " + level);
+	document.getElementById("jLabel1").innerText="Level: " + level;
 		coins = 3;
 		xkirby = xinit;
 		ykirby = yinit;
@@ -1798,10 +1799,9 @@ function whispywoods()
    //}
    
    
+   document.getElementById("jLabel1").innerText = "Level: " + level;
    
-   //jLabel1.setText("Level "+level);
-   //TODO const div = document.querySelector("div");
-   //TODO div.innerText= "Level" + level;
+  // document.getElementById("jLabel3").innerText = "";
    //jLabel3.setText("Coins Kirby: 0");
   
   
@@ -2257,6 +2257,8 @@ function start()
   document.getElementById('lblpbBandana').removeAttribute('hidden');
   document.getElementById('pbBandana').removeAttribute('hidden');
   
+  document.getElementById('jLabel1').removeAttribute('hidden');
+  document.getElementById('jLabel3').removeAttribute('hidden');
 
   document.getElementById('btnStart').setAttribute('hidden', 'true');
   document.getElementById('canvas1').removeAttribute('hidden');
@@ -2269,20 +2271,31 @@ function start()
 <body onload="PlatformJFrame();" >
   
   <table>
-	<tr><td><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent">
+	<tr><td colspan="2"><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent" >
 		Kirby : arrows to move, CTRL+arrow to jump, SPACE to aspire enemy, ENTER to fire.</br>
 		Bandana: A, D to move, SHIFT to jump.</br>
 		Press B to bring Kirby back.</br>
 		Kill enemies by aspiring them or jumping on them.</br>
 	</div></td></tr>
+
 	<tr><td>
   <label id="lblLifeKirby" for="lifeKirbyfile" hidden>Life Kirby:</label> 
+  </td><td>
   <progress id="lifeKirby" value="99" max="99" hidden></progress>   
   </td>
-</tr><tr><td>
-  <label id="lblpbBandana" for="pbBandanafile" hidden>Life Bandana:</label> 
+</tr>
+
+<tr><td>
+  <label id="lblpbBandana" for="pbBandanafile" hidden>Life Bandana:</label>
+  </td><td> 
   <progress id="pbBandana" value="99" max="99" hidden></progress>  
-</td></tr> 
+</td></tr>
+
+<tr><td colspan="2"><div id="jLabel1" hidden>Level: 1</div></td>
+</tr> 
+<tr><td colspan="2"><div id="jLabel3" hidden>Coins: 0</div></td>
+</tr> 
+
 </table>
   <input id = "btnStart" type="button" value="Start Game" onclick="start();" />
 <canvas id = "canvas1" width=640 height = 450 style="background-color:#00A2E8;top:0;left:0;" hidden /> 
