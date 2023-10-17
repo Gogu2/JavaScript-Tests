@@ -1248,7 +1248,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 		//getContentPane().repaint();
 
-		if (level == 1) // maxLevel - 1
+		if (level == maxLevel - 1) 
 		{
 			// th.stop();
 			// th.interrupt();
@@ -1260,12 +1260,17 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 			// playermp3.stop();
 			// playMidiFX("dangerous.mp3");
 			//TODO !!MediaPlayer p = getById(playerId);
+			x = document.getElementById('mySound');
+			x.pause();
+			x.setAttribute("src", "sounds/dangerous.mp3")
+  			x.play();
 
 		}
 
 		// if (playermp3.getStatus() == MediaPlayer.Status.PLAYING)
 		// {playermp3.stop();}else playermp3.play();
 
+		
 	}
 
 
@@ -2255,7 +2260,8 @@ function start()
 
   document.getElementById('btnStart').setAttribute('hidden', 'true');
   document.getElementById('canvas1').removeAttribute('hidden');
-  x = document.getElementById('mySound');x.play();
+  x = document.getElementById('mySound');
+  x.play();
 }
 
 </script>
@@ -2263,7 +2269,7 @@ function start()
 <body onload="PlatformJFrame();" >
   
   <table>
-	<tr><td><div style="border: 1px;border-color: black;border-style: solid;">
+	<tr><td><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent">
 		Kirby : arrows to move, CTRL+arrow to jump, SPACE to aspire enemy, ENTER to fire.</br>
 		Bandana: A, D to move, SHIFT to jump.</br>
 		Press B to bring Kirby back.</br>
