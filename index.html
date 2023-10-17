@@ -1,7 +1,7 @@
 <html>
 <head>
 <script type="text/javascript">
-
+var timerstopped = 0;
 
 
    var soundObject = null;
@@ -310,6 +310,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 		if (document.getElementById("lifeKirby").getAttribute('value') == 0 || document.getElementById("pbBandana").getAttribute('value') == 0) {
 			//timer.stop();
 			clearInterval(funcSetInterval);
+			timerstopped = 1;
       drawImage("imgGameOver", 0, 0);
 
 			//getContentPane().repaint();
@@ -494,6 +495,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 				if (cagedReleased) {
 					//timer.stop();
 					clearInterval(funcSetInterval);
+					timerstopped = 1;
           drawImage("imgVictory", 0, 0);
 					//getContentPane().repaint();
 					return;
@@ -2055,6 +2057,10 @@ drawImage(imgCurrentBandana, xb, yb);
 
 
         document.addEventListener('keydown', function(event) {
+			if  (timerstopped)
+			{
+				return;
+			}
 //bandana
 if (event.keyCode == 65  && !event.shiftKey) {
 			imgCurrentBandana = "imgBandanaLeft";
