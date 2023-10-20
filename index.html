@@ -2062,7 +2062,7 @@ drawImage(imgCurrentBandana, xb, yb);
 				return;
 			}
 //bandana
-if (event.keyCode == 65  && !event.shiftKey) {
+		if (event.keyCode == 65  && !event.shiftKey) {
 			imgCurrentBandana = "imgBandanaLeft";
 			bool_moveLeftb = true;
 
@@ -2073,7 +2073,7 @@ if (event.keyCode == 65  && !event.shiftKey) {
 
 		}
 
-    if (event.keyCode == 68 && event.shiftKey) {
+    if (event.keyCode == 68 && event.shiftKey || event.keyCode == 16 && bool_moveRightb) {
 			vb0y = -75;
 			yb0 = yb;
 			if (imgCurrentBandana == "imgBandana")
@@ -2094,7 +2094,7 @@ if (event.keyCode == 65  && !event.shiftKey) {
 			return;
 		}
 
-		if (event.keyCode == 65 && event.shiftKey) {
+		if (event.keyCode == 65 && event.shiftKey || event.keyCode == 16 && bool_moveLeftb) {
 			vb0y = -75;
 			yb0 = yb;
 			if (imgCurrentBandana == "imgBandana")
