@@ -13,7 +13,9 @@ var enemywidth = 75;
 var xexplosion = 0;
 var yexplosion = 0;
 var timerexplosion = 0;
-
+var lifePiece = 10;
+var whispyAlive = true;
+var whispyLife = 3;
 
    var soundObject = null;
         function playSound(soundfile) {
@@ -297,7 +299,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 	
 	var xwhispy=150;
 	var ywhispy=y0+kirbyheight-whispyheight;
-	
+	var xwhispytree = 600;
 	
 
 	var x0apple = 150+Math.floor(Math.random() * 250); 
@@ -412,7 +414,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 		
    
-		if (document.getElementById("lifeKirby").getAttribute('value') == 0 || document.getElementById("pbBandana").getAttribute('value') == 0) {
+		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("pbBandana").getAttribute('value') <= 0) {
 			//timer.stop();
 			clearInterval(funcSetInterval);
 			timerstopped = 1;
@@ -763,7 +765,22 @@ function drawRotatedImage_old(idImage, x, y, angle)
 						
 
 						
-						
+						//shoot whispywoods
+						if (level == maxLevel)
+						{
+							if ((xspitkirby + bombwidth/2) >= xwhispytree)
+							{
+								playSound("explosion.wav"); 
+								startspittingkirby = false;
+								whispyLife --;
+							}
+							if (whispyLife <= 0)
+							{
+								drawImage("imgWhispyMask", xwhispy, ywhispy);
+								whispyAlive = false;
+							}
+						}
+
 						// shoot enemy
 						for(var i = 0;i<=3;i++)
 						if (enemyExists[i][level])
@@ -1785,7 +1802,7 @@ function enemy() {
 
 								//	lifeKirby.setValue(lifeKirby.getValue() - 33);
 								currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - 33) ;
+								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
 					
 								playSound("die.wav");
 								
@@ -1802,7 +1819,7 @@ function enemy() {
 							yb = ybinit;
 						//	pbBandana.setValue(pbBandana.getValue() - 33);
 						currentLifeBandana = document.getElementById("pbBandana").getAttribute('value');
-						document.getElementById("pbBandana").setAttribute('value', currentLifeBandana - 33) ;
+						document.getElementById("pbBandana").setAttribute('value', currentLifeBandana - lifePiece) ;
 						//	new Thread(() -> {
 								playSound("die.wav");
 						//	}).start();
@@ -1833,7 +1850,7 @@ function enemy() {
 									ykirby = yinit - (kirbyfireheight - kirbyheight);
 								}
             					currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - 33) ;
+								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
 								playSound("die.wav");
 							} 
 							else //move frozen enemy
@@ -1860,7 +1877,7 @@ function enemy() {
 								drawImage(imgBlankB, xb, yb, null);
 							xb = screenwidth - bandanawidth;
 							yb = 300;
-							pbBandana.setValue(pbBandana.getValue() - 33);
+							pbBandana.setValue(pbBandana.getValue() - lifePiece);
 							//new Thread(() -> {
 								playSound("die.wav");
 						//	}).start();
@@ -2218,9 +2235,15 @@ function whispywoods()
 	{
 		if (level == maxLevel) //maxLevel
 		{
-			drawImage("imgWhispy", xwhispy, ywhispy);
-			//getContentPane().repaint();
-		
+			if (whispyAlive)
+			{
+				drawImage("imgWhispy", xwhispy, ywhispy);
+			}
+			else
+			{
+				return;
+			}
+
 			drawImage("imgBlankApple", xapple, yapple);
 			
 			// apple kills kirby
@@ -2243,7 +2266,7 @@ function whispywoods()
 						ykirby = ykirby - 42;
 					}
           currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-						document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - 33) ;
+						document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
 					//new Thread(() -> {
 						playSound("die.wav");
 				//	}).start();
@@ -2741,6 +2764,7 @@ drawImage(imgCurrentBandana, xb, yb);
 
 
 		//jump vertically
+		if (!jumpstarted && !fallstart)
 		if (event.ctrlKey && event.keyCode != 37 && event.keyCode != 39)
 		{
 			kirbydirection = -1;
@@ -2784,6 +2808,7 @@ drawImage(imgCurrentBandana, xb, yb);
 		}
 
           //jump left
+		 // if (!jumpstarted && !fallstart)
           if (event.ctrlKey && event.keyCode === 37 || event.keyCode == 17 && bool_moveLeft) 
           {
                 kirbydirection = -1;
@@ -2831,6 +2856,7 @@ drawImage(imgCurrentBandana, xb, yb);
                 return;
           }
             //jump right
+		 //  if (!jumpstarted && !fallstart)
           if (event.keyCode == 39 && event.ctrlKey || event.keyCode == 17 && bool_moveRight) 
           {
               kirbydirection = 1;
@@ -2914,6 +2940,8 @@ drawImage(imgCurrentBandana, xb, yb);
 
             //aspire
             if (event.keyCode == 32) //SPACE
+			//can't aspire if it has ability
+			if (!hashat && !hasbomb && !hasice)
 			for (var i = 0; i <= 3; i++) {
 				if (
 					enemyExists[i][level] 
@@ -3125,6 +3153,8 @@ function start()
 <img id="imgBlankFireWide" src="images/blankfirewide.png" alt="no" width="640" height="75" top="375" left="0" >
 <!--<img id="imgBlankFireSlim" src="images/blankfireslim.bmp" alt="no" width="640" height="75" top="375" left="0" > -->
 <img id="imgWhispy" src="images/whispywoodst.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgWhispyEmpty" src="images/whispywoodsemptyt.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id = "imgWhispyMask" src="images/whispywoodsmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgApple" src="images/applet.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgBlankApple" src="images/applemask.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgHotHeadHorizontal" src="images/hotheadhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
