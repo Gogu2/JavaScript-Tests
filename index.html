@@ -87,7 +87,7 @@ var startspitting = []; //5
 	var hasice = 0;
 	  var kirbywidth = 75;
 	  var bandanawidth =75;
-	  var kirbyheight = 75;
+	 
 	  var screenwidth = 640;
     
     var applewidth = 89;
@@ -96,6 +96,8 @@ var startspitting = []; //5
 	var kirbywidth = 47;// 75;
 	var bandanawidth = 50;
 	var bandanaheight = 75;
+	
+	var kirbyinitialheight = 54;
 	var kirbyheight = 54;// 75;
 	var screenwidth = 640;
 
@@ -729,6 +731,89 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		}
 	}
 
+	function kirbyice()
+	{
+		if (startspittingkirby) 
+		{
+			if(imgCurrent == "imgKirbyIce")
+			{
+				return;
+			}
+			
+			if (imgCurrent == "imgKirbyIceRight") 
+			{
+				drawImage("imgIceRight", xkirby+kirbywidth, ykirby+enemymouthy /*+enemymouthy*/);
+				for (var i = 0;i<=3;i++) 
+				{
+					if(enemyExists[i][level])
+					//todo
+					if ((xe[i][level]<=xkirby+kirbywidth+191+5)&&(xe[i][level]>=xkirby+kirbywidth-5) && (Math.abs(ye[i][level] + ye[i][level]/2 - (ykirby +ykirby/2) )<=25)) 
+					{
+						enemyFrozen[i][level] = true;
+							if (!enemyIce[i][level] && !enemyBomb[i][level] && !enemySpitting[i][level])
+							if (enemydirection[i][level] = 1)
+								
+								imgEnemyCurrent[i] = "imgRightFrozen";
+							else
+								
+								imgEnemyCurrent[i] = "imgLeftFrozen";
+							
+							playSound("explosion.wav"); //TODO 
+							
+							if (enemySpitting[i][level])
+							{
+								startspitting[i] = 0;
+								if (enemyBomb[i][level])
+									drawImage("imgBlankE", xspit[i], yspit[i]);
+								else
+									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+							}
+							
+								
+							startspittingkirby = false;
+					}
+						
+				}
+			}
+			else 
+			{
+				drawImage("imgIceLeft", xkirby - 191, ykirby+enemymouthy);
+				for (var i = 0;i<=3;i++) 
+				{
+					if(enemyExists[i][level])
+					//todo
+					if ((xe[i][level]>=xkirby+191-5)&&(xe[i][level]<=xkirby+kirbywidth+5)&& (Math.abs(ye[i][level] + ye[i][level]/2 - (ykirby +ykirby/2) )<=25)) 
+					{
+						enemyFrozen[i][level] = true;
+							if (!enemyIce[i][level] && !enemyBomb[i][level] && !enemySpitting[i][level])
+							if (enemydirection[i][level] = 1)
+								
+								imgEnemyCurrent[i] = "imgRightFrozen";
+							else
+								
+								imgEnemyCurrent[i] = "imgLeftFrozen";
+							
+							playSound("explosion.wav"); //TODO 
+							
+							if (enemySpitting[i][level])
+							{
+								startspitting[i] = 0;
+								if (enemyBomb[i][level])
+									drawImage("imgBlankE", xspit[i], yspit[i]);
+								else
+									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+							}
+							
+								
+							startspittingkirby = false;
+					}
+						
+				}
+				
+			}
+		}
+	}
+
 	function sleep(miliseconds) 
 	{
    		var currentTime = new Date().getTime();
@@ -823,19 +908,8 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					//
 	}
 
-	function kirbyice()
+	function kirbyice_old()
 	{
-		// spit
-	//	if (!startspittingkirby)
-	//				 {
-	//					startspittingkirby = true;
-//						angleK = 0;
-//						xspitkirby = xkirby;
-//						yspitkirby = ykirby+kirbyheight - bombheight;
-//						spitdirectionkirby = kirbydirection;
-//					}
-
-
 					if (startspittingkirby) 
 					{
 						drawImage("imgBlankSpit", xspitkirby, yspitkirby);
@@ -1079,13 +1153,14 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			drawImage("imgBlank", xkirby, ykirby);
 		else
 			drawImage("imgBlankK", xkirby, ykirby);
-		if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight")
+		//if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight")
+		if  (hashat)
 			drawImage("imgBlankFireWide", xkirby, ykirby);
 		if (hasice)
 			drawImage("imgBlankFireWide", xkirby, ykirby);
 		if (hasbomb)
 			drawImage("imgBlankBombSlim", xkirby, ykirby);
-		//getContentPane().repaint(); // don't forget to repaint the container
+		
 
 		onplatform = 0;
 
@@ -1558,9 +1633,11 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 		onmovingplatform = 0;
 		onmovingplatformb = 0;
-		for (var i = 0; i <= 3; i++) {
+		for (var i = 0; i <= 3; i++) 
+		{
 			aspiring[i] = false;
-			if (enemydirection[i][level+1] == -1) {
+			if (enemydirection[i][level+1] == -1) 
+			{
 				 imgEnemyCurrent[i] = "imgEnemyLeft";
 				if (enemySpitting[i][level+1]) 
 				{
@@ -1575,16 +1652,19 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					imgEnemyCurrent[i] = "imgChillyLeft";
 				}
 			}
-			if (enemydirection[i][level+1] == 1) {
+			if (enemydirection[i][level+1] == 1) 
+			{
 				 imgEnemyCurrent[i] = "imgEnemyRight";
-				if (enemySpitting[i][level+1]) {
+				if (enemySpitting[i][level+1]) 
+				{
 					imgEnemyCurrent[i] = "imgHotHeadRight";
-				} else 
+				} 
 				if (enemyBomb[i][level+1])
 				{
 					imgEnemyCurrent[i] = "imgPoppy";
 				}
-				if (enemyIce[i][level+1]) {
+				if (enemyIce[i][level+1]) 
+				{
 					imgEnemyCurrent[i] = "imgChillyRight";
 				} 
 			}
@@ -1790,12 +1870,15 @@ function enemy() {
 								drawImage("imgBlankK", xkirby, ykirby, null);
 								xkirby = xinit;
 								
-							
+								if (hasbomb)
+								{
+									ykirby = yinit - (kirbybombheight - kirbyinitialheight);
+								}
 								if (hasice || hashat)
 								{
 									ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
 								}	
-								else
+								if (!(hasice || hashat || hasbomb))
 								{
 									ykirby = yinit;
 								}
@@ -1845,9 +1928,13 @@ function enemy() {
 								drawImage("imgBlankK", xkirby, ykirby);
 								xkirby = xinit;
 								ykirby = yinit;
-								if (hashat || hasice || hasbomb)
+								if (hashat || hasice)
 								{
-									ykirby = yinit - (kirbyfireheight - kirbyheight);
+									ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
+								}
+								if (hasbomb)
+								{
+									ykirby = yinit - (kirbybombheight - kirbyinitialheight);
 								}
             					currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
 								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
@@ -2257,13 +2344,13 @@ function whispywoods()
 					drawImage("imgBlankFireWide", xkirby, ykirby);
 					xkirby = xinit;
 					ykirby = yinit;
-					if (hashat)
+					if (hashat || hasice)
 					{
-						ykirby = ykirby - 32;
+						ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
 					}
-					if  (hasbomb)
+					if (hasbomb)
 					{
-						ykirby = ykirby - 42;
+						ykirby = yinit - (kirbybombheight - kirbyinitialheight);
 					}
           currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
 						document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
@@ -2614,7 +2701,15 @@ drawImage(imgCurrentBandana, xb, yb);
 			//getContentPane().repaint();
 			}
 				
-
+			if (hasice)
+			{
+			startspittingkirby = 0;
+			if (imgCurrent == "imgKirbyIceRight")
+				drawImage("imgBlankFire",  xkirby+kirbywidth, ykirby + enemymouthy);
+			else
+				drawImage("imgBlankFire",  xkirby-191, ykirby+enemymouthy);
+			//getContentPane().repaint();
+			}
 			
 		}
 
@@ -2719,7 +2814,10 @@ drawImage(imgCurrentBandana, xb, yb);
 			{
 				angleK = 0;
 				startspittingkirby = 1;
-				xspitkirby = xkirby;
+				if (kirbydirection == 1)
+					xspitkirby = xkirby+kirbywidth;
+				else
+					xspitkirby = xkirby-bombwidth;
 				yspitkirby = ykirby + kirbyheight - bombheight;
 				spitdirectionkirby = kirbydirection;
 			}
@@ -3191,6 +3289,9 @@ function start()
 
 <img id="imgLeftFrozen" src="images/enemylefttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgRightFrozen" src="images/enemyrighttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgIceLeft" src="images/iceleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceRight" src="images/iceright.bmp" alt="no" width="640" height="75" top="375" left="0" >
 
 <audio controls id="mySound">
   <source src="sounds/tunnel.mp3" type="audio/mp3" />
