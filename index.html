@@ -2054,9 +2054,9 @@ function enemy() {
 						if (enemyIce[i][level])
 						{
 							if (spitdirection[i] == -1) {
-								drawImage("imgSpitLeft", xspit[i], yspit[i]); //TODO
+								drawImage("imgIceSpitLeft", xspit[i], yspit[i]); //TODO
 							} else {
-								drawImage("imgSpitRight", xspit[i], yspit[i]); //TODO
+								drawImage("imgIceSpitRight", xspit[i], yspit[i]); //TODO
 							}
 						}
 					}
@@ -3293,6 +3293,9 @@ function start()
 
 <img id="imgIceLeft" src="images/iceleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgIceRight" src="images/iceright.bmp" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgIceSpitLeft" src="images/spiticeleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceSpitRight" src="images/spiticeright.bmp" alt="no" width="640" height="75" top="375" left="0" >
 
 <audio controls id="mySound">
   <source src="sounds/tunnel.mp3" type="audio/mp3" />
