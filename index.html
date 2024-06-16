@@ -448,6 +448,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			{
 				kirbyFrozen = false;
 				kirbyFrozenCounter = 0;
+				drawImage("imgBlankE", xkirby, ykirby);
 			}
 		}
 
@@ -546,7 +547,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		// g.drawImage(imgBlankK, xkirby, ykirby, null);
 
 		// enter kirby
-		drawImage(imgCurrent, xkirby, ykirby);
+		if (!kirbyFrozen)
+		{
+			drawImage(imgCurrent, xkirby, ykirby);
+		}
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 		// enter bandana
@@ -709,6 +713,22 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					}
 						
 				}
+
+				//shoot whispywoods
+				if (level == maxLevel)
+						{
+							if (xkirby+kirbywidth+191+5 >= xwhispytree)
+							{
+								playSound("die.wav"); 
+								whispyLife --;
+							}
+							if (whispyLife <= 0)
+							{
+								drawImage("imgWhispyMask", xwhispy, ywhispy);
+								whispyAlive = false;
+							}
+						}
+
 			}
 			else 
 			{
@@ -753,12 +773,18 @@ function drawRotatedImage_old(idImage, x, y, angle)
 						enemyFrozen[i][level] = true;
 							if (!enemyIce[i][level] && !enemyBomb[i][level] && !enemySpitting[i][level])
 							if (enemydirection[i][level] = 1)
-								
 								imgEnemyCurrent[i] = "imgRightFrozen";
 							else
-								
 								imgEnemyCurrent[i] = "imgLeftFrozen";
-							
+							if (enemySpitting[i][level] && !(enemyBomb[i][level]) && !(enemyIce[i][level]))
+							{
+								imgEnemyCurrent[i] = "imgHotHeadFrozen";
+							}
+							if(enemyBomb[i][level])
+							{
+								imgEnemyCurrent[i] = "imgPoppyFrozen";
+							}
+
 							playSound("explosion.wav"); //TODO 
 							
 							if (enemySpitting[i][level])
@@ -1642,7 +1668,8 @@ function drawRotatedImage_old(idImage, x, y, angle)
 				 imgEnemyCurrent[i] = "imgEnemyLeft";
 				if (enemySpitting[i][level+1]) 
 				{
-					imgEnemyCurrent[i] = "imgHotHeadLeft";
+					
+						imgEnemyCurrent[i] = "imgHotHeadLeft";
 				} 
 				if (enemyBomb[i][level+1])
 				{
@@ -1786,6 +1813,7 @@ function enemy() {
 					//	getContentPane().repaint();
 
 						if (xe[i][level] <= enemyminx[i][level])
+							if (!enemyFrozen[i][level])
 						 {
 							imgEnemyCurrent[i] = "imgEnemyRight";
 							if (enemyFrozen[i][level])
@@ -1800,7 +1828,8 @@ function enemy() {
 							if (enemyIce[i][level]) {
 								imgEnemyCurrent[i] = "imgChillyRight";
 							} 
-							enemydirection[i][level] = 1;
+							
+								enemydirection[i][level] = 1;
 						}
 					} else {
 						// g.drawImage(imgBlankE, xe[i][level], ye[i][level], null);
@@ -1810,21 +1839,25 @@ function enemy() {
 						// g.drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level], null);
 						//getContentPane().repaint();
 
-						if (xe[i][level] >= enemymaxx[i][level]) {
+						if (xe[i][level] >= enemymaxx[i][level])
+							if (!enemyFrozen[i][level])
+						{
 							imgEnemyCurrent[i] = "imgEnemyLeft";
 							if (enemyFrozen[i][level])
 								imgEnemyCurrent[i] = "imgLeftFrozen";
-							if (enemySpitting[i][level]) {
+							if (enemySpitting[i][level]) 
+							{
 								imgEnemyCurrent[i] = "imgHotHeadLeft";
 							} 
 							if(enemyBomb[i][level])
 							{
 								imgEnemyCurrent[i] = "imgPoppy";
 							}
-							if (enemyIce[i][level]) {
+							if (enemyIce[i][level]) 
+							{
 								imgEnemyCurrent[i] = "imgChillyLeft";
 							} 
-							enemydirection[i][level] = -1;
+								enemydirection[i][level] = -1;
 						}
 
 					}
@@ -1860,10 +1893,16 @@ function enemy() {
 						if (Math.abs(xkirby + kirbywidth / 2 - xspit[i]) <= 10
 								&& Math.abs(ykirby + kirbyheight / 2 - yspit[i]) <= 40)
 						{
+							startspitting[i] = false;
+
 							if (enemyIce[i][level]) 
 							{
+								//drawImage("imgBlankSpit", xspit[i], yspit[i], null); 
 								//freeze kirby
 								kirbyFrozen = true;
+								//drawImage("imgBlankK", xkirby, ykirby, null); //xxxx
+								drawImage("imgKirbyFrozen", xkirby, ykirby, null); //xxxx
+								
 								//TODO
 							}
 							else //kill kirby
@@ -1890,7 +1929,7 @@ function enemy() {
 					
 								playSound("die.wav");
 								
-								startspitting[i] = false;
+								
 							}
 						}
 
@@ -2395,10 +2434,14 @@ function whispywoods()
 	    {
 			if (enemydirection[i][1] == -1)
 			 {
-				if (enemySpitting[i][level]) {
-					imgEnemyCurrent[i] = "imgHotHeadLeft";
-				} else {
-					imgEnemyCurrent[i] = "imgEnemyLeft";
+				if (enemySpitting[i][level]) 
+				{
+					
+						imgEnemyCurrent[i] = "imgHotHeadLeft";
+				} else
+				{
+					
+						imgEnemyCurrent[i] = "imgEnemyLeft";
 				}
 
 				if (enemyIce[i][level]) {
@@ -3297,10 +3340,17 @@ function start()
 <img id="imgIceSpitLeft" src="images/spiticeleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgIceSpitRight" src="images/spiticeright.bmp" alt="no" width="640" height="75" top="375" left="0" >
 
-<audio controls id="mySound">
-  <source src="sounds/tunnel.mp3" type="audio/mp3" />
-  </audio>
+<img id="imgKirbyFrozen" src="images/kirbyt_frozen.png" alt="no" width="640" height="75" top="375" left="0" >
 
+<img id="imgHotHeadFrozen" src="images/hotheadice.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgPoppyFrozen" src="images/poppybrosfrozen.jrt.png" alt="no" width="640" height="75" top="375" left="0" >
+
+
+<audio controls id="mySound" loop>
+  <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
+  <!-- <source src="sounds/arpegio3.mp3" type="audio/mp3" /> -->
+  </audio>
 
 <!--
 <audio controls id="mySound">
