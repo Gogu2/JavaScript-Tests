@@ -1,6 +1,6 @@
-<html>
+<html></html>
 <head>
-v 1.0
+v 2.0
 <script type="text/javascript">
 var timerstopped = 0;
 var kirbyinitialheight = 54;
@@ -9,7 +9,10 @@ var kirbyFrozenCounter = 0;
 var kirbyFrozenTime = 20;
 
 //var angleE = 0;
-var angleK = 0;
+var angleK = new Array(0,0,0,0,0,0,0,0,0,0);
+var xbombkirby = new Array(0,0,0,0,0,0,0,0,0,0);
+var ybombkirby = new Array(0,0,0,0,0,0,0,0,0,0);
+var bombNo = 0;
 var enemywidth = 75;
 var xexplosion = 0;
 var yexplosion = 0;
@@ -17,6 +20,7 @@ var timerexplosion = 0;
 var lifePiece = 10;
 var whispyAlive = true;
 var whispyLife = 3;
+var whispyFrozen = 0;
 
    var soundObject = null;
         function playSound(soundfile) {
@@ -51,9 +55,10 @@ var startspitting = []; //5
 
 	var enemymouthy = 30;
 	var startspittingkirby;
-	var xspitkirby;
-	var yspitkirby;
-	var spitdirectionkirby;
+	var xspitkirby = new Array(0,0,0,0,0,0,0,0,0,0);
+	var yspitkirby = new Array(0,0,0,0,0,0,0,0,0,0);
+	var spitdirectionkirby  = 0;
+	var bombdirectionkirby = [];
 	var kirbydirection;
 
   var aspiring = [];
@@ -159,7 +164,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 
     var angleE = new Array(0,0,0,0);
-    const nrcoins = new Array( 0, 3, 3, 3, 3, 3, 0, 0 );
+    const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 );
 	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0);
 
    // const movingplatform = new Array[4][maxLevel + 1]; //new boolean[4][maxLevel + 1];
@@ -413,8 +418,9 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		// playermp3.play();
 
 		// game over
-
-
+		c = document.getElementById("canvas1");
+   		context = c.getContext("2d");
+		context.clearRect(0, 0, document.getElementById("canvas1").width, document.getElementById("canvas1").height);
 		
    
 		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("pbBandana").getAttribute('value') <= 0) {
@@ -436,7 +442,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			if (timerexplosion == 20)
 			{
 				timerexplosion = 0;
-				drawImage("imgBlankE", xexplosion, yexplosion);
+				//// drawimage("imgBlankE", xexplosion, yexplosion);
 				xexplosion = 0;
 			}
 		}
@@ -448,7 +454,8 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			{
 				kirbyFrozen = false;
 				kirbyFrozenCounter = 0;
-				drawImage("imgBlankE", xkirby, ykirby);
+				imgCurrent = "img";
+			//	// drawimage("imgBlankE", xkirby, ykirby);
 			}
 		}
 
@@ -460,10 +467,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		
 			if (!hashat) 
 			{
-				if (imgCurrent == img)
-					drawImage("imgBlank", xkirby, ykirby);
+				if (imgCurrent == img){}
+					//// drawimage("imgBlank", xkirby, ykirby);
 				else
-					drawImage("imgBlankK", xkirby, ykirby);
+					//// drawimage("imgBlankK", xkirby, ykirby);
 				imgCurrent = "img";
 			} else 
 			{
@@ -474,18 +481,18 @@ function drawRotatedImage_old(idImage, x, y, angle)
 				// if (imgCurrent == imgKirbyFireLeft || imgCurrent == imgKirbyFireRight)
 				// g.drawImage(imgBlankFire, xkirby, ykirby, null);
 				// else
-				drawImage("imgBlankFireWide", xkirby, ykirby);
+			//	// drawimage("imgBlankFireWide", xkirby, ykirby);
 
 				imgCurrent = "imgKirbyFire";
 			}
 			if (hasbomb)
 			{
-				drawImage("imgBlankBombSlim", xkirby, ykirby);
+			//	// drawimage("imgBlankBombSlim", xkirby, ykirby);
 				imgCurrent = "imgKirbyBomb";
 			}
 			if(hasice)
 			{
-				drawImage("imgBlankFireWide", xkirby, ykirby);
+			//	// drawimage("imgBlankFireWide", xkirby, ykirby);
 				imgCurrent = "imgKirbyIce";
 			}
 			// g.drawImage(imgBlank, xkirby, ykirby, null);
@@ -496,10 +503,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		idletimeb++;
 		if (idletimeb == 20) {
 		
-			if (imgCurrentBandana == "imgBandana")
-				drawImage("imgBlankE", xb, yb);
+			if (imgCurrentBandana == "imgBandana"){}
+			//	// drawimage("imgBlankE", xb, yb);
 			else
-				drawImage("imgBlankE", xb, yb); // debugstefan
+			//	// drawimage("imgBlankE", xb, yb); // debugstefan
 			// g.drawImage(imgBlank, xb, yb, null);
 			imgCurrentBandana = "imgBandana";
 			//getContentPane().repaint();
@@ -515,7 +522,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		doorsCoins();
 
 		// caged waddle dee
-		if (level == maxLevel) 
+		if (level == maxLevel && !whispyAlive) 
 		{
 			cagedExists = 1;
 		} else
@@ -547,10 +554,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		// g.drawImage(imgBlankK, xkirby, ykirby, null);
 
 		// enter kirby
-		if (!kirbyFrozen)
-		{
+		//if (!kirbyFrozen)
+	//	{
 			drawImage(imgCurrent, xkirby, ykirby);
-		}
+	//	}
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 		// enter bandana
@@ -571,9 +578,9 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			Math.abs(xkirby + kirbywidth / 2 - (coinx[i][level] + coinwidth / 2)) <= 25
 					&& Math.abs(ykirby + kirbyheight / 2 - (coiny[i][level] + coinwidth / 2)) <= 25) {
 			//	new Thread(() -> {
-					playSound("coin.wav");
+					playSound("coin3.wav");
 			//	}).start();
-				drawImage("imgBlank", coinx[i][level], coiny[i][level]);
+			//	// drawimage("imgBlank", coinx[i][level], coiny[i][level]);
 				decreasecoinsflag = true;
 				coinsTaken++;
 				// tx = coinx[i];ty = coiny[y];
@@ -594,9 +601,9 @@ function drawRotatedImage_old(idImage, x, y, angle)
 			Math.abs(xb + bandanawidth / 2 - (coinx[i][level] + coinwidth / 2)) <= 25
 					&& Math.abs(yb + bandanaheight / 2 - (coiny[i][level] + coinwidth / 2)) <= 25) {
 		//		new Thread(() -> {
-					playSound("coin.wav");
+					playSound("coin3.wav");
 		//		}).start();
-				drawImage("imgBlank", coinx[i][level], coiny[i][level]);
+			//	// drawimage("imgBlank", coinx[i][level], coiny[i][level]);
 				decreasecoinsflag = true;
 				coinsTakenb++;
 				// tx = coinx[i];ty = coiny[y];
@@ -614,25 +621,19 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		}
 
 		// release waddlee dee
+		if (!whispyAlive)
 		if (level == maxLevel && !cagedReleased)
 			if (
-			// (x + kirbywidth > coinx[i][level] -15 && x + kirbywidth < coinx[i][level] +
-			// 15 && y >coiny[i][level]-5 && y < coiny[i][level] + 5)
-			// ||
-			// (x > coinx[i][level] +kirbywidth -15 && x < coinx[i][level] + kirbywidth + 15
-			// && y >coiny[i][level]-5 && y < coiny[i][level] + 5)
 			Math.abs(xkirby + kirbywidth / 2 - (xc + coinwidth / 2)) <= 75
 					&& Math.abs(ykirby + kirbyheight / 2 - (yc + coinwidth / 2)) <= 75
 					|| Math.abs(xb + bandanawidth / 2 - (xc + coinwidth / 2)) <= 75
-							&& Math.abs(yb + bandanawidth / 2 - (yc + coinwidth / 2)) <= 75) {
+							&& Math.abs(yb + bandanawidth / 2 - (yc + coinwidth / 2)) <= 75
+				)
+			{
 				cagedReleased = true;
 				imgCurrentWaddle = "imgFree";
 				drawImage("imgFree", xc, yc);
-				//getContentPane().repaint();
-				//new Thread(() -> {
-					playSound("release.wav"); 
-			//	}).start();
-
+				playSound("release.wav"); 
 			}
 
 		// if (x<xDoor[level-1]+15 && x> xDoor[level-1] -15 && y<yDoor[level-1]+5 && y>
@@ -649,7 +650,6 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					clearInterval(funcSetInterval);
 					timerstopped = 1;
           drawImage("imgVictory", 0, 0);
-					//getContentPane().repaint();
 					return;
 				} else {
 					jumpsfalls();
@@ -705,7 +705,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					//todo
 					if ((xe[i][level]<=xkirby+kirbywidth+191+5)&&(xe[i][level]>=xkirby+kirbywidth-5) && (Math.abs(ye[i][level] + ye[i][level]/2 - (ykirby +ykirby/2) )<=25)) 
 					{
-						drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					//	// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 						enemyExists[i][level] = false;
 						//new Thread(() -> {
 							playSound("die.wav");
@@ -739,7 +739,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					//todo
 					if ((xe[i][level]>=xkirby+191-5)&&(xe[i][level]<=xkirby+kirbywidth+5)&& (Math.abs(ye[i][level] + ye[i][level]/2 - (ykirby +ykirby/2) )<=25)) 
 					{
-						drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					//	// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 						enemyExists[i][level] = false;
 						//new Thread(() -> {
 							playSound("die.wav");
@@ -790,10 +790,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+							//		// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+							//		// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							
 								
@@ -801,10 +801,22 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					}
 						
 				}
+
+				//freeze whispywoods
+				if (level == maxLevel)
+						{
+							if (xkirby+kirbywidth+191+5 >= xwhispytree)
+							{
+								//playSound("die.wav"); 
+								//whispyLife --;
+								whispyFrozen = 1;
+							}
+							
+						}
 			}
 			else 
 			{
-				drawImage("imgIceLeft", xkirby - 191, ykirby+enemymouthy);
+				drawImage("imgIceLeft", xkirby - 105, ykirby+enemymouthy);
 				for (var i = 0;i<=3;i++) 
 				{
 					if(enemyExists[i][level])
@@ -825,10 +837,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+							//		// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+							//		// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							
 								
@@ -852,43 +864,34 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 	function kirbybomb()
 	{
-		// spit
-	//	if (!startspittingkirby)
-	//				 {
-	//					startspittingkirby = true;
-//						angleK = 0;
-//						xspitkirby = xkirby;
-//						yspitkirby = ykirby+kirbyheight - bombheight;
-//						spitdirectionkirby = kirbydirection;
-//					}
-
 
 					if (startspittingkirby) 
+					for (var k = 1; k<=bombNo;k++)
 					{
-						drawImage("imgBlankBomb", xspitkirby, yspitkirby);
+						// drawimage("imgBlankBomb", xspitkirby, yspitkirby);
 
-						xspitkirby += 10 * spitdirectionkirby;
+						xbombkirby[k] += 10 * bombdirectionkirby[k];
 
-						angleK += 90;
-						if (angleK == 360)
-							angleK = 0;
+						angleK[k] += 90;
+						if (angleK[k] == 360)
+							angleK[k] = 0;
 						
-						drawRotatedBombK( xspitkirby, yspitkirby, angleK);
+						drawRotatedBombK( xbombkirby[k], ybombkirby[k], angleK[k]);
 						
 
 						
 						//shoot whispywoods
 						if (level == maxLevel)
 						{
-							if ((xspitkirby + bombwidth/2) >= xwhispytree)
+							if ((xbombkirby[k] + bombwidth/2) >= xwhispytree)
 							{
 								playSound("explosion.wav"); 
-								startspittingkirby = false;
+								startspittingkirby[k] = false;
 								whispyLife --;
 							}
 							if (whispyLife <= 0)
 							{
-								drawImage("imgWhispyMask", xwhispy, ywhispy);
+								//drawImage("imgWhispyMask", xwhispy, ywhispy);
 								whispyAlive = false;
 							}
 						}
@@ -897,38 +900,44 @@ function drawRotatedImage_old(idImage, x, y, angle)
 						for(var i = 0;i<=3;i++)
 						if (enemyExists[i][level])
 						{
-						if (Math.abs(xe[i][level] + enemywidth / 2 - (xspitkirby + bombwidth/2)) <= 10
-								&& Math.abs(ye[i][level] + enemyheight / 2 - (yspitkirby + bombheight/2)) <= 40) 
+						if (Math.abs(xe[i][level] + enemywidth / 2 - (xbombkirby[k] + bombwidth/2)) <= 10
+								&& Math.abs(ye[i][level] + enemyheight / 2 - (ybombkirby[k] + bombheight/2)) <= 40) 
 						{
 							drawImage("imgExplosion", xe[i][level], ye[i][level]);
 							playSound("explosion.wav"); 
 							xexplosion = xe[i][level];
 							yexplosion = ye[i][level];
 							//sleep(2000);
-							//drawImage("imgBlankE", xe[i][level], ye[i][level]);
+							//// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 							enemyExists[i][level] = 0;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+									// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							//xkirby = xinit;
 							//ykirby = yinit;
             			//currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
 						//document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - 33) ;
 								
-							startspittingkirby = false;
+							//startspittingkirby = false;
+							bombNo--;
+							if (bombNo == 0) 
+								startspittingkirby = false;
 						}
 					}
 
 						
-						if (xspitkirby < 0 || xspitkirby > screenwidth) 
+						if (xbombkirby[k] < 0 || xbombkirby[k] > screenwidth) 
 						{
 
-							startspittingkirby = false;
+							//startspittingkirby = false;
+							bombNo--;
+							if (bombNo == 0) 
+								startspittingkirby = false;
 						}
 
 					}
@@ -939,9 +948,9 @@ function drawRotatedImage_old(idImage, x, y, angle)
 	{
 					if (startspittingkirby) 
 					{
-						drawImage("imgBlankSpit", xspitkirby, yspitkirby);
+						// drawimage("imgBlankSpit", xspitkirby, yspitkirby);
 
-						xspitkirby += 10 * spitdirectionkirby;
+						xspitkirby[k] += 10 * bombdirectionkirby[k];
 
 						//angleK += 90;
 						//if (angleK == 360)
@@ -974,15 +983,15 @@ function drawRotatedImage_old(idImage, x, y, angle)
 							//xexplosion = xe[i][level];
 							//yexplosion = ye[i][level];
 							//sleep(2000);
-							//drawImage("imgBlankE", xe[i][level], ye[i][level]);
+							//// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 							//enemyExists[i][level] = 0;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+									// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							//xkirby = xinit;
 							//ykirby = yinit;
@@ -1009,10 +1018,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 		onmovingplatformb = 0;
 		onplatformb = 0;
-		if (imgCurrentBandana == "imgBandana")
-			drawImage("imgBlankE", xb, yb);
-		else
-			drawImage("imgBlankE", xb, yb);
+		if (imgCurrentBandana == "imgBandana"){}
+			// drawimage("imgBlankE", xb, yb);
+		else{}
+			// drawimage("imgBlankE", xb, yb);
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 		tb = tb + 1;
@@ -1053,10 +1062,10 @@ function drawRotatedImage_old(idImage, x, y, angle)
 	function jumpbandana() {
 		var yib = 0;
 
-		if (imgCurrentBandana == "imgBandana")
-			drawImage("imgBlankE", xb, yb);
-		else
-			drawImage("imgBlankE", xb, yb, null);
+		if (imgCurrentBandana == "imgBandana"){}
+			// drawimage("imgBlankE", xb, yb);
+		else{}
+			// drawimage("imgBlankE", xb, yb, null);
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 		onmovingplatformb = false;
@@ -1127,12 +1136,12 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		// y+=10;
 		onmovingplatform = false;
 		onplatform = false;
-		if (imgCurrent == "img")
-			drawImage("imgBlank", xkirby, ykirby);
-		else
-			drawImage("imgBlankK", xkirby, ykirby);
-		if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight" || hasice || hasbomb)
-			drawImage("imgBlankFireWide", xkirby, ykirby);
+		//if (imgCurrent == "img"){}
+		//	// drawimage("imgBlank", xkirby, ykirby);
+		//else{}
+		//	// drawimage("imgBlankK", xkirby, ykirby);
+		if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight" || hasice || hasbomb){};
+			// drawimage("imgBlankFireWide", xkirby, ykirby);
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 		t = t + 1;
@@ -1154,6 +1163,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					onplatform = 1;
 					platform = i;
 					jumpstarted = 0;
+					jumpleft = 0;jumpright = 0; //v2
 					fallstart = 0;
 					t = 0;
 					vy = v0y;
@@ -1164,10 +1174,9 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		}
 		// end fall on platform
 
-		drawImage(imgCurrent, xkirby, ykirby);
+		//debugstefan drawImage(imgCurrent, xkirby, ykirby);
 		//getContentPane().repaint(); // don't forget to repaint the container
-		if (1)
-			return;
+		
 	}
 
 	function jumpkirby() 
@@ -1176,17 +1185,17 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 		onmovingplatform = 0;
 
-		if (imgCurrent == "img")
-			drawImage("imgBlank", xkirby, ykirby);
-		else
-			drawImage("imgBlankK", xkirby, ykirby);
+		if (imgCurrent == "img"){}
+			// drawimage("imgBlank", xkirby, ykirby);
+		else{}
+			// drawimage("imgBlankK", xkirby, ykirby);
 		//if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight")
 		if  (hashat)
-			drawImage("imgBlankFireWide", xkirby, ykirby);
+			// drawimage("imgBlankFireWide", xkirby, ykirby);
 		if (hasice)
-			drawImage("imgBlankFireWide", xkirby, ykirby);
+			// drawimage("imgBlankFireWide", xkirby, ykirby);
 		if (hasbomb)
-			drawImage("imgBlankBombSlim", xkirby, ykirby);
+			// drawimage("imgBlankBombSlim", xkirby, ykirby);
 		
 
 		onplatform = 0;
@@ -1225,12 +1234,12 @@ function drawRotatedImage_old(idImage, x, y, angle)
 						if (enemySpitting[i][level])
 						{
 							startspitting[i] = 0;
-							if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+							if (enemyBomb[i][level]){}
+									// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 						}
-						drawImage("imgBlankE", xe[i][level], ye[i][level]);
+						// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 					//	new Thread(() -> {
 							playSound("die.wav");
 					//	}).start();
@@ -1256,6 +1265,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 					onplatform = 1;
 					platform = i;
 					jumpstarted = 0;
+					jumpleft = 0;jumpright = 0; //v2
 					t = 0;
 					vy = v0y;
 					if (movingplatform[i][level]) {
@@ -1272,6 +1282,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 				if (yi >= yplatform[i][level] + platformheight && ykirby <= yplatform[i][level] + platformheight) {
 					ykirby = yplatform[i][level] + platformheight;
 					jumpstarted = 0;
+					jumpleft = 0;jumpright = 0; //v2
 					t = 0;
 					vy = 0;
 					fallstart = 1;
@@ -1280,7 +1291,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 		// end ceiling
 
-		drawImage(imgCurrent, xkirby, ykirby);
+		//debugstefan drawImage(imgCurrent, xkirby, ykirby);
 		//getContentPane().repaint(); // don't forget to repaint the container
 
 	}
@@ -1368,19 +1379,19 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		for (var i = 1; i <= nrplatforms[level]; i++) {
 			if (movingplatform[i][level]) {
 
-				drawImage("imgBlankForPlatform", xplatform[i][level], yplatform[i][level], null);
+				// drawimage("imgBlankForPlatform", xplatform[i][level], yplatform[i][level], null);
 				if (platformdirection[i][level] < 0) {
 					xplatform[i][level] -= 5;
 					if (onmovingplatform) {
-						drawImage("imgBlankK", xkirby, ykirby);
+						// drawimage("imgBlankK", xkirby, ykirby);
 					//	getContentPane().repaint();
 						xkirby -= 5;
 					}
 					if (onmovingplatformb) {
-						if (imgCurrentBandana == "imgBandana")
-							drawImage("imgBlankE", xb, yb);
-						else
-							drawImage("imgBlankB", xb, yb);
+						if (imgCurrentBandana == "imgBandana"){}
+							// drawimage("imgBlankE", xb, yb);
+						else{}
+							// drawimage("imgBlankB", xb, yb);
 						getContentPane().repaint();
 						xb -= 5;
 					}
@@ -1391,15 +1402,15 @@ function drawRotatedImage_old(idImage, x, y, angle)
 				} else {
 					xplatform[i][level] += 5;
 					if (onmovingplatform) {
-						drawImage("imgBlankK", xkirby, ykirby);
+						// drawimage("imgBlankK", xkirby, ykirby);
 						//getContentPane().repaint();
 						xkirby += 5;
 					}
 					if (onmovingplatformb) {
-						if (imgCurrentBandana == "imgBandana")
-							drawImage("imgBlankE", xb, yb);
-						else
-							drawImage("imgBlankB", xb, yb);
+						if (imgCurrentBandana == "imgBandana"){}
+							// drawimage("imgBlankE", xb, yb);
+						else{}
+							// drawimage("imgBlankB", xb, yb);
 						getContentPane().repaint();
 						xb += 5;
 					}
@@ -1636,10 +1647,13 @@ function drawRotatedImage_old(idImage, x, y, angle)
 
 
   function initlevel() {
-		drawImage("imgBlankK", xkirby, ykirby, null);
-		drawImage("imgBlankB", xb, yb, null);
+		// drawimage("imgBlankK", xkirby, ykirby, null);
+		// drawimage("imgBlankB", xb, yb, null);
 	document.getElementById("jLabel1").innerText="Level: " + level;
-		coins = 3;
+		
+		bombNo = 0;
+		//coins = 3;
+		coins = nrcoins[level+1];
 		xkirby = xinit;
 		ykirby = yinit;
 		if (hashat ||  hasice) 
@@ -1654,7 +1668,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		yb = ybinit;
 		platform = 0;
 		onplatform = 1;
-		coins = 3; // oare ? coinsTaken = 0;
+		//coins = 3; // oare ? coinsTaken = 0;
 		platformb = 0;
 		onplatformb = 1;
 
@@ -1704,20 +1718,20 @@ function drawRotatedImage_old(idImage, x, y, angle)
 		// coiny[0][level] = 300;coiny[1][level]=300;coiny[2][level]=300;
 
 		for (var i = 1; i <= nrplatforms[level]; i++) {
-			drawImage("imgBlankForPlatform", xplatform[i][level], yplatform[i][level]);
+			// drawimage("imgBlankForPlatform", xplatform[i][level], yplatform[i][level]);
 		}
 
 		for (var i = 0; i <= 2; i++) {
-			drawImage("imgBlank", coinx[i][level], coiny[i][level]);
+			// drawimage("imgBlank", coinx[i][level], coiny[i][level]);
 		}
 
 		for (var i = 0; i <= 2; i++) {
-			drawImage("imgBlankE", xe[i][level], ye[i][level]);
+			// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 		}
 
 		 initcoins();
 
-		drawImage("imgBlankE", xDoor[level - 1], yDoor[level - 1]);
+		// drawimage("imgBlankE", xDoor[level - 1], yDoor[level - 1]);
 
 		//getContentPane().repaint();
 
@@ -1764,10 +1778,10 @@ function enemy() {
 					drawImage("imgEnemyRightMask", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgEnemyHorizontal") {
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgHotHeadHorizontal") {
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgHotHeadLeft") {
 					drawImage("imgHotHeadLeftMask", xe[i][level], ye[i][level]);
@@ -1781,17 +1795,17 @@ function enemy() {
 				}
 				if (imgEnemyCurrent[i] == "imgPoppyHorizontal")
 				{
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgChillyLeft") {
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgChillyRight") {
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgChillyHorizontal")
 				{
-					drawImage("imgBlankE", xe[i][level], ye[i][level]);
+					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 				}
 				//getContentPane().repaint();
 
@@ -1880,11 +1894,11 @@ function enemy() {
 					{
 						if(!enemyBomb[i][level])
 						{
-							drawImage("imgBlankSpit", xspit[i], yspit[i]);
+							// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 						}
 						else
 						{
-							drawImage("imgBlankBomb", xspit[i], yspit[i]);
+							// drawimage("imgBlankBomb", xspit[i], yspit[i]);
 						}
 						xspit[i] += 10 * spitdirection[i];
 						
@@ -1897,17 +1911,17 @@ function enemy() {
 
 							if (enemyIce[i][level]) 
 							{
-								//drawImage("imgBlankSpit", xspit[i], yspit[i], null); 
+								//// drawimage("imgBlankSpit", xspit[i], yspit[i], null); 
 								//freeze kirby
 								kirbyFrozen = true;
-								//drawImage("imgBlankK", xkirby, ykirby, null); //xxxx
-								drawImage("imgKirbyFrozen", xkirby, ykirby, null); //xxxx
-								
+								//// drawimage("imgBlankK", xkirby, ykirby, null); //xxxx
+								//v2 drawImage("imgKirbyFrozen", xkirby, ykirby, null); //xxxx
+								imgCurrent = "imgKirbyFrozen";
 								//TODO
 							}
 							else //kill kirby
 							{
-								drawImage("imgBlankK", xkirby, ykirby, null);
+								// drawimage("imgBlankK", xkirby, ykirby, null);
 								xkirby = xinit;
 								
 								if (hasbomb)
@@ -1937,7 +1951,7 @@ function enemy() {
 						// shoot bandana
 						if (Math.abs(xb + bandanawidth / 2 - xspit[i]) <= 10
 								&& Math.abs(yb + bandanaheight / 2 - yspit[i]) <= 40) {
-							drawImage("imgBlankB", xb, yb, null);
+							// drawimage("imgBlankB", xb, yb, null);
 							xb = xbinit;
 							yb = ybinit;
 						//	pbBandana.setValue(pbBandana.getValue() - 33);
@@ -1965,7 +1979,7 @@ function enemy() {
 						{
 							if (!enemyFrozen[i][level])
 							{
-								drawImage("imgBlankK", xkirby, ykirby);
+								// drawimage("imgBlankK", xkirby, ykirby);
 								xkirby = xinit;
 								ykirby = yinit;
 								if (hashat || hasice)
@@ -2019,16 +2033,16 @@ function enemy() {
 						if (xe[i][level] <= xkirby + kirbywidth + 5)
 						 {
 							aspiring[i] = 0;
-							drawImage("imgBlankE", xe[i][level], ye[i][level]);
+							// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 							// ? enemyDied[i][level] = true;
 							enemyExists[i][level] = false;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+									// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							if (!hashat)
 								imgCurrent = "imgKirbyRight";
@@ -2048,16 +2062,16 @@ function enemy() {
 					} else {
 						if (xe[i][level] + kirbywidth >= xkirby - 5) {
 							aspiring[i] = 0;
-							drawImage("imgBlankE", xe[i][level], ye[i][level]);
+							// drawimage("imgBlankE", xe[i][level], ye[i][level]);
 							// ? enemyDied = true;
 							enemyExists[i][level] = false;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level])
-									drawImage("imgBlankE", xspit[i], yspit[i]);
-								else
-									drawImage("imgBlankSpit", xspit[i], yspit[i]);
+								if (enemyBomb[i][level]){}
+									// drawimage("imgBlankE", xspit[i], yspit[i]);
+								else{}
+									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							if (!hashat)
 								imgCurrent = "imgKirbyLeft";
@@ -2371,7 +2385,11 @@ function whispywoods()
 				return;
 			}
 
-			drawImage("imgBlankApple", xapple, yapple);
+			if (whispyFrozen)
+			{
+				return;
+			}
+			// drawimage("imgBlankApple", xapple, yapple);
 			
 			// apple kills kirby
 			if (
@@ -2381,7 +2399,7 @@ function whispywoods()
 					(Math.abs(xkirby+kirbywidth/2-(xapple+applewidth/2))<=45)
 				) 
 				{
-					drawImage("imgBlankFireWide", xkirby, ykirby);
+					// drawimage("imgBlankFireWide", xkirby, ykirby);
 					xkirby = xinit;
 					ykirby = yinit;
 					if (hashat || hasice)
@@ -2523,26 +2541,9 @@ function whispywoods()
           if (bool_moveRightb) MoveRightb();
       }
       
-      function MoveLeft() {
+      function MoveLeft() 
+	{
 
-if (imgCurrent == "img")
-  drawImage("imgBlankK", xkirby, ykirby);
-else
-  drawImage("imgBlank", xkirby, ykirby);
-if (imgCurrent == "imgKirbyFireLeft") 
-{
-  drawImage("imgBlankFireWide", xkirby, ykirby);
-}
-if (hasbomb) 
-{
-  drawImage("imgBlankBombSlim", xkirby, ykirby);
-}
-if (hasice)
-{
-	drawImage("imgBlankFireWide", xkirby, ykirby);
-}
-
-//getContentPane().repaint(); // don't forget to repaint the container
 
 // kirby hits bandana left
 if (ykirby + kirbyheight == yb + bandanaheight)
@@ -2572,27 +2573,27 @@ if (xkirby > 0) {
     v0y = 0;
   }
 }
-drawImage(imgCurrent, xkirby, ykirby);
+//debugstefan drawImage(imgCurrent, xkirby, ykirby);
 //getContentPane().repaint(); // don't forget to repaint the container
 }
 
        function MoveRight()
         {
-        if (imgCurrent == "img")
-          drawImage("imgBlankK", xkirby, ykirby);
-        else
-          drawImage("imgBlank", xkirby, ykirby);
+        if (imgCurrent == "img"){}
+          // drawimage("imgBlankK", xkirby, ykirby);
+        else{}
+          // drawimage("imgBlank", xkirby, ykirby);
         if (imgCurrent == "imgKirbyFireRight")
 		{
-          drawImage("imgBlankFireWide", xkirby, ykirby);
+          // drawimage("imgBlankFireWide", xkirby, ykirby);
         }
 		if (hasbomb)
 		{
-			drawImage("imgBlankBombSlim", xkirby, ykirby);
+			// drawimage("imgBlankBombSlim", xkirby, ykirby);
 		}
 		if (hasice)
 		{
-			drawImage("imgBlankFireWide", xkirby, ykirby);
+			// drawimage("imgBlankFireWide", xkirby, ykirby);
 		}
 
       //	getContentPane().repaint(); // don't forget to repaint the container
@@ -2632,7 +2633,7 @@ drawImage(imgCurrent, xkirby, ykirby);
             v0y = 0;
           }
         }
-        drawImage(imgCurrent, xkirby, ykirby);
+       //debugstefan drawImage(imgCurrent, xkirby, ykirby);
                 
         }
     
@@ -2640,10 +2641,10 @@ drawImage(imgCurrent, xkirby, ykirby);
 
         function MoveLeftb() {
 
-if (imgCurrentBandana == "imgBandana")
-  drawImage("imgBlankE", xb, yb);
-else
-  drawImage("imgBlankE", xb, yb);
+if (imgCurrentBandana == "imgBandana"){}
+  // drawimage("imgBlankE", xb, yb);
+else{}
+  // drawimage("imgBlankE", xb, yb);
 //getContentPane().repaint(); // don't forget to repaint the container
 
 // bandana hits kirby left
@@ -2680,10 +2681,10 @@ drawImage(imgCurrentBandana, xb, yb);
 
 function MoveRightb() {
 
-if (imgCurrentBandana == "imgBandana")
-  drawImage("imgBlankE", xb, yb);
-else
-  drawImage("imgBlankE", xb, yb);
+if (imgCurrentBandana == "imgBandana"){}
+  // drawimage("imgBlankE", xb, yb);
+else{}
+  // drawimage("imgBlankE", xb, yb);
 //getContentPane().repaint(); // don't forget to repaint the container
 
 // kirby hits bandana right
@@ -2738,22 +2739,13 @@ drawImage(imgCurrentBandana, xb, yb);
 			if (hashat)
 			{
 			startspittingkirby = 0;
-			if (imgCurrent == "imgKirbyFireRight")
-				drawImage("imgBlankFire",  xkirby+kirbywidth, ykirby + enemymouthy);
-			else
-				drawImage("imgBlankFire",  xkirby-191, ykirby+enemymouthy);
-			//getContentPane().repaint();
 			}
 				
 			if (hasice)
 			{
 			startspittingkirby = 0;
-			if (imgCurrent == "imgKirbyIceRight")
-				drawImage("imgBlankFire",  xkirby+kirbywidth, ykirby + enemymouthy);
-			else
-				drawImage("imgBlankFire",  xkirby-191, ykirby+enemymouthy);
-			//getContentPane().repaint();
 			}
+			
 			
 		}
 
@@ -2800,10 +2792,10 @@ drawImage(imgCurrentBandana, xb, yb);
     if (event.keyCode == 68 && event.shiftKey || event.keyCode == 16 && bool_moveRightb) {
 			vb0y = -75;
 			yb0 = yb;
-			if (imgCurrentBandana == "imgBandana")
-				drawImage("imgBlankE", xb, yb);
-			else
-				drawImage("imgBlankE", xb, yb);
+			if (imgCurrentBandana == "imgBandana"){}
+				// drawimage("imgBlankE", xb, yb);
+			else{}
+				// drawimage("imgBlankE", xb, yb);
 			imgCurrentBandana = "imgBandanaRight";
 			jumpstartedb = 1;
 			jumprightb = 1;
@@ -2813,7 +2805,7 @@ drawImage(imgCurrentBandana, xb, yb);
 			else
 				jumpfromplatformb = 0;
 			//new Thread(() -> {
-				playSound("jump.wav");
+			//Sorina	playSound("jump.wav");
 		//	}).start();
 			return;
 		}
@@ -2821,10 +2813,10 @@ drawImage(imgCurrentBandana, xb, yb);
 		if (event.keyCode == 65 && event.shiftKey || event.keyCode == 16 && bool_moveLeftb) {
 			vb0y = -75;
 			yb0 = yb;
-			if (imgCurrentBandana == "imgBandana")
-				drawImage("imgBlankE", xb, yb);
-			else
-				drawImage("imgBlankE", xb, yb);
+			if (imgCurrentBandana == "imgBandana"){}
+				// drawimage("imgBlankE", xb, yb);
+			else{}
+				// drawimage("imgBlankE", xb, yb);
 			imgCurrentBandana = "imgBandanaLeft";
 			jumpstartedb = 1;
 			jumpleftb = 1;
@@ -2834,7 +2826,7 @@ drawImage(imgCurrentBandana, xb, yb);
 			else
 				jumpfromplatformb = 0;
 			//new Thread(() -> {
-				playSound("jump.wav");
+			//Sorina	playSound("jump.wav");
 			//}).start();
 			return;
 		}
@@ -2844,7 +2836,7 @@ drawImage(imgCurrentBandana, xb, yb);
 		{
 			return;
 		}
-              // shoot enemy
+              // shoot enemy event
 		if (event.keyCode == 13)
 		 {
 			if (hashat)
@@ -2855,15 +2847,18 @@ drawImage(imgCurrentBandana, xb, yb);
 				spitdirectionkirby = kirbydirection;	
 			}
 			if (hasbomb)
+			if (bombNo < 9)
 			{
-				angleK = 0;
+				bombNo++;
+				angleK[bombNo] = 0;
 				startspittingkirby = 1;
 				if (kirbydirection == 1)
-					xspitkirby = xkirby+kirbywidth;
+					xbombkirby[bombNo] = xkirby+kirbywidth;
 				else
-					xspitkirby = xkirby-bombwidth;
-				yspitkirby = ykirby + kirbyheight - bombheight;
-				spitdirectionkirby = kirbydirection;
+					xbombkirby[bombNo] = xkirby-bombwidth;
+				ybombkirby[bombNo] = ykirby + kirbyheight - bombheight;
+				bombdirectionkirby[bombNo] = kirbydirection;
+				
 			}
 			if (hasice)
 			{
@@ -2880,21 +2875,21 @@ drawImage(imgCurrentBandana, xb, yb);
 			if (hashat)
 			{
 				imgCurrent = "img";
-				drawImage("imgBlankFireSlim", xkirby, ykirby);
+				// drawimage("imgBlankFireSlim", xkirby, ykirby);
 				ykirby = ykirby +  32;
 				kirbyheight = kirbyheight - 32;
 			}
 			if (hasbomb)
 			{
 				imgCurrent = "img";
-				drawImage("imgBlankBombSlim", xkirby, ykirby);
+				// drawimage("imgBlankBombSlim", xkirby, ykirby);
 				ykirby = ykirby +  32;
 				kirbyheight = kirbyheight - 32;
 			}
 			if (hasice)
 			{
 				imgCurrent = "img";
-				drawImage("imgBlankFireSlim", xkirby, ykirby);
+				// drawimage("imgBlankFireSlim", xkirby, ykirby);
 				ykirby = ykirby +  32;
 				kirbyheight = kirbyheight - 32;
 			}
@@ -2906,7 +2901,7 @@ drawImage(imgCurrentBandana, xb, yb);
 
 
 		//jump vertically
-		if (!jumpstarted && !fallstart)
+		if (!jumpstarted && !fallstart && !jumpleft && !jumpright)
 		if (event.ctrlKey && event.keyCode != 37 && event.keyCode != 39)
 		{
 			kirbydirection = -1;
@@ -2914,21 +2909,21 @@ drawImage(imgCurrentBandana, xb, yb);
                 y0 = ykirby;
 				if (!hashat) 
 				{
-				  if  (hasbomb)
-				  	drawImage("imgBlankBombSlim", xkirby, ykirby);
-				  else 
-                  if (imgCurrent == "img")
-                    drawImage("imgBlank", xkirby, ykirby);
-                  else
-                    drawImage("imgBlankK", xkirby, ykirby);//imgBlankK
+				  if  (hasbomb){}
+				  	// drawimage("imgBlankBombSlim", xkirby, ykirby);
+				  else {}
+                  if (imgCurrent == "img"){}
+                    // drawimage("imgBlank", xkirby, ykirby);
+                  else{}
+                    // drawimage("imgBlankK", xkirby, ykirby);//imgBlankK
                 } 
 				else
 				 {
-                  drawImage("imgBlankFireSlim", xkirby, ykirby);
+                  // drawimage("imgBlankFireSlim", xkirby, ykirby);
                 }
 				if (hasice)
 				{
-					drawImage("imgBlankFireSlim", xkirby, ykirby);
+					// drawimage("imgBlankFireSlim", xkirby, ykirby);
 				}
 				
 				/////
@@ -2951,6 +2946,7 @@ drawImage(imgCurrentBandana, xb, yb);
 
           //jump left
 		 // if (!jumpstarted && !fallstart)
+		  if (!jumpleft )
           if (event.ctrlKey && event.keyCode === 37 || event.keyCode == 17 && bool_moveLeft) 
           {
                 kirbydirection = -1;
@@ -2958,20 +2954,20 @@ drawImage(imgCurrentBandana, xb, yb);
                 y0 = ykirby;
                 if (!hashat) 
 				{
-				  if  (hasbomb)
-				  	drawImage("imgBlankBombSlim", xkirby, ykirby);
-				  else 
-                  if (imgCurrent == "img")
-                    drawImage("imgBlank", xkirby, ykirby);
-                  else
-                    drawImage("imgBlankK", xkirby, ykirby);
+				  if  (hasbomb){}
+				  	// drawimage("imgBlankBombSlim", xkirby, ykirby);
+				  else {}
+                  if (imgCurrent == "img"){}
+                    // drawimage("imgBlank", xkirby, ykirby);
+                  else{}
+                    // drawimage("imgBlankK", xkirby, ykirby);
                 } else
 				 {
-                  drawImage("imgBlankFireSlim", xkirby, ykirby);
+                  // drawimage("imgBlankFireSlim", xkirby, ykirby);
                 }
 				if (hasice)
 				{
-					drawImage("imgBlankFireSlim", xkirby, ykirby);
+					// drawimage("imgBlankFireSlim", xkirby, ykirby);
 				}
 				
 
@@ -2994,35 +2990,36 @@ drawImage(imgCurrentBandana, xb, yb);
                 //	playSound("sounds/jump.wav");
                 //}).start();
                 //soundjump.play();
-                playSound("jump.wav");
+               //Sorina playSound("jump.wav");
                 return;
           }
             //jump right
 		 //  if (!jumpstarted && !fallstart)
+		 if (!jumpright)
           if (event.keyCode == 39 && event.ctrlKey || event.keyCode == 17 && bool_moveRight) 
           {
               kirbydirection = 1;
               v0y = -75;
               y0 = ykirby;
               
-			  if (hasbomb)
-					drawImage("imgBlankBombSlim", xkirby, ykirby);
+			  if (hasbomb){}
+					// drawimage("imgBlankBombSlim", xkirby, ykirby);
 			 else {
 
 			  if (!hashat && !hasice) 
 			  {				 
-                if (imgCurrent == "img")
-                  drawImage("imgBlank", xkirby, ykirby);
-                else
-                  drawImage("imgBlankK", xkirby, ykirby);
+                if (imgCurrent == "img"){}
+                  // drawimage("imgBlank", xkirby, ykirby);
+                else{}
+                  // drawimage("imgBlankK", xkirby, ykirby);
               } else
 			   {
-                drawImage("imgBlankFireSlim", xkirby, ykirby);
+                // drawimage("imgBlankFireSlim", xkirby, ykirby);
               }
 			 }
 			 if (hasice)
 				{
-					drawImage("imgBlankFireSlim", xkirby, ykirby);
+					// drawimage("imgBlankFireSlim", xkirby, ykirby);
 				}
 
               if (!hashat)
@@ -3043,11 +3040,12 @@ drawImage(imgCurrentBandana, xb, yb);
               //new Thread(() -> {
             //		playSound("sounds/jump.wav");
             //	}).start();
-            playSound("jump.wav");
+          //Sorina playSound("jump.wav");
               return;
 		      }
 
           //move right
+		  if (!jumpright && !jumpstarted)
           if (!event.ctrlKey && event.keyCode === 39) 
           {
             kirbydirection = 1;
@@ -3064,6 +3062,7 @@ drawImage(imgCurrentBandana, xb, yb);
           }
           
           //move left
+		  if (!jumpleft && !jumpstarted)
           if (!event.ctrlKey && event.keyCode === 37) 
           {
             kirbydirection = -1;
