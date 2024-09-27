@@ -117,15 +117,17 @@ var startspitting = []; //5
 	var kirbyfireheight = 86;
 	var kirbybombheight = 96;
 
+	var xinit = 15; //0  
+	var yinit = 321;
+
   // kirby
-	var xkirby = 0;
+	var xkirby = xinit;
 	var y0 = 321;
 	var ykirby = y0;
 	var v0y = -75; // 75
 	var vy = v0y;
 
-	var xinit = 0;
-	var yinit = 321;
+	
     
 // kirby
 var onmovingplatform = 0;
@@ -172,7 +174,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
     var angleE = new Array(0,0,0,0);
     const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 );
-	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0);
+	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 0, 0);
 
    // const movingplatform = new Array[4][maxLevel + 1]; //new boolean[4][maxLevel + 1];
     var movingplatform = [];
@@ -292,7 +294,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   
     
     
-    var gravity = 5; //10
+    var gravity = 4; //10
     
     
    
@@ -310,7 +312,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
    var boolenemyDied = false;
    
    var whispywidth = 511;
-	var whispyheight = 269;
+	var whispyheight = 375;//269;
 	
 	var xwhispy=150;
 	var ywhispy=y0+kirbyheight-whispyheight;
@@ -318,7 +320,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 	
 
 	var x0apple = 150+Math.floor(Math.random() * 250); 
-	var y0apple=150;
+	var y0apple=75;//150
 	var yapple = y0apple;
 	var xapple = x0apple;
    
@@ -656,7 +658,6 @@ if (!jumpleft && !jumpstarted)
 		var yy = 0;
 		var yyb = 0;
 
-		//debug
 		if (world == 1)
 			drawImage("imgGround", 0, 375);
 		if (world == 2)
@@ -681,6 +682,7 @@ if (!jumpleft && !jumpstarted)
 		}
 		// end caged waddle dee
 
+		/*
 		if (level != firstworldmaxlevel) 
     	{
 			platforms();
@@ -688,6 +690,13 @@ if (!jumpleft && !jumpstarted)
 		} 
     	else
      	{
+			whispywoods();
+		}
+		*/
+		platforms();
+		enemy();
+		if (level == firstworldmaxlevel)
+		{
 			whispywoods();
 		}
 
@@ -805,12 +814,14 @@ if (!jumpleft && !jumpstarted)
 				{
 					if (cagedReleased)
 					{
+						level++;
 						jumpLevel();
 						return;
 					}
 				}	
 				else
 				{
+					level++;
 					jumpLevel();
 					return;
 				}
@@ -823,14 +834,21 @@ if (!jumpleft && !jumpstarted)
 
    function jumpLevel()
    {
-					initlevel();
-					level++;
-					if (level == 8)
+					if (level == firstworldmaxlevel+1)
 					{
 						world = 2;
 					}
+					else
+					{
+						world = 1;
+					}
+					initlevel();
+				
 					document.getElementById("jLabel1").innerText ="Level: " + (level-7*(world-1));
 					document.getElementById("lblWorld").innerText ="World: " + world;
+
+					speedx = 0;
+					bool_moveLeft = 0;
    }
    
    function jumpsfalls() {
@@ -1812,20 +1830,25 @@ if (!jumpleft && !jumpstarted)
 
 
   function initlevel() {
-	if (level == firstworldmaxlevel)
+	if (world == 2)
 	{
 	var c = document.getElementById("canvas1");
 	c.setAttribute("style","background-color:#C0E0FF;top:0;left:0;");	
 	}
+	if (world == 1)
+	{
+		var c = document.getElementById("canvas1");
+		c.setAttribute("style","background-color:#00A2E8;top:0;left:0;");	
+	}
 
 	// drawimage("imgBlankK", xkirby, ykirby, null);
 		// drawimage("imgBlankB", xb, yb, null);
-	document.getElementById("jLabel1").innerText="Level: " + level;
+	//v4 document.getElementById("jLabel1").innerText="Level: " + level;
 		
 		bombNo = 0;
 		//coins = 3;
-		coins = nrcoins[level+1];
-		xkirby = xinit;
+		coins = nrcoins[level];
+		xkirby = xinit; 
 		ykirby = yinit;
 		if (hashat ||  hasice) 
 		{
@@ -1848,35 +1871,35 @@ if (!jumpleft && !jumpstarted)
 		for (var i = 0; i <= 3; i++) 
 		{
 			aspiring[i] = false;
-			if (enemydirection[i][level+1] == -1) 
+			if (enemydirection[i][level] == -1) 
 			{
 				 imgEnemyCurrent[i] = "imgEnemyLeft";
-				if (enemySpitting[i][level+1]) 
+				if (enemySpitting[i][level]) 
 				{
 					
 						imgEnemyCurrent[i] = "imgHotHeadLeft";
 				} 
-				if (enemyBomb[i][level+1])
+				if (enemyBomb[i][level])
 				{
 					imgEnemyCurrent[i] = "imgPoppy";
 				}
-				if (enemyIce[i][level+1]) 
+				if (enemyIce[i][level]) 
 				{
 					imgEnemyCurrent[i] = "imgChillyLeft";
 				}
 			}
-			if (enemydirection[i][level+1] == 1) 
+			if (enemydirection[i][level] == 1) 
 			{
 				 imgEnemyCurrent[i] = "imgEnemyRight";
-				if (enemySpitting[i][level+1]) 
+				if (enemySpitting[i][level]) 
 				{
 					imgEnemyCurrent[i] = "imgHotHeadRight";
 				} 
-				if (enemyBomb[i][level+1])
+				if (enemyBomb[i][level])
 				{
 					imgEnemyCurrent[i] = "imgPoppy";
 				}
-				if (enemyIce[i][level+1]) 
+				if (enemyIce[i][level]) 
 				{
 					imgEnemyCurrent[i] = "imgChillyRight";
 				} 
@@ -1906,7 +1929,7 @@ if (!jumpleft && !jumpstarted)
 
 		//getContentPane().repaint();
 
-		if (level == maxLevel - 1) 
+		if (level == firstworldmaxlevel ) 
 		{
 			// th.stop();
 			// th.interrupt();
@@ -2480,7 +2503,7 @@ function initenemies() {
 
 
   function level5() {
-		copylevel(4, 5);
+		copylevel(4, 5, 1);
 		enemyExists[3][5] = true;
 		enemyminx[3][5] = 100;
 		enemymaxx[3][5] = 100 + platformrange;
@@ -2491,7 +2514,7 @@ function initenemies() {
 	}
 
 	function level6() {
-		copylevel(5, 6);
+		copylevel(5, 6, 1);
 		enemyBomb[3][6] = true;
 
 		enemySpitting[1][6] = true;
@@ -2503,7 +2526,7 @@ function initenemies() {
 
 	function level7()
 	{
-		copylevel(6, 7);
+		copylevel(6, 7, 0);
 		enemyExists[3][7] = false;
 
 		enemyExists[1][7] = false;
@@ -2514,7 +2537,7 @@ function initenemies() {
 
 	function level8()
 	{
-		copylevel(6, 7);
+		copylevel(7, 8, 0);
 		//enemyExists[3][7] = false;
 
 		//enemyExists[1][7] = false;
@@ -2524,16 +2547,24 @@ function initenemies() {
 	}
 
 
-  function copylevel(levelSource, levelDest) {
+  function copylevel(levelSource, levelDest, platforms) 
+  {
 
 // copy coins
-for (var i = 0; i <= 2; i++) {
+for (var i = 0; i <= 2; i++) 
+{
   coinx[i][levelDest] = coinx[i][levelSource];
   coiny[i][levelDest] = coiny[i][levelSource];
 }
 
 // copy platforms
-for (var i = 0; i <= 3; i++) {
+//platform 0 is the ground - it has to be copied in any case !!
+  xplatform[0][levelDest] = xplatform[0][levelSource];
+  yplatform[0][levelDest] = yplatform[0][levelSource];
+
+if (platforms == 1)
+for (var i = 1; i <= 3; i++) 
+{
   xplatform[i][levelDest] = xplatform[i][levelSource];
   yplatform[i][levelDest] = yplatform[i][levelSource];
   movingplatform[i][levelDest] = movingplatform[i][levelSource];
@@ -2622,7 +2653,7 @@ function whispywoods()
         var TIMER_DELAY = 100;
         
      
-      level = 1;
+      level = 1; //debugstefan 
     initcoins();
 		initplatforms();
 	  initenemies();
@@ -2630,6 +2661,7 @@ function whispywoods()
     level5();
 	level6();
     level7();
+	level8();
 	
     for (var i = 0; i <= 3; i++)
 	    {
@@ -2743,7 +2775,8 @@ for (var i = 1; i < 4; i++)
 if (xkirby > 0) 
 {
   //xkirby -= 10;
-  if ((onplatform) && (xkirby + kirbywidth <= xplatform[platform][level] - 5)) {
+  if ((onplatform) && (xkirby + kirbywidth <= xplatform[platform][level] - 5)) 
+  {
     fallstart = 1;
     ykirby = y0;
     v0y = 0;
@@ -2751,8 +2784,22 @@ if (xkirby > 0)
 }
 else
 		{
+			/*
 			bool_moveLeft = 0;
 			speedx = 0;
+			*/
+			//oare ?
+			if (level>1)
+			{
+				level--;
+				jumpLevel();
+				xkirby = screenwidth - kirbywidth;
+			}
+			else
+			{
+				bool_moveLeft = 0;
+				speedx = 0;
+			}
 		}
 //debugstefan drawImage(imgCurrent, xkirby, ykirby);
 //getContentPane().repaint(); // don't forget to repaint the container
@@ -3314,8 +3361,7 @@ function start()
 <img id="imgVictory" src="images/victory.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgGameOver" src="images/gameover.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgCaged" src="images/caged.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgFree" src="images/free.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgFree" src="images/free.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgFree" src="images/free.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPoppy" src="images/poppybros.jrt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPoppyMask" src="images/poppybros.jrmask.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPoppyHorizontal" src="images/poppybros.jrhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
