@@ -88,7 +88,7 @@ var startspitting = []; //5
   var doorwidth = 75;
 	var doorHeight = 75;
 
-	var xcaged = 500;
+	var xcaged; // = 600;
 	var ycaged = 0;
 	var cagedwidth = 75;
 	var cagedheight = 75;
@@ -652,7 +652,7 @@ if (!kirbyFrozen)
 
 		if (cagedExists) 
 		{
-			xcaged = xDoor[level - 1] + 100;
+			xcaged = xDoor[level - 1] + 150;
 			ycaged = yDoor[level - 1];
 			drawImage(imgCurrentWaddle, xcaged, ycaged);
 		}
@@ -2358,7 +2358,7 @@ function whispywoods()
     function InitGame()
      {  
      
-    level = 1; 
+    level = 6; //1 debugstefan 
 	
 	initplatforms();
     initcoins();
@@ -3005,16 +3005,11 @@ function start()
 <img id="imgBandanaLeft" src="images/bandanaleftt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgBandanaRight" src="images/bandanarightt.png" alt="no" width="640" height="75" top="375" left="0" >
 
-
-<img id="imgBlankFireSlim" src="images/blankfireslim.png" alt="no" width="640" height="86" top="375" left="0" >
-<img id="imgBlankBombSlim" src="images/blankbombslim.png" alt="no" width="640" height="75" top="375" left="0" >
-
 <img id="imgPlatform" src="images/platformt.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgEnemyRight" src="images/enemyrightt.png" alt="no" width="640" height="75" top="375" left="0">
 <img id="imgEnemyLeft" src="images/enemyleftt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgEnemyRightMask" src="images/enemyrightmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgEnemyLeftMask" src="images/enemyleftmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
+
 
 <img id="imgEnemyHorizontal" src="images/enemyhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgAspiringLeft" src="images/kirbyaspiringleftt.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3023,8 +3018,6 @@ function start()
 <img id="imgSpitLeft" src="images/spitleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgHotHeadRight" src="images/hotheadrightt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgHotHeadLeft" src="images/hotheadleftt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgHotHeadRightMask" src="images/hotheadrightmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgHotHeadLeftMask" src="images/hotheadleftmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgKirbyFire" src="images/kirbyfiret.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgKirbyFireLeft" src="images/kirbyfireleftt.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3038,12 +3031,10 @@ function start()
 
 <img id="imgFireLeft" src="images/fireleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgFireRight" src="images/fireright.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgBlankFire" src="images/blankforfire.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgBlankFireWide" src="images/blankfirewide.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgWhispy" src="images/whispywoodst.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgWhispyEmpty" src="images/whispywoodsemptyt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id = "imgWhispyMask" src="images/whispywoodsmaskt.png" alt="no" width="640" height="75" top="375" left="0" >
+
 <img id="imgApple" src="images/applet.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgBlankApple" src="images/applemask.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgHotHeadHorizontal" src="images/hotheadhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
