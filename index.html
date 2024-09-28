@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 8.0
+v 9.0
 <script type="text/javascript">
 
 var v0yinitial = -75;
@@ -705,7 +705,7 @@ if (!kirbyFrozen)
 					coinx[i][level] = coinx[coins - 1][level];
 					coiny[i][level] = coiny[coins - 1][level];
 					var c = coinsTaken + coinsTakenb;
-					document.getElementById("jLabel3").innerText ="Coins: " + c;
+					document.getElementById("lblCoins").innerText ="Coins: " + c;
 
 				}
 
@@ -720,7 +720,7 @@ if (!kirbyFrozen)
 				coiny[i][level] = coiny[coins - 1][level];
 				
 				c = coinsTaken + coinsTakenb;
-				document.getElementById("jLabel3").innerText ="Coins: " + c;
+				document.getElementById("lblCoins").innerText ="Coins: " + c;
 			}
 		}
 
@@ -792,7 +792,7 @@ if (!kirbyFrozen)
 					}
 					initlevel();
 				
-					document.getElementById("jLabel1").innerText ="Level: " + (level-7*(world-1));
+					document.getElementById("lblLevel").innerText ="Level: " + (level-7*(world-1));
 					document.getElementById("lblWorld").innerText ="World: " + world;
 
 					speedx = 0;
@@ -1710,6 +1710,20 @@ if (!kirbyFrozen)
 		
 	}
 
+function killKirby()
+{
+	xkirby = xinit;
+	ykirby = yinit;
+	hashat = false; hasice = false; hasbomb = false;
+	kirbyheight = kirbyinitialheight;
+	imgCurrent = "img";
+
+	currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
+	document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
+					
+	playSound("die.wav");
+}
+
 
 //////////////// ENEMY
 function enemy() {
@@ -1717,34 +1731,7 @@ function enemy() {
 
 		for (var i = 0; i <= 3; i++) {
 			if (enemyExists[i][level]) {
-				//v6 drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]); // debustefan
-		
-
-				/* version 6
-				if (imgEnemyCurrent[i] == "imgEnemyLeft")
-				{
-					drawImage("imgEnemyLeftMask", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgEnemyRight") 
-				{
-					drawImage("imgEnemyRightMask", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgHotHeadLeft")
-				 {
-					drawImage("imgHotHeadLeftMask", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgHotHeadRight") 
-				{
-					drawImage("imgHotHeadRightMask", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgPoppy") 
-				{
-					drawImage("imgPoppyMask", xe[i][level], ye[i][level]);
-				}
-				*/
 				
-
-
 
 				if (!aspiring[i]) {
 
@@ -1850,29 +1837,7 @@ function enemy() {
 							}
 							else //kill kirby
 							{
-								
-								xkirby = xinit;
-								
-								if (hasbomb)
-								{
-									ykirby = yinit - (kirbybombheight - kirbyinitialheight);
-								}
-								if (hasice || hashat)
-								{
-									ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
-								}	
-								if (!(hasice || hashat || hasbomb))
-								{
-									ykirby = yinit;
-								}
-
-								//	lifeKirby.setValue(lifeKirby.getValue() - 33);
-								currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
-					
-								playSound("die.wav");
-								
-								
+								killKirby();
 							}
 						}
 
@@ -1905,20 +1870,7 @@ function enemy() {
 						{
 							if (!enemyFrozen[i][level])
 							{
-							
-								xkirby = xinit;
-								ykirby = yinit;
-								if (hashat || hasice)
-								{
-									ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
-								}
-								if (hasbomb)
-								{
-									ykirby = yinit - (kirbybombheight - kirbyinitialheight);
-								}
-            					currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-								document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
-								playSound("die.wav");
+								killKirby();
 							} 
 							else //move frozen enemy
 							{
@@ -2328,35 +2280,15 @@ function whispywoods()
 			
 			
 			// apple kills kirby
-			if (
-					(yapple+appleheight >= ykirby - 15)	
-					&&
-				//	(Math.abs(ykirby+kirbyheight/2-(yapple+appleheight/2))<=25)
-					(Math.abs(xkirby+kirbywidth/2-(xapple+applewidth/2))<=45)
-				) 
+			if (collision(xkirby, kirbywidth, xapple, applewidth, ykirby, kirbyheight, yapple, appleheight))
 				{
-					// drawimage("imgBlankFireWide", xkirby, ykirby);
-					xkirby = xinit;
-					ykirby = yinit;
-					if (hashat || hasice)
-					{
-						ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
-					}
-					if (hasbomb)
-					{
-						ykirby = yinit - (kirbybombheight - kirbyinitialheight);
-					}
-          currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-						document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
-					//new Thread(() -> {
-						playSound("die.wav");
-				//	}).start();
-				} // end apple kills kirby
+					killKirby();
+				} 
 			
 			if (yapple>=280) 
 			{   
 				yapple = y0apple;
-				xapple =  150+Math.floor(Math.random() * 250);//rand.nextInt(250)+150;
+				xapple =  150+Math.floor(Math.random() * 250);
 			}
 			else 
 			{
@@ -2369,7 +2301,7 @@ function whispywoods()
     function InitGame()
      {  
      
-    level = 4; //1 debugstefan 
+    level = 6; //1 debugstefan 
 	
 	initplatforms();
     initcoins();
@@ -2433,7 +2365,7 @@ function whispywoods()
   
    
    
-   document.getElementById("jLabel1").innerText = "Level: " + level;
+   document.getElementById("lblLevel").innerText = "Level: " + level;
    
   
      funcSetInterval = setInterval(gameLoop, 60);//60 //100
@@ -2954,8 +2886,8 @@ function start()
   document.getElementById('lblpbBandana').removeAttribute('hidden');
   document.getElementById('pbBandana').removeAttribute('hidden');
   
-  document.getElementById('jLabel1').removeAttribute('hidden');
-  document.getElementById('jLabel3').removeAttribute('hidden');
+  document.getElementById('lblLevel').removeAttribute('hidden');
+  document.getElementById('lblCoins').removeAttribute('hidden');
 
   document.getElementById('btnStart').setAttribute('hidden', 'true');
   document.getElementById('canvas1').removeAttribute('hidden');
@@ -2988,20 +2920,14 @@ function start()
   <progress id="pbBandana" value="99" max="99" hidden></progress>  
 </td></tr>
 
-<tr><td colspan="2"><div id="jLabel1" hidden>Level: 1</div></td><td colspan="2"><div id="lblWorld" hidden>World: 1</div></td>
+<tr><td colspan="2"><div id="lblLevel" hidden>Level: 1</div></td><td colspan="2"><div id="lblWorld" hidden>World: 1</div></td>
 </tr> 
-<tr><td colspan="2"><div id="jLabel3" hidden>Coins: 0</div></td><td></td>
+<tr><td colspan="2"><div id="lblCoins" hidden>Coins: 0</div></td><td></td>
 </tr> 
 
 </table>
   <input id = "btnStart" type="button" value="Start Game" onclick="start();" />
 <canvas id = "canvas1" width=640 height = 450 style="background-color:#00A2E8;top:0;left:0;" hidden /> 
-
-<!--
-<div jLabel1>Test</div>
-<div jLabel2 />Test</div>
-<div jLabel3 />Test</div>
--->
 
 <EMBED SRC = "test2.mid" HIDDEN = "true" loop = "yes" volume="10" autostart="true">
 
