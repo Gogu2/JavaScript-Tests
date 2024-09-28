@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 5.0
+v 6.0
 <script type="text/javascript">
 
 var v0yinitial = -75;
@@ -9,6 +9,7 @@ var speedx=0;
 
 var world = 1;
 
+var idling;
 var timerstopped = 0;
 var kirbyinitialheight = 54;
 var kirbyFrozen = false;
@@ -309,7 +310,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
     
     
-    var level = 1; 
+    var level; 
     
   function drawImage(idImage, xdraw, ydraw)
 {
@@ -435,6 +436,9 @@ if (!kirbyFrozen)
 	if (!jumpright && !jumpstarted)
 	if (gameKeys && !gameKeys[17] && gameKeys[39]) 
 	{
+		idling = false;
+		idletime = 0;
+
 		kirbydirection = 1;
 		if (hashat == 0)
 			imgCurrent = "imgKirbyRight";
@@ -453,6 +457,9 @@ if (!kirbyFrozen)
 	if (!jumpleft && !jumpstarted)
 	if (gameKeys && !gameKeys[17] && gameKeys[37]) 
           {
+			idling = false;
+			idletime = 0;
+
             kirbydirection = -1;
 			if (hashat == 0)
 			     imgCurrent = "imgKirbyLeft";
@@ -471,6 +478,9 @@ if (!kirbyFrozen)
 		 if (!jumpright)
           if (gameKeys && gameKeys[39] && gameKeys[17] || gameKeys && gameKeys[17] && bool_moveRight) 
           {
+			idling = false;
+			idletime = 0;
+
               kirbydirection = 1;
               v0y = v0yinitial;
               y0 = ykirby;
@@ -498,6 +508,9 @@ if (!kirbyFrozen)
 		 if (!jumpleft )
           if (gameKeys && gameKeys[17] && gameKeys[37] || gameKeys && gameKeys[17] && bool_moveLeft) 
           {
+				idling = false;
+				idletime = 0;
+
                 kirbydirection = -1;
                 v0y = v0yinitial;
                 y0 = ykirby;
@@ -523,6 +536,9 @@ if (!kirbyFrozen)
 		if (!jumpstarted && !fallstart && !jumpleft && !jumpright)
 		if (gameKeys && gameKeys[17] && !gameKeys[37] && !gameKeys[39])
 		{
+				idling = false;
+				idletime = 0;
+
 				kirbydirection = -1;
                 v0y = v0yinitial;
                 y0 = ykirby;
@@ -583,7 +599,7 @@ if (!kirbyFrozen)
 		idletimeb++;
 		if (idletime == 20)
 		 {
-		
+			idling = true;
 			if (!hashat) 
 			{
 				if (imgCurrent == img){}
@@ -662,21 +678,22 @@ if (!kirbyFrozen)
 
 		// getting coins
 		var decreasecoinsflag = 0;
-		for (var i = 0; i < coins; i++) {
+		for (var i = 0; i < nrcoins[level]; i++) 
+		{
 			// kirby
 				if (collision(xkirby, kirbywidth, coinx[i][level], coinwidth, ykirby, kirbyheight, coiny[i][level], coinwidth))
 				{
 			
 					playSound("coin3.wav");
 			
-				decreasecoinsflag = true;
-				coinsTaken++;
-				coinx[i][level] = coinx[coins - 1][level];
-				coiny[i][level] = coiny[coins - 1][level];
-				var c = coinsTaken + coinsTakenb;
-				document.getElementById("jLabel3").innerText ="Coins: " + c;
+					decreasecoinsflag = true;
+					coinsTaken++;
+					coinx[i][level] = coinx[coins - 1][level];
+					coiny[i][level] = coiny[coins - 1][level];
+					var c = coinsTaken + coinsTakenb;
+					document.getElementById("jLabel3").innerText ="Coins: " + c;
 
-			}
+				}
 
 			// bandana
 			if (collision(xb, bandanawidth, coinx[i][level], coinwidth, yb, bandanaheight, coiny[i][level], coinwidth))
@@ -693,9 +710,9 @@ if (!kirbyFrozen)
 			}
 		}
 
-		if (decreasecoinsflag) {
-			coins--;
-
+		if (decreasecoinsflag) 
+		{
+			nrcoins[level]--;
 		}
 
 		// release waddlee dee
@@ -766,6 +783,7 @@ if (!kirbyFrozen)
 
 					speedx = 0;
 					bool_moveLeft = 0;
+					playSound("release.wav"); 
    }
    
    function jumpsfalls() {
@@ -834,7 +852,6 @@ if (!kirbyFrozen)
 							}
 							if (whispyLife <= 0)
 							{
-								//drawImage("imgWhispyMask", xwhispy, ywhispy);
 								whispyAlive = false;
 							}
 						}
@@ -1000,62 +1017,7 @@ if (!kirbyFrozen)
 					//
 	}
 
-	function kirbyice_old()
-	{
-					if (startspittingkirby) 
-					{
-					
 
-						xspitkirby[k] += 10 * bombdirectionkirby[k];
-
-						
-						
-						//drawRotatedBombK( xspitkirby, yspitkirby, angleK);
-						if (kirbydirection = 1)
-							drawImage("imgSpitRight", xspitkirby, yspitkirby);
-						else 
-							drawImage("imgSpitLeft", xspitkirby, yspitkirby);	
-						
-						
-						// shoot enemy
-						for(var i = 0;i<=3;i++)
-						if (enemyExists[i][level])
-						{
-						if (Math.abs(xe[i][level] + enemywidth / 2 - (xspitkirby + bombwidth/2)) <= 10
-								&& Math.abs(ye[i][level] + enemyheight / 2 - (yspitkirby + bombheight/2)) <= 40) 
-						{
-							enemyFrozen[i][level] = true;
-							if (!enemyIce[i][level] && !enemyBomb[i][level] && !enemySpitting[i][level])
-							if (enemydirection[i][level] = 1)
-								
-								imgEnemyCurrent[i] = "imgRightFrozen";
-							else
-								
-								imgEnemyCurrent[i] = "imgLeftFrozen";
-							
-							playSound("explosion.wav"); //TODO 
-							
-							if (enemySpitting[i][level])
-							{
-								startspitting[i] = 0;
-								
-							}
-						
-								
-							startspittingkirby = false;
-						}
-					}
-
-						
-						if (xspitkirby < 0 || xspitkirby > screenwidth) 
-						{
-
-							startspittingkirby = false;
-						}
-
-					}
-					//
-	}
 
  function fallbandana() {
 		var yib = 0;
@@ -1306,33 +1268,39 @@ if (!kirbyFrozen)
 	}
 
   
-  function doorsCoins() {
-		if (level == 2) {
-			xDoor[level - 1] = xplatform[3][level] + 40;
-			yDoor[level - 1] = yplatform[3][level] - 75;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+  function doorsCoins() 
+  {
 
-			for (var i = 0; i < coins; i++) {
-				drawImage("imgCoin", coinx[i][2], coiny[i][2]);
-			}
-		}
-
-		if (level == 1) {
+	if (level == 1) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
 			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
 
-			for (var i = 0; i < coins; i++) {
+			for (var i = 0; i < nrcoins[level]; i++) {
 				drawImage("imgCoin", coinx[i][1], coiny[i][1]);
 			}
 		}
+
+		if (level == 2) 
+		{
+			xDoor[level - 1] = xplatform[3][level] + 40;
+			yDoor[level - 1] = yplatform[3][level] - 75;
+			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+
+			for (var i = 0; i < nrcoins[level]; i++) 
+			{
+				drawImage("imgCoin", coinx[i][2], coiny[i][2]);
+			}
+		}
+
+		
 
 		if (level == 3) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
 			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
 
-			for (var i = 0; i < coins; i++) {
+			for (var i = 0; i < nrcoins[level]; i++) {
 				drawImage("imgCoin", coinx[i][3], coiny[i][3]);
 			}
 		}
@@ -1374,22 +1342,17 @@ if (!kirbyFrozen)
   function platforms() {
 		// moving platform
 		for (var i = 1; i <= nrplatforms[level]; i++) {
-			if (movingplatform[i][level]) {
+			if (movingplatform[i][level])
+			{
 
-				// drawimage("imgBlankForPlatform", xplatform[i][level], yplatform[i][level], null);
-				if (platformdirection[i][level] < 0) {
+				if (platformdirection[i][level] < 0)
+				 {
 					xplatform[i][level] -= 5;
 					if (onmovingplatform) {
-						// drawimage("imgBlankK", xkirby, ykirby);
-					//	getContentPane().repaint();
+						
 						xkirby -= 5;
 					}
 					if (onmovingplatformb) {
-						if (imgCurrentBandana == "imgBandana"){}
-							// drawimage("imgBlankE", xb, yb);
-						else{}
-							// drawimage("imgBlankB", xb, yb);
-						getContentPane().repaint();
 						xb -= 5;
 					}
 					if (xplatform[i][level] <= platformminx[i][level]) {
@@ -1399,16 +1362,10 @@ if (!kirbyFrozen)
 				} else {
 					xplatform[i][level] += 5;
 					if (onmovingplatform) {
-						// drawimage("imgBlankK", xkirby, ykirby);
-						//getContentPane().repaint();
+						
 						xkirby += 5;
 					}
 					if (onmovingplatformb) {
-						if (imgCurrentBandana == "imgBandana"){}
-							// drawimage("imgBlankE", xb, yb);
-						else{}
-							// drawimage("imgBlankB", xb, yb);
-						getContentPane().repaint();
 						xb += 5;
 					}
 					if (xplatform[i][level] >= platformmaxx[i][level]) {
@@ -1468,7 +1425,7 @@ if (!kirbyFrozen)
 		coinx[0][2] = 200;
 		coiny[0][2] = 300;
 
-		coinx[1][2] = xplatform[2][2] + platformwidth[2] / 2 - coinwidth / 2;// 300;
+		coinx[1][2] = 280; //xplatform[2][2] + platformwidth[2] / 2 - coinwidth / 2;// 300;
 		coiny[1][2] = yplatform[2][2] - kirbyheight; // 300
 
 		coinx[2][2] = 450;
@@ -1723,7 +1680,7 @@ if (!kirbyFrozen)
 
 		
 
-		 initcoins();
+		
 
 	
 
@@ -1748,32 +1705,31 @@ function enemy() {
 
 		for (var i = 0; i <= 3; i++) {
 			if (enemyExists[i][level]) {
-				drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]); // debustefan
+				//v6 drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]); // debustefan
 		
 
-
-				if (imgEnemyCurrent[i] == "imgEnemyLeft") {
+				/* version 6
+				if (imgEnemyCurrent[i] == "imgEnemyLeft")
+				{
 					drawImage("imgEnemyLeftMask", xe[i][level], ye[i][level]);
 				}
-				if (imgEnemyCurrent[i] == "imgEnemyRight") {
+				if (imgEnemyCurrent[i] == "imgEnemyRight") 
+				{
 					drawImage("imgEnemyRightMask", xe[i][level], ye[i][level]);
 				}
-				if (imgEnemyCurrent[i] == "imgEnemyHorizontal") {
-					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgHotHeadHorizontal") {
-					// drawimage("imgBlankE", xe[i][level], ye[i][level]);
-				}
-				if (imgEnemyCurrent[i] == "imgHotHeadLeft") {
+				if (imgEnemyCurrent[i] == "imgHotHeadLeft")
+				 {
 					drawImage("imgHotHeadLeftMask", xe[i][level], ye[i][level]);
 				}
-				if (imgEnemyCurrent[i] == "imgHotHeadRight") {
+				if (imgEnemyCurrent[i] == "imgHotHeadRight") 
+				{
 					drawImage("imgHotHeadRightMask", xe[i][level], ye[i][level]);
 				}
 				if (imgEnemyCurrent[i] == "imgPoppy") 
 				{
 					drawImage("imgPoppyMask", xe[i][level], ye[i][level]);
 				}
+				*/
 				
 
 
@@ -2399,16 +2355,14 @@ function whispywoods()
 		}
 	}
 
-    function PlatformJFrame()
-     {
-      //  initComponents();
-        var TIMER_DELAY = 100;
-        
+    function InitGame()
+     {  
      
-      level = 1; 
+    level = 1; 
+	
+	initplatforms();
     initcoins();
-		initplatforms();
-	  initenemies();
+	initenemies();
 
     level5();
 	level6();
@@ -2457,6 +2411,9 @@ function whispywoods()
 		}
    
    
+	idling = false;
+	idletime = 0;
+
     imgCurrent = "img";
     imgCurrentBandana = "imgBandana";
     imgCurrentWaddle = "imgCaged";
@@ -2807,6 +2764,7 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 		}
               // shoot enemy event
 		if (event.keyCode == 13)
+		if (!idling)
 		 {
 			if (hashat)
 			{
@@ -2996,7 +2954,7 @@ function start()
 
 </script>
 </head>
-<body onload="PlatformJFrame();" >
+<body onload="InitGame();" >
   
   <table>
 	<tr><td colspan="2"><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent" >
