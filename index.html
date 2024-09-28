@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 7.0
+v 8.0
 <script type="text/javascript">
 
 var v0yinitial = -75;
@@ -128,6 +128,7 @@ var startspitting = []; //5
 	var kirbyfirewidth = 47;
 	var kirbyfireheight = 86;
 	var kirbybombheight = 96;
+	var kirbyiceheight = 86;
 
 	var xinit = 15; //0  
 	var yinit = 321;
@@ -424,6 +425,29 @@ function collision(x1, width1, x2, width2, y1, height1, y2, height2)
 	return res;
 }
 
+function setKirbyCurrentImage()
+{
+	if (!hashat) 
+			{
+				if (imgCurrent == img){}
+				else
+				imgCurrent = "img";
+			} else 
+			{
+				imgCurrent = "imgKirbyFire";
+			}
+			if (hasbomb)
+			{
+			
+				imgCurrent = "imgKirbyBomb";
+			}
+			if(hasice)
+			{
+		
+				imgCurrent = "imgKirbyIce";
+			}
+}
+
     function gameLoop() 
     {
 
@@ -583,42 +607,15 @@ if (!kirbyFrozen)
 			}
 		}
 
-		if (kirbyFrozen)
-		{
-			kirbyFrozenCounter++;
-			if (kirbyFrozenCounter > kirbyFrozenTime)
-			{
-				kirbyFrozen = false;
-				kirbyFrozenCounter = 0;
-				imgCurrent = "img";
-			}
-		}
-
+		
 		// idling
 		idletime++;
 		idletimeb++;
+		if (!kirbyFrozen)
 		if (idletime == 20)
 		 {
 			idling = true;
-			if (!hashat) 
-			{
-				if (imgCurrent == img){}
-				else
-				imgCurrent = "img";
-			} else 
-			{
-				imgCurrent = "imgKirbyFire";
-			}
-			if (hasbomb)
-			{
-			
-				imgCurrent = "imgKirbyBomb";
-			}
-			if(hasice)
-			{
-		
-				imgCurrent = "imgKirbyIce";
-			}
+			setKirbyCurrentImage();
 			
 		}
 
@@ -666,6 +663,23 @@ if (!kirbyFrozen)
 		}
 
 		// enter kirby
+
+		if (kirbyFrozen)
+		{
+			kirbyFrozenCounter++;
+			if (kirbyFrozenCounter > kirbyFrozenTime)
+			{
+				kirbyFrozen = false;
+				kirbyFrozenCounter = 0;
+				setKirbyCurrentImage();
+				if (hasice)
+				{
+					ykirby = ykirby - (kirbyiceheight - kirbyinitialheight)
+				}//v8
+			}
+		}
+
+
 		//if (!kirbyFrozen)
 	//	{
 			xkirby+=speedx;
@@ -1136,8 +1150,6 @@ if (!kirbyFrozen)
 		// y+=10;
 		onmovingplatform = false;
 		onplatform = false;
-		
-		if (imgCurrent == "imgKirbyFireLeft" || imgCurrent == "imgKirbyFireRight" || hasice || hasbomb){};
 			
 
 		t = t + 1;
@@ -1821,11 +1833,20 @@ function enemy() {
 
 							if (enemyIce[i][level]) 
 							{
-								
-								kirbyFrozen = true;
-								
 								imgCurrent = "imgKirbyFrozen";
-								
+								if (hasbomb && !kirbyFrozen)
+								{
+									ykirby = ykirby + (kirbybombheight - kirbyinitialheight);
+								}
+								if (hasice && !kirbyFrozen)
+								{
+									ykirby = ykirby + (kirbyiceheight - kirbyinitialheight);
+								}	
+								if (hashat && !kirbyFrozen)
+								{
+									ykirby = ykirby + (kirbyfireheight - kirbyinitialheight);
+								}	
+								kirbyFrozen = true;
 							}
 							else //kill kirby
 							{
@@ -1859,7 +1880,7 @@ function enemy() {
 						// shoot bandana
 						if (Math.abs(xb + bandanawidth / 2 - xspit[i]) <= 10
 								&& Math.abs(yb + bandanaheight / 2 - yspit[i]) <= 40) {
-							// drawimage("imgBlankB", xb, yb, null);
+							
 							xb = xbinit;
 							yb = ybinit;
 						//	pbBandana.setValue(pbBandana.getValue() - 33);
@@ -1884,7 +1905,7 @@ function enemy() {
 						{
 							if (!enemyFrozen[i][level])
 							{
-								// drawimage("imgBlankK", xkirby, ykirby);
+							
 								xkirby = xinit;
 								ykirby = yinit;
 								if (hashat || hasice)
@@ -1938,16 +1959,12 @@ function enemy() {
 						if (xe[i][level] <= xkirby + kirbywidth + 5)
 						 {
 							aspiring[i] = 0;
-							// drawimage("imgBlankE", xe[i][level], ye[i][level]);
-							// ? enemyDied[i][level] = true;
+							
 							enemyExists[i][level] = false;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level]){}
-									// drawimage("imgBlankE", xspit[i], yspit[i]);
-								else{}
-									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
+								
 							}
 							if (!hashat)
 								imgCurrent = "imgKirbyRight";
@@ -1958,25 +1975,19 @@ function enemy() {
 							if (hasice)
 								imgCurrent = "imgKirbyIceRight";
 
-						//	new Thread(() -> {
+						
 								playSound("die.wav");
-						//	}).start();
+					
 						} else {
 							xe[i][level] -= 15;
 						}
 					} else {
 						if (xe[i][level] + kirbywidth >= xkirby - 5) {
 							aspiring[i] = 0;
-							// drawimage("imgBlankE", xe[i][level], ye[i][level]);
-							// ? enemyDied = true;
 							enemyExists[i][level] = false;
 							if (enemySpitting[i][level])
 							{
 								startspitting[i] = 0;
-								if (enemyBomb[i][level]){}
-									// drawimage("imgBlankE", xspit[i], yspit[i]);
-								else{}
-									// drawimage("imgBlankSpit", xspit[i], yspit[i]);
 							}
 							if (!hashat)
 								imgCurrent = "imgKirbyLeft";
@@ -2358,7 +2369,7 @@ function whispywoods()
     function InitGame()
      {  
      
-    level = 1; //1 debugstefan 
+    level = 4; //1 debugstefan 
 	
 	initplatforms();
     initcoins();
