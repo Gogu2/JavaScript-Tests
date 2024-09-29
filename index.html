@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 9.0
+v 10.0
 <script type="text/javascript">
 
 var v0yinitial = -75;
@@ -183,8 +183,8 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 
     var angleE = new Array(0,0,0,0);
-    const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 );
-	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 0, 0);
+    const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3);
+	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 0);
 
     var movingplatform = [];
     movingplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
@@ -232,10 +232,10 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
     var platformheight =53;
    
     
-	var coiny = [];
-  coiny =  new Array(3).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+  var coiny = [];
+  coiny =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   var coinx = [];
-  coinx =  new Array(3).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+  coinx =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
     
     const xDoor = new Array(0,0,0);
     const yDoor = new Array(0,0,0);
@@ -744,7 +744,7 @@ if (!kirbyFrozen)
 				playSound("release.wav"); 
 			}
 		
-			if (collision(xkirby, kirbywidth, xDoor[level - 1], doorwidth, ykirby, kirbyheight, yDoor[level - 1], doorwidth)
+			if (!jumpstarted && !fallstart && collision(xkirby, kirbywidth, xDoor[level - 1], doorwidth, ykirby, kirbyheight, yDoor[level - 1], doorwidth)
 				||
 			collision(xb, bandanawidth, xDoor[level - 1], doorwidth, yb, bandanaheight, yDoor[level - 1], doorwidth)
 				)
@@ -1041,7 +1041,7 @@ if (!kirbyFrozen)
 		
 
 		tb = tb + 1;
-		// debugstefan vby = vb0y+(gravity*tb*tb)/2;
+		
 		vby = (gravity * tb * tb) / 2;
 
 		yib = yb;
@@ -1153,7 +1153,7 @@ if (!kirbyFrozen)
 			
 
 		t = t + 1;
-		// debugstefan vy = v0y+(gravity*t*t)/2;
+		
 		vy = (gravity * t * t) / 2;
 
 		yi = ykirby;
@@ -1279,30 +1279,21 @@ if (!kirbyFrozen)
 
 	}
 
-  
+
   function doorsCoins() 
   {
 
 	if (level == 1) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
-
-			for (var i = 0; i < nrcoins[level]; i++) {
-				drawImage("imgCoin", coinx[i][1], coiny[i][1]);
-			}
+			
 		}
 
 		if (level == 2) 
 		{
 			xDoor[level - 1] = xplatform[3][level] + 40;
 			yDoor[level - 1] = yplatform[3][level] - 75;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
-
-			for (var i = 0; i < nrcoins[level]; i++) 
-			{
-				drawImage("imgCoin", coinx[i][2], coiny[i][2]);
-			}
+			
 		}
 
 		
@@ -1310,25 +1301,20 @@ if (!kirbyFrozen)
 		if (level == 3) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
-
-			for (var i = 0; i < nrcoins[level]; i++) {
-				drawImage("imgCoin", coinx[i][3], coiny[i][3]);
-			}
+			
 		}
 
 		if (level == 4) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 225 - doorHeight;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
-
+			
 			
 		}
 
 		if (level == 5) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+		
 
 			
 		}
@@ -1336,18 +1322,31 @@ if (!kirbyFrozen)
 		if (level == 6) {
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[level - 1] = 300;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+	
 
 			
 		}
 
-		if (level == 7) {
+		if (level == 7) 
+		{
 			xDoor[level - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[level - 1] = 300;
-			drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
-
-			
+			yDoor[level - 1] = 300;			
 		}
+
+		if (level == 8)
+		{
+			xDoor[level - 1] = xplatform[2][level] + xplatform[2][level]/2;
+			yDoor[level - 1] = yplatform[2][level] - doorHeight;		
+		}
+
+		
+
+		for (var i = 0; i < nrcoins[level]; i++) 
+		{
+			drawImage("imgCoin", coinx[i][level], coiny[i][level]);
+		}
+
+		drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
 
 	}
 
@@ -1416,11 +1415,25 @@ if (!kirbyFrozen)
 
 		}
 
-		for (var i = 1; i <= nrplatforms[level]; i++) {
-			drawImage("imgPlatform", xplatform[i][level], yplatform[i][level]);
+		
+
+		for (var i = 1; i <= nrplatforms[level]; i++) 
+		{
+			drawImage(getImgPlatformForWorld(world), xplatform[i][level], yplatform[i][level]);
 		}
 
 	}
+
+function getImgPlatformForWorld(world)
+{
+	var res;
+	if (world == 1)
+		res = "imgPlatform";
+	if (world == 2)
+		res = "imgPlatformIce";
+
+	return res;
+}
 
   function initcoins() {
 		// level 1
@@ -1452,6 +1465,14 @@ if (!kirbyFrozen)
 
 		coinx[2][3] = 400;
 		coiny[2][3] = 300;
+
+
+		//level 8
+		for (var i=0;i<nrcoins[8];i++)
+		{
+			coinx[i][8] = -25 + xplatform[i+1][8]+platformwidth[i+1]/2; //first platorm is platform 0
+			coiny[i][8] = yplatform[i+1][8] - coinwidth;
+		}
 	}
 
   function initplatforms() {
@@ -1498,6 +1519,17 @@ if (!kirbyFrozen)
 		xplatform[1][4] = 150;
 		xplatform[2][4] = 300;
 		xplatform[3][4] = 430;
+
+		//level 8
+		yplatform[0][8] = 375;
+		yplatform[1][8] = 225;
+		yplatform[2][8] = 75;
+		yplatform[3][8] = 225;
+
+		xplatform[0][8] = 0;
+		xplatform[1][8] = 150;
+		xplatform[2][8] = 150;
+		xplatform[3][8] = 430;
 
 		// level 1
 		movingplatform[0][1] = false;
@@ -1629,7 +1661,7 @@ if (!kirbyFrozen)
 		bombNo = 0;
 		
 		coins = nrcoins[level];
-		xkirby = xinit; 
+		xkirby = xinit+25; //v10 
 		ykirby = yinit;
 		if (hashat ||  hasice) 
 		{
@@ -2211,7 +2243,7 @@ function initenemies() {
 
 	function level8()
 	{
-		copylevel(7, 8, 0);
+		//copylevel(1, 8, 1);
 		//enemyExists[3][7] = false;
 
 		//enemyExists[1][7] = false;
@@ -2311,6 +2343,7 @@ function whispywoods()
 	level6();
     level7();
 	level8();
+
 	
     for (var i = 0; i <= 3; i++)
 	    {
@@ -2492,7 +2525,7 @@ else
 			speedx = 0;
 		}
 		  
-       //debugstefan drawImage(imgCurrent, xkirby, ykirby);
+       
                 
         }
     
@@ -2943,6 +2976,7 @@ function start()
 <img id="imgBandanaRight" src="images/bandanarightt.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgPlatform" src="images/platformt.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgPlatformIce" src="images/platformicet.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgEnemyRight" src="images/enemyrightt.png" alt="no" width="640" height="75" top="375" left="0">
 <img id="imgEnemyLeft" src="images/enemyleftt.png" alt="no" width="640" height="75" top="375" left="0" >
