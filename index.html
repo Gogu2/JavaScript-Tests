@@ -1767,9 +1767,6 @@ function enemy() {
 
 				if (!aspiring[i]) {
 
-					
-					
-
 					if (enemydirection[i][level] < 0) 
 					{
 						
@@ -1795,7 +1792,7 @@ function enemy() {
 								imgEnemyCurrent[i] = "imgChillyRight";
 							} 
 							
-								enemydirection[i][level] = 1;
+							enemydirection[i][level] = 1;
 						}
 					} else {
 						
@@ -1823,6 +1820,11 @@ function enemy() {
 								enemydirection[i][level] = -1;
 						}
 
+					}
+					
+					if (level == 8)
+					{
+						imgEnemyCurrent[i] = "imgPokeson";
 					}
 
 					// spit
@@ -2250,6 +2252,7 @@ function initenemies() {
 		//enemyExists[2][7] = false;
 
 		// useless enemySpitting[3][6] = false;
+		copyEnemies(4, 8);
 	}
 
 
@@ -2290,6 +2293,21 @@ for (var i = 0; i <= 3; i++) {
   enemySpitting[i][levelDest] = enemySpitting[i][levelSource];
 }
 
+}
+
+
+function copyEnemies(levelSource, levelDest)
+{
+// copy enemies
+for (var i = 0; i <= 3; i++) {
+  xe[i][levelDest] = xe[i][levelSource];
+  ye[i][levelDest] = ye[i][levelSource];
+  enemyExists[i][levelDest] = enemyExists[i][levelSource];
+  enemydirection[i][levelDest] = enemydirection[i][levelSource];
+  enemymaxx[i][levelDest] = enemymaxx[i][levelSource];
+  enemyminx[i][levelDest] = enemyminx[i][levelSource];
+  enemySpitting[i][levelDest] = enemySpitting[i][levelSource];
+}
 }
 
 function whispywoods()
@@ -2866,6 +2884,10 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 					{
 						imgEnemyCurrent[i] = "imgChillyHorizontal";
 					}
+					if (level == 8)
+					{
+						imgEnemyCurrent[i] = "imgPokesonHorizontal";
+					}
 
 					if (hashat) 
 					{
@@ -3053,6 +3075,9 @@ function start()
 <img id="imgHotHeadFrozen" src="images/hotheadice.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgPoppyFrozen" src="images/poppybrosfrozen.jrt.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgPokeson" src="images/pokeson.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgPokesonHorizontal" src="images/pokesonhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
 
 <audio controls id="mySound" loop>
