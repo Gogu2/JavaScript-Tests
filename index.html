@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 11.0
+v 12.0
 <script type="text/javascript">
 
 var v0yinitial = -75;
@@ -131,7 +131,7 @@ var startspitting = []; //5
 	var kirbyiceheight = 86;
 
 	var xinit = 15; //0  
-	var yinit = 321;
+	var yinit = 375 - kirbyinitialheight;//321;
 
   // kirby
 	var xkirby = xinit;
@@ -167,8 +167,8 @@ var onmovingplatform = 0;
   
     
     //enemy
-    var xe = 500;
-    var ye = 300;
+    //var xe = 500;
+    //var ye = 300;
 
    // var maxLevel = 3;
    var maxLevel = 9;
@@ -835,7 +835,7 @@ if (!kirbyFrozen)
 
 					speedx = 0;
 					bool_moveLeft = 0;
-					playSound("release.wav"); 
+					//Sorina a scos playSound("release.wav"); 
    }
    
    function jumpsfalls() {
@@ -1739,22 +1739,22 @@ function getImgPlatformForWorld(world)
 		
 		bombNo = 0;
 		
-		//coins = nrcoins[level];
+		
 		xkirby = xinit+25; //v10 
 		ykirby = yinit;
 		if (hashat ||  hasice) 
 		{
-			ykirby = ykirby - 32;
+			ykirby = ykirby - (kirbyfireheight - kirbyinitialheight);
 		}
 		if(hasbomb)
 		{
-			ykirby = ykirby - 42;
+			ykirby = ykirby - (kirbybombheight - kirbyinitialheight);
 		}
 		xb = xbinit; // screenwidth-kirbywidth;
 		yb = ybinit;
 		platform = 0;
 		onplatform = 1;
-		//coins = 3; // oare ? coinsTaken = 0;
+		
 		platformb = 0;
 		onplatformb = 1;
 
@@ -1764,51 +1764,7 @@ function getImgPlatformForWorld(world)
 		{
 			aspiring[i] = false;
 			setEnemyImage(i, level, enemydirection[i][level], 0, 0, 0);
-			/*
-			if (enemydirection[i][level] == -1) 
-			{
-				 imgEnemyCurrent[i] = "imgEnemyLeft";
-				if (enemySpitting[i][level]) 
-				{
-					
-						imgEnemyCurrent[i] = "imgHotHeadLeft";
-				} 
-				if (enemyBomb[i][level])
-				{
-					imgEnemyCurrent[i] = "imgPoppy";
-				}
-				if (enemyIce[i][level]) 
-				{
-					imgEnemyCurrent[i] = "imgChillyLeft";
-				}
-			}
-			if (enemydirection[i][level] == 1) 
-			{
-				 imgEnemyCurrent[i] = "imgEnemyRight";
-				if (enemySpitting[i][level]) 
-				{
-					imgEnemyCurrent[i] = "imgHotHeadRight";
-				} 
-				if (enemyBomb[i][level])
-				{
-					imgEnemyCurrent[i] = "imgPoppy";
-				}
-				if (enemyIce[i][level]) 
-				{
-					imgEnemyCurrent[i] = "imgChillyRight";
-				} 
-			}
-			*/
 		}
-		
-
-		
-
-		
-
-		
-
-	
 
 		if (level == firstworldmaxlevel ) 
 		{
@@ -1826,12 +1782,31 @@ function getImgPlatformForWorld(world)
 
 function killKirby()
 {
+	kirbyFrozen = false;
+	kirbyFrozenCounter = 0;
+
 	xkirby = xinit;
+
+
+	//lose ability when killed ?
+	/*
 	ykirby = yinit;
 	hashat = false; hasice = false; hasbomb = false;
 	kirbyheight = kirbyinitialheight;
 	imgCurrent = "img";
+	*/
 
+	ykirby = yinit;
+	if (hashat ||  hasice) 
+	{
+		ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
+	}
+	if(hasbomb)
+	{
+		ykirby = yinit - (kirbybombheight - kirbyinitialheight);
+	}
+
+	setKirbyCurrentImage(false);
 	currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
 	document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby - lifePiece) ;
 					
