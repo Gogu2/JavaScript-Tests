@@ -1,8 +1,9 @@
 <html></html>
 <head>
-v 12.0
+v 13.0
 <script type="text/javascript">
 
+var groundy = 375;
 var v0yinitial = -75;
 var gameKeys; 
 var speedx=0;
@@ -131,7 +132,7 @@ var startspitting = []; //5
 	var kirbyiceheight = 86;
 
 	var xinit = 15; //0  
-	var yinit = 375 - kirbyinitialheight;//321;
+	var yinit = groundy - kirbyinitialheight;//321;
 
   // kirby
 	var xkirby = xinit;
@@ -298,7 +299,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
    var boolenemyDied = false;
    
    var whispywidth = 511;
-	var whispyheight = 375;//269;
+	var whispyheight = groundy;//269;
 	
 	var xwhispy=150;
 	var ywhispy=y0+kirbyheight-whispyheight;
@@ -667,9 +668,9 @@ if (!kirbyFrozen)
 		var yyb = 0;
 
 		if (world == 1)
-			drawImage("imgGround", 0, 375);
+			drawImage("imgGround", 0, groundy);
 		if (world == 2)
-			drawImage("imgWorld2", 0, 375);
+			drawImage("imgWorld2", 0, groundy);
 
 		doors();
 		coins();
@@ -1541,7 +1542,7 @@ function getImgPlatformForWorld(world)
 
   function initplatforms() {
 		// level 1
-		yplatform[0][1] = 375;
+		yplatform[0][1] = groundy;
 		yplatform[1][1] = 225;
 		yplatform[2][1] = 140;
 		yplatform[3][1] = 225;
@@ -1552,7 +1553,7 @@ function getImgPlatformForWorld(world)
 		xplatform[3][1] = 430;
 
 		// level 2
-		yplatform[0][2] = 375;
+		yplatform[0][2] = groundy;
 		yplatform[1][2] = 225;
 		yplatform[2][2] = 150;
 		yplatform[3][2] = 80;
@@ -1563,7 +1564,7 @@ function getImgPlatformForWorld(world)
 		xplatform[3][2] = 350;
 
 		// level 3
-		yplatform[0][3] = 375;
+		yplatform[0][3] = groundy;
 		yplatform[1][3] = 225;
 		yplatform[2][3] = 140;
 		yplatform[3][3] = 225;
@@ -1574,7 +1575,7 @@ function getImgPlatformForWorld(world)
 		xplatform[3][3] = 430;
 
 		// level 4
-		yplatform[0][4] = 375;
+		yplatform[0][4] = groundy;
 		yplatform[1][4] = 225;
 		yplatform[2][4] = 225;
 		yplatform[3][4] = 225;
@@ -1587,7 +1588,7 @@ function getImgPlatformForWorld(world)
 		//...
 
 		//level 8
-		yplatform[0][8] = 375;
+		yplatform[0][8] = groundy;
 		yplatform[1][8] = 225;
 		yplatform[2][8] = 75;
 		yplatform[3][8] = 225;
@@ -1598,7 +1599,7 @@ function getImgPlatformForWorld(world)
 		xplatform[3][8] = 430;
 
 		//level 9
-		yplatform[0][9] = 375;
+		yplatform[0][9] = groundy;
 		yplatform[1][9] = 225;
 		yplatform[2][9] = 75;
 		yplatform[3][9] = 225;
@@ -1741,14 +1742,17 @@ function getImgPlatformForWorld(world)
 		
 		
 		xkirby = xinit+25; //v10 
-		ykirby = yinit;
+		if (!hashat && !hasbomb && !hasice)
+		{
+			ykirby = yinit;
+		}
 		if (hashat ||  hasice) 
 		{
-			ykirby = ykirby - (kirbyfireheight - kirbyinitialheight);
+			ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
 		}
 		if(hasbomb)
 		{
-			ykirby = ykirby - (kirbybombheight - kirbyinitialheight);
+			ykirby = yinit - (kirbybombheight - kirbyinitialheight);
 		}
 		xb = xbinit; // screenwidth-kirbywidth;
 		yb = ybinit;
@@ -2886,31 +2890,26 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 		//drop ability
 		if (event.keyCode == 46)
 		{
+			imgCurrent = "img";
+			kirbyheight = kirbyinitialheight;
+			//ykirby = groundy - kirbyheight;
 			if (hashat)
 			{
-				imgCurrent = "img";
-				// drawimage("imgBlankFireSlim", xkirby, ykirby);
-				ykirby = ykirby +  32;
-				kirbyheight = kirbyheight - 32;
+				ykirby = ykirby +  (kirbyfireheight - kirbyinitialheight);
 			}
 			if (hasbomb)
 			{
-				imgCurrent = "img";
-				// drawimage("imgBlankBombSlim", xkirby, ykirby);
-				ykirby = ykirby +  32;
-				kirbyheight = kirbyheight - 32;
+				ykirby = ykirby +  (kirbybombheight - kirbyinitialheight);
 			}
 			if (hasice)
 			{
-				imgCurrent = "img";
-				// drawimage("imgBlankFireSlim", xkirby, ykirby);
-				ykirby = ykirby +  32;
-				kirbyheight = kirbyheight - 32;
+				ykirby = ykirby +  (kirbyiceheight - kirbyinitialheight);
 			}
+			
 			hashat = 0;
 			hasbomb = 0;
 			hasice = 0;
-			drawImage("img", xkirby, ykirby);
+			//drawImage("img", xkirby, ykirby);
 		}
 
 
