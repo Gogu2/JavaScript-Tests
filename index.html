@@ -1,9 +1,9 @@
 <html></html>
 <head>
-v 16.0
+v 17.0
 <script type="text/javascript">
 
-const gameSpeed = 60;
+const gameSpeed = 60;//60
 const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
@@ -16,7 +16,7 @@ const KEY_CTRL = 17;
 const KEY_SPACE = 32;
 
 
-var groundy = 375; //375 debugstefan
+var groundy = 375; 
 var v0yinitial = -75;
 var gameKeys; 
 var speedx=0;
@@ -323,11 +323,6 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 	var y0apple=75;//150
 	var yapple = y0apple;
 	var xapple = x0apple;
-   
-   //////////////////////SOUND
-  
-
-    
     
     var level; 
     
@@ -414,7 +409,7 @@ function drawRotatedImage_old(idImage, x, y, angle)
 */
 
    
-  function collision_old(x1, width1, x2, width2, y1, height1, y2, height2)
+function collision_old(x1, width1, x2, width2, y1, height1, y2, height2)
   {
 	var res = (
 					Math.abs(x1 + width1 / 2 - (x2 + width2 / 2)) <= 25
@@ -443,93 +438,9 @@ function collision(x1, width1, x2, width2, y1, height1, y2, height2)
 	return res;
 }
 
-function setKirbyCurrentImage(aspiring)
+function kirbyMovementEvents()
 {
-	if (aspiring)
-	{
-		if (kirbydirection == 1)
-		{
-			imgCurrent = "imgAspiringRight";
-		}
-		else
-		{
-			imgCurrent = "imgAspiringLeft";
-		}
-		return;
-	}
-
-	if (kirbydirection == 0)
-	{
-			if(!hashat && !hasbomb && !hasice)
-			{
-				imgCurrent = "img";
-			}
-
-			if (hashat) 
-			{
-				imgCurrent = "imgKirbyFire";
-			}
-			if (hasbomb)
-			{
-			
-				imgCurrent = "imgKirbyBomb";
-			}
-			if(hasice)
-			{
-		
-				imgCurrent = "imgKirbyIce";
-			}
-	}
-
-	if (kirbydirection == 1)
-	{
-		if (!hashat && !hasbomb && !hasice)
-		{	
-			imgCurrent = "imgKirbyRight";
-		}
-		if (hashat)
-		{
-			imgCurrent = "imgKirbyFireRight";
-		}
-		if (hasbomb)
-		{
-			imgCurrent = "imgKirbyBombRight";
-		}
-		if (hasice)
-		{
-			imgCurrent = "imgKirbyIceRight";
-		}
-	}
-
-	if (kirbydirection == -1)
-	{
-		if (!hashat && !hasbomb && !hasice)
-		{	
-			imgCurrent = "imgKirbyLeft";
-		}
-		if (hashat)
-		{
-			imgCurrent = "imgKirbyFireLeft";
-		}
-		if (hasbomb)
-		{
-			imgCurrent = "imgKirbyBombLeft";
-		}
-		if (hasice)
-		{
-			imgCurrent = "imgKirbyIceLeft";
-		}
-	}
-
-} //end setKirbyCurrentImage
-
-    function gameLoop() 
-    {
-
-//
-speedx = 0;
-
-if (!kirbyFrozen)
+	if (!kirbyFrozen)
 {
 //move right
 	if (!jumpright && !jumpstarted)
@@ -629,11 +540,102 @@ if (!kirbyFrozen)
 		_DoMovement();
 
 	}
-	
-		c = document.getElementById("canvas1");
-   		context = c.getContext("2d");
-		context.clearRect(0, 0, document.getElementById("canvas1").width, document.getElementById("canvas1").height);
+}
+
+function setKirbyCurrentImage(aspiring)
+{
+	if (aspiring)
+	{
+		if (kirbydirection == 1)
+		{
+			imgCurrent = "imgAspiringRight";
+		}
+		else
+		{
+			imgCurrent = "imgAspiringLeft";
+		}
+		return;
+	}
+
+	if (kirbydirection == 0)
+	{
+			if(!hashat && !hasbomb && !hasice)
+			{
+				imgCurrent = "img";
+			}
+
+			if (hashat) 
+			{
+				imgCurrent = "imgKirbyFire";
+			}
+			if (hasbomb)
+			{
+			
+				imgCurrent = "imgKirbyBomb";
+			}
+			if(hasice)
+			{
 		
+				imgCurrent = "imgKirbyIce";
+			}
+	}
+
+	if (kirbydirection == 1)
+	{
+		if (!hashat && !hasbomb && !hasice)
+		{	
+			imgCurrent = "imgKirbyRight";
+		}
+		if (hashat)
+		{
+			imgCurrent = "imgKirbyFireRight";
+		}
+		if (hasbomb)
+		{
+			imgCurrent = "imgKirbyBombRight";
+		}
+		if (hasice)
+		{
+			imgCurrent = "imgKirbyIceRight";
+		}
+	}
+
+	if (kirbydirection == -1)
+	{
+		if (!hashat && !hasbomb && !hasice)
+		{	
+			imgCurrent = "imgKirbyLeft";
+		}
+		if (hashat)
+		{
+			imgCurrent = "imgKirbyFireLeft";
+		}
+		if (hasbomb)
+		{
+			imgCurrent = "imgKirbyBombLeft";
+		}
+		if (hasice)
+		{
+			imgCurrent = "imgKirbyIceLeft";
+		}
+	}
+
+} //end setKirbyCurrentImage
+
+function gameLoop() 
+    {
+
+	//
+	speedx = 0;
+
+	kirbyMovementEvents();
+
+	//clear screen
+			c = document.getElementById("canvas1");
+			context = c.getContext("2d");
+			context.clearRect(0, 0, document.getElementById("canvas1").width, document.getElementById("canvas1").height);
+	//
+
 		// game over
 		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("pbBandana").getAttribute('value') <= 0)
 		{
@@ -687,20 +689,7 @@ if (!kirbyFrozen)
 		coins();
 
 		// caged waddle dee
-		if (level == firstworldmaxlevel && !whispyAlive) 
-		{
-			cagedExists = 1;
-		} else
-		{
-			cagedExists = 0;
-		}
-
-		if (cagedExists) 
-		{
-			xcaged = xDoor[level - 1] + 150;
-			ycaged = yDoor[level - 1];
-			drawImage(imgCurrentWaddle, xcaged, ycaged);
-		}
+		cagedWaddleeDee();
 		// end caged waddle dee
 
 		platforms();
@@ -745,8 +734,26 @@ if (!kirbyFrozen)
 		drawImage(imgCurrentBandana, xb, yb);
 
 		// getting coins
-		//var decreasecoinsflag = 0;
-		for (var i = 0; i < nrcoins[level]; i++) 
+		gettingCoins();
+
+		// release waddlee dee
+		kirbyReleasesWaddleeDee();
+		//
+		
+		if (kirbyFindsDoor())
+		{
+			return;
+		}
+			
+
+		jumpsfalls();
+
+
+   } //end gameLoop()
+
+function gettingCoins()
+{
+	for (var i = 0; i < nrcoins[level]; i++) 
 		{
 			// kirby
 				if (coinAlive[i][level])
@@ -755,10 +762,9 @@ if (!kirbyFrozen)
 			
 					playSound("coin3.wav");
 			
-					//decreasecoinsflag = true;
+					
 					coinsTaken++;
-					//coinx[i][level] = coinx[coins - 1][level];
-					//coiny[i][level] = coiny[coins - 1][level];
+					
 					coinAlive[i][level] = 0;
 					var c = coinsTaken + coinsTakenb;
 					document.getElementById("lblCoins").innerText ="Coins: " + c;
@@ -775,9 +781,64 @@ if (!kirbyFrozen)
 				document.getElementById("lblCoins").innerText ="Coins: " + c;
 			}
 		}
+}
 
-		// release waddlee dee
-		if (!whispyAlive)
+function kirbyFindsDoor()
+{
+	if (!jumpstarted && !fallstart && collision(xkirby, kirbywidth, xDoor[level - 1], doorwidth, ykirby, kirbyheight, yDoor[level - 1], doorwidth)
+				||
+			collision(xb, bandanawidth, xDoor[level - 1], doorwidth, yb, bandanaheight, yDoor[level - 1], doorwidth)
+				)
+
+			if (level == maxLevel) 
+			{
+					clearInterval(funcSetInterval);
+					timerstopped = 1;
+          			drawImage("imgVictory", 0, 0);
+					return 1;
+			} 
+			else 
+			{
+				if (level == firstworldmaxlevel) 
+				{
+					if (cagedReleased)
+					{
+						level++;
+						jumpLevel();
+						return 1;
+					}
+				}	
+				else
+				{
+					level++;
+					jumpLevel();
+					return 1;
+				}
+			}
+	return 0;
+}
+
+function cagedWaddleeDee()
+{
+	if (level == firstworldmaxlevel && !whispyAlive) 
+		{
+			cagedExists = 1;
+		} else
+		{
+			cagedExists = 0;
+		}
+
+		if (cagedExists) 
+		{
+			xcaged = xDoor[level - 1] + 150;
+			ycaged = yDoor[level - 1];
+			drawImage(imgCurrentWaddle, xcaged, ycaged);
+		}
+}
+
+function kirbyReleasesWaddleeDee()
+{
+	if (!whispyAlive)
 		if (level == firstworldmaxlevel && !cagedReleased)
 		
 			if (collision(xkirby, kirbywidth, xcaged, cagedwidth, ykirby, kirbyheight, ycaged, cagedheight)
@@ -790,44 +851,9 @@ if (!kirbyFrozen)
 				drawImage("imgFree", xcaged, ycaged);
 				playSound("release.wav"); 
 			}
-		
-			if (!jumpstarted && !fallstart && collision(xkirby, kirbywidth, xDoor[level - 1], doorwidth, ykirby, kirbyheight, yDoor[level - 1], doorwidth)
-				||
-			collision(xb, bandanawidth, xDoor[level - 1], doorwidth, yb, bandanaheight, yDoor[level - 1], doorwidth)
-				)
+}
 
-			if (level == maxLevel) 
-			{
-					clearInterval(funcSetInterval);
-					timerstopped = 1;
-          			drawImage("imgVictory", 0, 0);
-					return;
-			} 
-			else 
-			{
-				if (level == firstworldmaxlevel) 
-				{
-					if (cagedReleased)
-					{
-						level++;
-						jumpLevel();
-						return;
-					}
-				}	
-				else
-				{
-					level++;
-					jumpLevel();
-					return;
-				}
-			}
-
-		jumpsfalls();
-
-
-   } //end gameLoop()
-
-   function jumpLevel()
+function jumpLevel()
    {
 					if (level >= firstworldmaxlevel+1)
 					{
@@ -847,7 +873,7 @@ if (!kirbyFrozen)
 					//Sorina a scos playSound("release.wav"); 
    }
    
-   function jumpsfalls() {
+function jumpsfalls() {
 		var yi = 0;
 		var yib = 0;
 
@@ -871,7 +897,7 @@ if (!kirbyFrozen)
 		kirbyice();
 	}
 
-  function kirbyfire()
+function kirbyfire()
 	{
 		var xfire;
 		var yfire;
@@ -926,7 +952,7 @@ if (!kirbyFrozen)
 		}
 	}
 
-	function kirbyice()
+function kirbyice()
 	{
 		var xice;
 		var yice;
@@ -999,8 +1025,8 @@ if (!kirbyFrozen)
 		}
 	
 
-
-	function sleep(miliseconds) 
+/*
+function sleep(miliseconds) 
 	{
    		var currentTime = new Date().getTime();
 
@@ -1008,8 +1034,9 @@ if (!kirbyFrozen)
 	 {
    	 }
 	}
+*/
 
-	function kirbybomb()
+function kirbybomb()
 	{
 
 					if (startspittingkirby) 
@@ -1081,8 +1108,6 @@ if (!kirbyFrozen)
 					}
 					//
 	}
-
-
 
  function fallbandana() {
 		var yib = 0;
