@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 15.0
+v 16.0
 <script type="text/javascript">
 
 const gameSpeed = 60;
@@ -629,14 +629,12 @@ if (!kirbyFrozen)
 		_DoMovement();
 
 	}
-
-
-		// game over
+	
 		c = document.getElementById("canvas1");
    		context = c.getContext("2d");
 		context.clearRect(0, 0, document.getElementById("canvas1").width, document.getElementById("canvas1").height);
 		
-   
+		// game over
 		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("pbBandana").getAttribute('value') <= 0)
 		{
 			clearInterval(funcSetInterval);
@@ -724,18 +722,24 @@ if (!kirbyFrozen)
 				setKirbyCurrentImage();
 				if (hasice)
 				{
-					ykirby = ykirby - (kirbyiceheight - kirbyinitialheight)
-				}//v8
+					ykirby = ykirby - (kirbyiceheight - kirbyinitialheight);
+				}
+				if (hashat)
+				{
+					ykirby = ykirby - (kirbyfireheight - kirbyinitialheight);
+				}
+				if (hasbomb)
+				{
+					ykirby = ykirby - (kirbybombheight - kirbyinitialheight);
+				}
 			}
 		}
 
 
-		//if (!kirbyFrozen)
-	//	{
-			xkirby+=speedx;
-			
-			drawImage(imgCurrent, xkirby, ykirby);
-	//	}
+		
+		xkirby+=speedx;
+		drawImage(imgCurrent, xkirby, ykirby);
+	
 		
 		// enter bandana
 		drawImage(imgCurrentBandana, xb, yb);
@@ -765,21 +769,12 @@ if (!kirbyFrozen)
 			if (collision(xb, bandanawidth, coinx[i][level], coinwidth, yb, bandanaheight, coiny[i][level], coinwidth))
 			{
 					playSound("coin3.wav");
-				//decreasecoinsflag = true;
 				coinsTakenb++;
-				
-				//coinx[i][level] = coinx[coins - 1][level];
-				//coiny[i][level] = coiny[coins - 1][level];
 				
 				c = coinsTaken + coinsTakenb;
 				document.getElementById("lblCoins").innerText ="Coins: " + c;
 			}
 		}
-
-		//if (decreasecoinsflag) 
-	//	{
-//			nrcoins[level]--;
-//		}
 
 		// release waddlee dee
 		if (!whispyAlive)
@@ -830,7 +825,7 @@ if (!kirbyFrozen)
 		jumpsfalls();
 
 
-   }
+   } //end gameLoop()
 
    function jumpLevel()
    {
