@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 17.0
+v 18.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -28,6 +28,7 @@ var timerstopped = 0;
 var kirbyinitialheight = 54;
 var kirbyFrozen = false;
 var kirbyFrozenCounter = 0;
+var kirbyAspires;
 
 
 //var angleE = 0;
@@ -450,7 +451,7 @@ function kirbyMovementEvents()
 		idletime = 0;
 
 		kirbydirection = 1;
-		setKirbyCurrentImage(0);
+		setKirbyCurrentImage(kirbyAspires);
 		/*
 		
 			*/
@@ -466,7 +467,7 @@ function kirbyMovementEvents()
 			idletime = 0;
 
             kirbydirection = -1;
-			setKirbyCurrentImage(0);
+			setKirbyCurrentImage(kirbyAspires);
 			bool_moveLeft = 1;
 			speedx = -10;
           }
@@ -483,7 +484,7 @@ function kirbyMovementEvents()
               v0y = v0yinitial;
               y0 = ykirby;
 
-			  setKirbyCurrentImage(0);
+			  setKirbyCurrentImage(kirbyAspires);
               jumpstarted = 1;
               jumpright = 1;
               jumpleft = 0;
@@ -506,7 +507,7 @@ function kirbyMovementEvents()
                 v0y = v0yinitial;
                 y0 = ykirby;
 
-				setKirbyCurrentImage(0);
+				setKirbyCurrentImage(kirbyAspires);
                 jumpstarted = 1;
                 jumpleft = 1;
                 jumpright = 0;
@@ -2213,6 +2214,7 @@ function enemyAspired(i)
 						if (xe[i][level] <= xkirby + kirbywidth + 5)
 						 {
 							aspiring[i] = 0;
+							kirbyAspires = 0;
 
 							////////
 							kirbyGetsAbility(i);
@@ -2224,7 +2226,7 @@ function enemyAspired(i)
 								startspitting[i] = 0;
 								
 							}
-							setKirbyCurrentImage(0);
+							setKirbyCurrentImage(kirbyAspires);
 
 						
 								playSound("die.wav");
@@ -2238,6 +2240,7 @@ function enemyAspired(i)
 						if (xe[i][level] + kirbywidth >= xkirby - 5) 
 						{
 							aspiring[i] = 0;
+							kirbyAspires = 0;
 							//
 							kirbyGetsAbility(i);
 							//
@@ -2246,7 +2249,7 @@ function enemyAspired(i)
 							{
 								startspitting[i] = 0;
 							}
-							setKirbyCurrentImage(0);
+							setKirbyCurrentImage(kirbyAspires);
 						
 								playSound("die.wav");
 						
@@ -2590,6 +2593,7 @@ function whispywoods()
    
 	idling = false;
 	idletime = 0;
+	kirbyAspires = 0;
 
     imgCurrent = "img";
     imgCurrentBandana = "imgBandana";
@@ -3006,10 +3010,10 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 				) 
 				{
 					aspiring[i] = 1;
-					
+					kirbyAspires = 1;
 					
 					setEnemyImage(i, level, 0, 1, 0, 1);
-					setKirbyCurrentImage(1);
+					setKirbyCurrentImage(kirbyAspires);
 					
 					break;
 				}
