@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 18.0
+v 19.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -42,6 +42,7 @@ var yexplosion = 0;
 var timerexplosion = 0;
 var lifePiece = 10;
 var whispyAlive = true;
+var iceMonsterAlive = 1;
 var whispyLife = 3;
 var whispyFrozen = 0;
 
@@ -186,9 +187,9 @@ var onmovingplatform = 0;
     //var ye = 300;
 
    // var maxLevel = 3;
-   var maxLevel = 9;
+   var maxLevel = 10;
    var firstworldmaxlevel = 7;
-
+   var secondworldmaxlevel = 10;
 
 var coinAlive = [];
 coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
@@ -318,7 +319,15 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 	var xwhispy=150;
 	var ywhispy=y0+kirbyheight-whispyheight;
 	var xwhispytree = 600;
-	
+
+	var icemonsterwidth = 250;
+	var icemonsterheight = groundy;
+	var xicemonster = 400;
+	var yicemonster = y0+kirbyheight-icemonsterheight;
+	var iceMonsterTimer = 0;
+	var iceMonsterAlive = 1;
+	var iceMonsterSwitch = 1;
+	var iceMonsterLife = 10;
 
 	var x0apple = 150+Math.floor(Math.random() * 250); 
 	var y0apple=75;//150
@@ -699,6 +708,10 @@ function gameLoop()
 		{
 			whispywoods();
 		}
+		if (level == secondworldmaxlevel)
+		{
+			icemonster();
+		}
 
 		// enter kirby
 
@@ -1071,6 +1084,22 @@ function kirbybomb()
 							}
 						}
 
+						if (level == secondworldmaxlevel)
+						{
+							if ((xbombkirby[k] + bombwidth/2) >= xwhispytree)
+							{
+								playSound("explosion.wav"); 
+								startspittingkirby[k] = false;
+								iceMonsterLife --;
+							}
+							if (iceMonsterLife <= 0)
+							{
+								
+								iceMonsterAlive = false;
+							}
+						}
+
+
 						// shoot enemy
 						for(var i = 0;i<=3;i++)
 						if (enemyExists[i][level])
@@ -1441,6 +1470,12 @@ function initDoors()
 			xDoor[ilevel - 1] = xplatform[2][ilevel] + platformwidth[2]/2;
 			yDoor[ilevel - 1] = yplatform[2][ilevel] - doorHeight;		
 		}
+
+		if (ilevel == 10)
+		{
+			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
+			yDoor[ilevel - 1] = 300;		
+		}
 	}
 
 	}
@@ -1809,8 +1844,8 @@ function getImgPlatformForWorld(world)
 		onmovingplatformb = 0;
 		for (var i = 0; i <= 3; i++) 
 		{
-			aspiring[i] = false;
-			setEnemyImage(i, level, enemydirection[i][level], 0, 0, 0);
+			aspiring[i] = 0;
+			setEnemyImage(i, level, enemydirection[i][level], 0, 0);
 		}
 
 		if (level == firstworldmaxlevel ) 
@@ -1860,10 +1895,16 @@ function killKirby()
 	playSound("die.wav");
 }
 
-function setEnemyImage(i, level, direction, aspiring, frozen, horizontal)
+function setEnemyImage(i, level, direction, aspiring, frozen)
 {
-	if  (!horizontal)
+	if  (!aspiring)
 	{
+		if (world == 2)
+		{
+			imgEnemyCurrent[i] = "imgPokeson";
+			return;
+		}
+
 	if (direction == 1 && !aspiring && !frozen)
 	{
 		imgEnemyCurrent[i] = "imgEnemyRight";
@@ -1906,7 +1947,7 @@ function setEnemyImage(i, level, direction, aspiring, frozen, horizontal)
 	}
 	}
 
-	if (horizontal)
+	if (aspiring)
 	{
 		// imgEnemyCurrent[i] = imgEnemyHorizontal;
 		if (enemySpitting[i][level])
@@ -1953,7 +1994,7 @@ function enemy() {
 						if (xe[i][level] <= enemyminx[i][level])
 							if (!enemyFrozen[i][level])
 							{
-								setEnemyImage(i, level, 1, 0, 0);
+								//setEnemyImage(i, level, 1, 0, 0);
 								enemydirection[i][level] = 1;
 							}
 					} else 
@@ -1965,7 +2006,7 @@ function enemy() {
 						if (xe[i][level] >= enemymaxx[i][level])
 							if (!enemyFrozen[i][level])
 						{
-							setEnemyImage(i, level, -1, 0, 0);
+							//setEnemyImage(i, level, -1, 0, 0);
 							enemydirection[i][level] = -1;
 						}
 
@@ -2065,6 +2106,7 @@ function enemy() {
 						}
 						drawRotatedBombE( xspit[i], yspit[i], angleE[i]);
 					}
+					setEnemyImage(i, level, enemydirection[i][level], aspiring[i], enemyFrozen[i][level]);
 					drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]);
 			}  // end enemy exists
 			
@@ -2481,6 +2523,15 @@ function initenemies() {
 		copyEnemies(4, 9);
 	}
 
+	function level10()
+	{
+		copylevel (6, 10, 0);
+		enemyExists[3][10] = false;
+
+		enemyExists[1][10] = false;
+		enemyExists[2][10] = false;	
+	}
+
 
   function copylevel(levelSource, levelDest, platforms) 
   {
@@ -2538,8 +2589,7 @@ for (var i = 0; i <= 3; i++) {
 
 function whispywoods()
 	{
-		if (level == firstworldmaxlevel) //maxLevel
-		{
+
 			if (whispyAlive)
 			{
 				drawImage("imgWhispy", xwhispy, ywhispy);
@@ -2571,13 +2621,48 @@ function whispywoods()
 				yapple += 5;
 				drawImage("imgApple", xapple, yapple);
 			}
-		}
+		
 	}
+
+function icemonster()
+{
+	if (iceMonsterAlive)
+		{
+			xicemonster -= 5;
+			iceMonsterTimer++;
+			if (iceMonsterTimer % 10 == 0)
+			{
+				iceMonsterSwitch = -iceMonsterSwitch;
+			}
+
+			
+			// ice monster kills kirby
+			if (collision(xkirby, kirbywidth, xicemonster, icemonsterwidth, ykirby, kirbyheight, yicemonster, icemonsterheight))
+			{
+				killKirby();
+			} 
+			setIceMonsterImage();
+			drawImage(imgIceMonster, xicemonster, yicemonster);
+		}	
+}
+
+function setIceMonsterImage()
+{
+	if (iceMonsterSwitch == 1)
+	{
+		imgIceMonster = "imgIceMonster";
+	}
+	else
+	{
+		imgIceMonster = "imgIceMonster2"
+	}
+}
 
     function InitGame()
      {  
      
-    level = 1; //1 debugstefan 
+    level = 6; //1 debugstefan 
+	
 	
 	initplatforms();
 	initDoors();
@@ -2589,6 +2674,7 @@ function whispywoods()
     level7();
 	level8();
 	level9();
+	level10();
    
    
 	idling = false;
@@ -3012,7 +3098,7 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 					aspiring[i] = 1;
 					kirbyAspires = 1;
 					
-					setEnemyImage(i, level, 0, 1, 0, 1);
+					//setEnemyImage(i, level, 0, 1, 0, 1);
 					setKirbyCurrentImage(kirbyAspires);
 					
 					break;
@@ -3172,6 +3258,8 @@ function start()
 <img id="imgPokeson" src="images/pokeson.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPokesonHorizontal" src="images/pokesonhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
+<img id="imgIceMonster" src="images/icemonster.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceMonster2" src="images/icemonster2.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
