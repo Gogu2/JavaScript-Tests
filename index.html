@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 19.0
+v 20.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -16,7 +16,7 @@ const KEY_CTRL = 17;
 const KEY_SPACE = 32;
 
 
-var groundy = 375; 
+var groundy = 525; //375
 var v0yinitial = -75;
 var gameKeys; 
 var speedx=0;
@@ -35,6 +35,7 @@ var kirbyAspires;
 var angleK = new Array(0,0,0,0,0,0,0,0,0,0);
 var xbombkirby = new Array(0,0,0,0,0,0,0,0,0,0);
 var ybombkirby = new Array(0,0,0,0,0,0,0,0,0,0);
+var bombAlive = new Array(0,0,0,0,0,0,0,0,0,0);
 var bombNo = 0;
 var enemywidth = 75;
 var xexplosion = 0;
@@ -128,7 +129,7 @@ var startspitting = []; //5
 	  var kirbywidth = 75;
 	  var bandanawidth =75;
 	 
-	  var screenwidth = 640;
+	  var screenwidth = 800;//marire 640
     
     var applewidth = 89;
 	var appleheight = 84;
@@ -139,7 +140,7 @@ var startspitting = []; //5
 	
 	var kirbyinitialheight = 54;
 	var kirbyheight = 54;// 75;
-	var screenwidth = 640;
+	var screenwidth = 800; //marire 640
 
 	var kirbyfirewidth = 47;
 	var kirbyfireheight = 86;
@@ -151,7 +152,7 @@ var startspitting = []; //5
 
   // kirby
 	var xkirby = xinit;
-	var y0 = 321;
+	var y0 = groundy - kirbyinitialheight;; //debugstefan 321
 	var ykirby = y0;
 	var v0y = v0yinitial; // 75
 	var vy = v0y;
@@ -172,13 +173,13 @@ var onmovingplatform = 0;
 
    // bandana
 	var xb = screenwidth - 75;
-	var yb0 = 300;
+	var yb0 = groundy - bandanaheight;
 	var yb = yb0;
 	var vb0y = -75; // 75
 	var vby = vb0y;
 
 	var xbinit = screenwidth - 75;
-	var ybinit = 300;
+	var ybinit = groundy - bandanaheight;
 
   
     
@@ -314,23 +315,23 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
    var boolenemyDied = false;
    
    var whispywidth = 511;
-	var whispyheight = groundy;//269;
+	var whispyheight = 375;//269;
 	
-	var xwhispy=150;
-	var ywhispy=y0+kirbyheight-whispyheight;
-	var xwhispytree = 600;
+	var xwhispy=screenwidth - whispywidth;
+	var ywhispy=groundy - whispyheight;//y0+kirbyheight-whispyheight;
+	var xwhispytree = xwhispy + 400;
 
 	var icemonsterwidth = 250;
-	var icemonsterheight = groundy;
+	var icemonsterheight = 375;
 	var xicemonster = 400;
-	var yicemonster = y0+kirbyheight-icemonsterheight;
+	var yicemonster = groundy - icemonsterheight;//y0+kirbyheight-icemonsterheight;
 	var iceMonsterTimer = 0;
 	var iceMonsterAlive = 1;
 	var iceMonsterSwitch = 1;
 	var iceMonsterLife = 10;
 
-	var x0apple = 150+Math.floor(Math.random() * 250); 
-	var y0apple=75;//150
+	var x0apple = xwhispy+Math.floor(Math.random() * (whispywidth - (screenwidth - xwhispytree))); 
+	var y0apple= ywhispy + 75;//75;//150
 	var yapple = y0apple;
 	var xapple = x0apple;
     
@@ -1055,6 +1056,7 @@ function kirbybomb()
 
 					if (startspittingkirby) 
 					for (var k = 1; k<=bombNo;k++)
+					if (bombAlive[k])
 					{
 						
 
@@ -1075,6 +1077,7 @@ function kirbybomb()
 							{
 								playSound("explosion.wav"); 
 								startspittingkirby[k] = false;
+								bombAlive[k] = 0;
 								whispyLife --;
 							}
 							if (whispyLife <= 0)
@@ -1083,14 +1086,18 @@ function kirbybomb()
 								whispyAlive = false;
 							}
 						}
-
+						
+						//shoot ice monster
 						if (level == secondworldmaxlevel)
 						{
-							if ((xbombkirby[k] + bombwidth/2) >= xwhispytree)
+							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
 							{
-								playSound("explosion.wav"); 
+								
 								startspittingkirby[k] = false;
+								bombAlive[k] = 0;
 								iceMonsterLife --;
+								xicemonster += 15;
+								playSound("explosion.wav"); 
 							}
 							if (iceMonsterLife <= 0)
 							{
@@ -1119,20 +1126,20 @@ function kirbybomb()
 							
 							}
 							
-							bombNo--;
-							if (bombNo == 0) 
-								startspittingkirby = false;
+							//bombNo--;
+							//if (bombNo == 0) 
+							startspittingkirby = false;
+							bombAlive[k] = 0;
 						}
 					}
 
 						
 						if (xbombkirby[k] < 0 || xbombkirby[k] > screenwidth) 
 						{
-
-							
-							bombNo--;
-							if (bombNo == 0) 
+							//bombNo--;
+							//if (bombNo == 0) 
 								startspittingkirby = false;
+								bombAlive[k] = 0;
 						}
 
 					}
@@ -1411,7 +1418,7 @@ function initDoors()
 	if (ilevel == 1) 
 	{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;
+			yDoor[ilevel - 1] = groundy - doorHeight;
 			
 		}
 
@@ -1427,19 +1434,19 @@ function initDoors()
 		if (ilevel == 3) 
 		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;
+			yDoor[ilevel - 1] = groundy - doorHeight;
 			
 		}
 
 		if (ilevel == 4) 
 		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 225 - doorHeight;
+			yDoor[ilevel - 1] = yplatform[2][ilevel] - doorHeight;
 		}
 
 		if (ilevel == 5) {
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;
+			yDoor[ilevel - 1] = groundy - doorHeight;
 		
 
 			
@@ -1447,7 +1454,7 @@ function initDoors()
 
 		if (ilevel == 6) {
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;
+			yDoor[ilevel - 1] = groundy - doorHeight;
 	
 
 			
@@ -1456,7 +1463,7 @@ function initDoors()
 		if (ilevel == 7) 
 		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;			
+			yDoor[ilevel - 1] = groundy - doorHeight;			
 		}
 
 		if (ilevel == 8)
@@ -1474,7 +1481,7 @@ function initDoors()
 		if (ilevel == 10)
 		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
-			yDoor[ilevel - 1] = 300;		
+			yDoor[ilevel - 1] = groundy - doorHeight;		
 		}
 	}
 
@@ -1621,9 +1628,9 @@ function getImgPlatformForWorld(world)
   function initplatforms() {
 		// level 1
 		yplatform[0][1] = groundy;
-		yplatform[1][1] = 225;
-		yplatform[2][1] = 140;
-		yplatform[3][1] = 225;
+		yplatform[1][1] = 225+120;
+		yplatform[2][1] = 140+120;
+		yplatform[3][1] = 225+120;
 
 		xplatform[0][1] = 0;
 		xplatform[1][1] = 150;
@@ -1632,9 +1639,9 @@ function getImgPlatformForWorld(world)
 
 		// level 2
 		yplatform[0][2] = groundy;
-		yplatform[1][2] = 225;
-		yplatform[2][2] = 150;
-		yplatform[3][2] = 80;
+		yplatform[1][2] = 225+120;
+		yplatform[2][2] = 150+120;
+		yplatform[3][2] = 80+120;
 
 		xplatform[0][2] = 0;
 		xplatform[1][2] = 150;
@@ -1643,9 +1650,9 @@ function getImgPlatformForWorld(world)
 
 		// level 3
 		yplatform[0][3] = groundy;
-		yplatform[1][3] = 225;
-		yplatform[2][3] = 140;
-		yplatform[3][3] = 225;
+		yplatform[1][3] = 225+120;
+		yplatform[2][3] = 140+120;
+		yplatform[3][3] = 225+120;
 
 		xplatform[0][3] = 0;
 		xplatform[1][3] = 150;
@@ -1654,9 +1661,9 @@ function getImgPlatformForWorld(world)
 
 		// level 4
 		yplatform[0][4] = groundy;
-		yplatform[1][4] = 225;
-		yplatform[2][4] = 225;
-		yplatform[3][4] = 225;
+		yplatform[1][4] = 225+120;
+		yplatform[2][4] = 225+120;
+		yplatform[3][4] = 225+120;
 
 		xplatform[0][4] = 0;
 		xplatform[1][4] = 150;
@@ -1667,9 +1674,9 @@ function getImgPlatformForWorld(world)
 
 		//level 8
 		yplatform[0][8] = groundy;
-		yplatform[1][8] = 225;
-		yplatform[2][8] = 75;
-		yplatform[3][8] = 225;
+		yplatform[1][8] = 225+120;
+		yplatform[2][8] = 75+120;
+		yplatform[3][8] = 225+120;
 
 		xplatform[0][8] = 0;
 		xplatform[1][8] = 150;
@@ -1678,9 +1685,9 @@ function getImgPlatformForWorld(world)
 
 		//level 9
 		yplatform[0][9] = groundy;
-		yplatform[1][9] = 225;
-		yplatform[2][9] = 75;
-		yplatform[3][9] = 225;
+		yplatform[1][9] = 225+120;
+		yplatform[2][9] = 75+120;
+		yplatform[3][9] = 225+120;
 
 		xplatform[0][9] = 0;
 		xplatform[1][9] = 150;
@@ -2407,28 +2414,28 @@ function initenemies() {
 		xe[3][4] = 300;
 
 		// level 1
-		ye[0][1] = 300;
-		ye[1][1] = 300;
-		ye[2][1] = 300;
-		ye[3][1] = 300;
+		ye[0][1] = groundy - enemyheight;
+		ye[1][1] = groundy - enemyheight;
+		ye[2][1] = groundy - enemyheight;
+		ye[3][1] = groundy - enemyheight;
 
 		// level 2
-		ye[0][2] = 300;
-		ye[1][2] = 300;
-		ye[2][2] = 300;
-		ye[3][2] = 300;
+		ye[0][2] = groundy - enemyheight;
+		ye[1][2] = groundy - enemyheight;
+		ye[2][2] = groundy - enemyheight;
+		ye[3][2] = groundy - enemyheight;
 
 		// level 3
-		ye[0][3] = 300;
-		ye[1][3] = 300;
-		ye[2][3] = 300;
-		ye[3][3] = 300;
+		ye[0][3] = groundy - enemyheight;
+		ye[1][3] = groundy - enemyheight;
+		ye[2][3] = groundy - enemyheight;
+		ye[3][3] = groundy - enemyheight;
 
 		// level 4
-		ye[0][4] = yplatform[0][4] - 75;
-		ye[1][4] = yplatform[1][4] - 75;
-		ye[2][4] = yplatform[2][4] - 75;
-		ye[3][4] = yplatform[3][4] - 75;
+		ye[0][4] = yplatform[0][4] - enemyheight;
+		ye[1][4] = yplatform[1][4] - enemyheight;
+		ye[2][4] = yplatform[2][4] - enemyheight;
+		ye[3][4] = yplatform[3][4] - enemyheight;
 
 		// level 1
 		enemymaxx[0][1] = xe[0][1] + platformrange;
@@ -2486,8 +2493,8 @@ function initenemies() {
 		enemyExists[3][5] = true;
 		enemyminx[3][5] = 100;
 		enemymaxx[3][5] = 100 + platformrange;
-		xe[3][5] = 300;
-		ye[3][5] = 300;
+		xe[3][5] = groundy - enemyheight;
+		ye[3][5] = groundy - enemyheight;
 
 		enemySpitting[3][5] = true;
 	}
@@ -2611,10 +2618,10 @@ function whispywoods()
 					killKirby();
 				} 
 			
-			if (yapple>=280) 
+			if (yapple>=groundy - appleheight) 
 			{   
 				yapple = y0apple;
-				xapple =  150+Math.floor(Math.random() * 250);
+				xapple = xwhispy+Math.floor(Math.random() * (whispywidth - (screenwidth - xwhispytree)));
 			}
 			else 
 			{
@@ -2661,7 +2668,7 @@ function setIceMonsterImage()
     function InitGame()
      {  
      
-    level = 1; //1 debugstefan 
+    level = 6; //1 debugstefan 
 	
 	
 	initplatforms();
@@ -3030,9 +3037,11 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 				spitdirectionkirby = kirbydirection;	
 			}
 			if (hasbomb)
-			if (bombNo < 9)
+			if (bombAlive[1] == 0)
 			{
-				bombNo++;
+				//bombNo++;
+				bombNo = 1;
+				bombAlive[bombNo] = 1;
 				angleK[bombNo] = 0;
 				startspittingkirby = 1;
 				if (kirbydirection == 1)
@@ -3161,7 +3170,7 @@ function start()
 
 </table>
   <input id = "btnStart" type="button" value="Start Game" onclick="start();" />
-<canvas id = "canvas1" width=640 height = 450 style="background-color:#00A2E8;top:0;left:0;" hidden /> 
+<canvas id = "canvas1" width=800 height = 600 style="background-color:#00A2E8;top:0;left:0;" hidden /> 
 
 <EMBED SRC = "test2.mid" HIDDEN = "true" loop = "yes" volume="10" autostart="true">
 
