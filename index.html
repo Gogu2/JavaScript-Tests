@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 21.0
+v 22.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -555,6 +555,11 @@ function kirbyMovementEvents()
 
 function setKirbyCurrentImage(aspiring)
 {
+	if (kirbyFrozen)
+	{
+		imgCurrent = "imgKirbyFrozen";
+		return;
+	}
 	if (aspiring)
 	{
 		if (kirbydirection == 1)
@@ -997,6 +1002,8 @@ function kirbyice()
 					if (collision(xice, icewidth, xe[i][level], enemywidth, yice, iceheight, ye[i][level], enemyheight))
 					{
 						enemyFrozen[i][level] = true;
+						setEnemyImage(i, level, enemydirection[i][level], 0, 1);
+						/*
 							if (!enemyIce[i][level] && !enemyBomb[i][level] && !enemySpitting[i][level])
 							if (enemydirection[i][level] = 1)
 								imgEnemyCurrent[i] = "imgRightFrozen";
@@ -1010,6 +1017,8 @@ function kirbyice()
 							{
 								imgEnemyCurrent[i] = "imgPoppyFrozen";
 							}
+							*/
+
 
 							playSound("explosion.wav");  
 							
@@ -1852,7 +1861,7 @@ function getImgPlatformForWorld(world)
 		for (var i = 0; i <= 3; i++) 
 		{
 			aspiring[i] = 0;
-			setEnemyImage(i, level, enemydirection[i][level], 0, 0);
+			setEnemyImage(i, level, enemydirection[i][level], 0, enemyFrozen[i][level]);
 		}
 
 		if (level == firstworldmaxlevel ) 
@@ -1908,46 +1917,93 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 			return;
 		}
 
-	if (direction == 1 && !aspiring && !frozen)
-	{
-		imgEnemyCurrent[i] = "imgEnemyRight";
-								
-		//if (enemyFrozen[i][level])
-		//	imgEnemyCurrent[i] = "imgRightFrozen";
-		if (enemySpitting[i][level]) 
+		if (frozen)
 		{
-			imgEnemyCurrent[i] = "imgHotHeadRight";
-		} 
-								
-		if(enemyBomb[i][level])
-		{
-			imgEnemyCurrent[i] = "imgPoppy";
-		}
-		if (enemyIce[i][level])
-		{
-			imgEnemyCurrent[i] = "imgChillyRight";
-		} 
-	}
+			if (direction == 1 )
+			{
+				imgEnemyCurrent[i] = "imgRightFrozen";
+										
+				//if (enemyFrozen[i][level])
+				//	imgEnemyCurrent[i] = "imgRightFrozen";
+				if (enemySpitting[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgHotHeadFrozen";
+				} 
+										
+				if(enemyBomb[i][level])
+				{
+					imgEnemyCurrent[i] = "imgPoppyFrozen";
+				}
+				if (enemyIce[i][level])
+				{
+					imgEnemyCurrent[i] = "imgChillyRight";//TODO
+				} 
+			}
 
-	if (direction == -1 && !aspiring && !frozen)
-	{
-		imgEnemyCurrent[i] = "imgEnemyLeft";
-							
-		//if (enemyFrozen[i][level])
-		//	imgEnemyCurrent[i] = "imgLeftFrozen";
-		if (enemySpitting[i][level]) 
-		{
-			imgEnemyCurrent[i] = "imgHotHeadLeft";
-		} 
-		if(enemyBomb[i][level])
-		{
-			imgEnemyCurrent[i] = "imgPoppy";
+			if (direction == -1 )
+			{
+				imgEnemyCurrent[i] = "imgLeftFrozen";
+									
+				//if (enemyFrozen[i][level])
+				//	imgEnemyCurrent[i] = "imgLeftFrozen";
+				if (enemySpitting[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgHotHeadFrozen";
+				} 
+				if(enemyBomb[i][level])
+				{
+					imgEnemyCurrent[i] = "imgPoppyFrozen";
+				}
+				if (enemyIce[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgChillyLeft";//TODO
+				} 
+			}
 		}
-		if (enemyIce[i][level]) 
+
+		if (!frozen)
 		{
-			imgEnemyCurrent[i] = "imgChillyLeft";
-		} 
-	}
+			if (direction == 1 )
+			{
+				imgEnemyCurrent[i] = "imgEnemyRight";
+										
+				//if (enemyFrozen[i][level])
+				//	imgEnemyCurrent[i] = "imgRightFrozen";
+				if (enemySpitting[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgHotHeadRight";
+				} 
+										
+				if(enemyBomb[i][level])
+				{
+					imgEnemyCurrent[i] = "imgPoppy";
+				}
+				if (enemyIce[i][level])
+				{
+					imgEnemyCurrent[i] = "imgChillyRight";
+				} 
+			}
+
+			if (direction == -1 )
+			{
+				imgEnemyCurrent[i] = "imgEnemyLeft";
+									
+				//if (enemyFrozen[i][level])
+				//	imgEnemyCurrent[i] = "imgLeftFrozen";
+				if (enemySpitting[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgHotHeadLeft";
+				} 
+				if(enemyBomb[i][level])
+				{
+					imgEnemyCurrent[i] = "imgPoppy";
+				}
+				if (enemyIce[i][level]) 
+				{
+					imgEnemyCurrent[i] = "imgChillyLeft";
+				} 
+			}
+		}
 	}
 
 	if (aspiring)
@@ -2165,7 +2221,7 @@ function enemyShootsKirby(i)
 
 							if (enemyIce[i][level]) 
 							{
-								imgCurrent = "imgKirbyFrozen";
+								
 								if (hasbomb && !kirbyFrozen)
 								{
 									ykirby = ykirby + (kirbybombheight - kirbyinitialheight);
@@ -2179,6 +2235,7 @@ function enemyShootsKirby(i)
 									ykirby = ykirby + (kirbyfireheight - kirbyinitialheight);
 								}	
 								kirbyFrozen = true;
+								setKirbyCurrentImage(0);
 							}
 							else //kill kirby
 							{
@@ -2912,8 +2969,8 @@ drawImage(imgCurrentBandana, xb, yb);
 }
 
         
-        document.addEventListener('keyup', function(event)
-        {
+document.addEventListener('keyup', function(event)
+{
 			gameKeys[event.keyCode] = (event.type == "keydown");
 		
 			idletime = 0;
@@ -3206,8 +3263,8 @@ function start()
 
 
 
-<img id="imgFireLeft" src="images/fireleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgFireRight" src="images/fireright.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgFireLeft" src="images/fireleft.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgFireRight" src="images/fireright.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgWhispy" src="images/whispywoodst.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgWhispyEmpty" src="images/whispywoodsemptyt.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3217,7 +3274,7 @@ function start()
 <img id="imgHotHeadHorizontal" src="images/hotheadhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgVictory" src="images/victory.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgGameOver" src="images/gameover.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgCaged" src="images/caged.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgCaged" src="images/caged.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgFree" src="images/free.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPoppy" src="images/poppybros.jrt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPoppyMask" src="images/poppybros.jrmask.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3225,7 +3282,7 @@ function start()
 
 
 
-<img id="imgExplosion" src="images/explosion.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgExplosion" src="images/explosion.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgBombK0" src="images/bombt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgBombK90" src="images/bomb90t.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3248,8 +3305,8 @@ function start()
 <img id="imgLeftFrozen" src="images/enemylefttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgRightFrozen" src="images/enemyrighttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
 
-<img id="imgIceLeft" src="images/iceleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgIceRight" src="images/iceright.bmp" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceLeft" src="images/iceleft.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceRight" src="images/iceright.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgIceSpitLeft" src="images/spiticeleft.bmp" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgIceSpitRight" src="images/spiticeright.bmp" alt="no" width="640" height="75" top="375" left="0" >
