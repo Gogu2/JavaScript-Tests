@@ -349,14 +349,23 @@ function drawRotatedBombK(xdraw, ydraw, angle)
 {
 	const c = document.getElementById("canvas1");
   	const ctx = c.getContext("2d");
-  	if (angle == 0 ) 
+  	
+	if (angle == 0 ) 
 		img = document.getElementById("imgBombK0");
+
 	if (angle == 90)
 	 img = document.getElementById("imgBombK90");
 	if (angle == 180)
 		img = document.getElementById("imgBombK180");
 	if  (angle == 270)
 		img = document.getElementById("imgBombK270");
+
+	if (angle == -90)
+	 img = document.getElementById("imgBombK270");
+	if (angle == -180)
+		img = document.getElementById("imgBombK180");
+	if  (angle == -270)
+		img = document.getElementById("imgBombK90");
 	
   	ctx.drawImage(img, xdraw, ydraw);
 }
@@ -377,7 +386,7 @@ function drawRotatedBombE(xdraw, ydraw, angle)
   	ctx.drawImage(img, xdraw, ydraw);
 }
 
-/*
+
 function drawImageAngle(idImage, xdraw, ydraw, angle)
 {
 	const c = document.getElementById("canvas1");
@@ -390,7 +399,7 @@ function drawImageAngle(idImage, xdraw, ydraw, angle)
 	ctx.drawImage(img,xdraw, ydraw);
 	ctx.restore();
 }
-*/
+
 
 //var TO_RADIANS = Math.PI/180; 
 /*
@@ -1071,12 +1080,16 @@ function kirbybomb()
 
 						xbombkirby[k] += 10 * bombdirectionkirby[k];
 
-						angleK[k] += 90;
+						angleK[k] += 20*bombdirectionkirby[k];
+						
 						if (angleK[k] == 360)
 							angleK[k] = 0;
+						if (angleK[k] == -360)
+							angleK[k] = 0;
 						
-						drawRotatedBombK( xbombkirby[k], ybombkirby[k], angleK[k]);
 						
+						//drawRotatedBombK( xbombkirby[k], ybombkirby[k], angleK[k]);
+						drawImageAngle("imgBombK0",  xbombkirby[k], ybombkirby[k], angleK[k])
 
 						
 						//shoot whispywoods
@@ -2086,7 +2099,7 @@ function enemy() {
 						if (!enemyBomb[i][level])
 							yspit[i] = ye[i][level] + enemymouthy;
 						else
-							yspit[i] = ye[i][level]+enemyheight-bombheight;
+							yspit[i] = ye[i][level]+enemyheight-bombheight/2;
 						spitdirection[i] = enemydirection[i][level];
 					}
 
@@ -2158,12 +2171,17 @@ function enemy() {
 					}
 					if (enemySpitting[i][level] && startspitting[i] && enemyBomb[i][level]) 
 					{
-						angleE[i] += 90;
+						angleE[i] += 20*spitdirection[i];
 						if (angleE[i] == 360)
 						{
 							angleE[i] = 0;
 						}
-						drawRotatedBombE( xspit[i], yspit[i], angleE[i]);
+						if (angleE[i] == -360)
+						{
+							angleE[i] = 0;
+						}
+						//drawRotatedBombE( xspit[i], yspit[i], angleE[i]);
+						drawImageAngle("imgBombE0", xspit[i], yspit[i], angleE[i])
 					}
 					setEnemyImage(i, level, enemydirection[i][level], aspiring[i], enemyFrozen[i][level]);
 					drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]);
@@ -3098,10 +3116,10 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 				angleK[bombNo] = 0;
 				startspittingkirby = 1;
 				if (kirbydirection == 1)
-					xbombkirby[bombNo] = xkirby+kirbywidth;
+					xbombkirby[bombNo] = xkirby+kirbywidth +bombwidth/2;
 				else
-					xbombkirby[bombNo] = xkirby-bombwidth;
-				ybombkirby[bombNo] = ykirby + kirbyheight - bombheight;
+					xbombkirby[bombNo] = xkirby-bombwidth/2;
+				ybombkirby[bombNo] = ykirby + kirbyheight - bombheight/2;//ykirby + kirbyheight - bombheight;
 				bombdirectionkirby[bombNo] = kirbydirection;
 				
 			}
