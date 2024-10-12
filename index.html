@@ -1377,24 +1377,39 @@ function jumpkirby()
 		// end jump on enemy
 
 		// jump on platform ?
+
+		//next 2 lines fixed jump on multiple platforms bug
+		var highestyplatform =9999;
+		var highestplatform = -1;
 		for (var i = 0; i <= nrplatforms[level]; i++) {
 			// if (platform != i)
 			if ((xkirby >= xplatform[i][level] - 35)
 					&& (xkirby + kirbywidth <= xplatform[i][level] + platformwidth[i] + 35))
 				// debug if ((y0+vy*t+kirbywidth >=yplatform[i]-35) && (y0+vy*t+kirbywidth <=
 				// yplatform[i]+35))
-				if (yi + kirbyheight <= yplatform[i][level] && ykirby + kirbyheight >= yplatform[i][level]) {
-					ykirby = yplatform[i][level] - kirbyheight;
-					onplatform = 1;
-					platform = i;
-					jumpstarted = 0;
-					jumpleft = 0;jumpright = 0; //v2
-					t = 0;
-					vy = v0y;
-					if (movingplatform[i][level]) {
-						onmovingplatform = 1;
+				if (yi + kirbyheight <= yplatform[i][level] && ykirby + kirbyheight >= yplatform[i][level]) 
+				{
+					if (yplatform[i][level] < highestyplatform)
+					{
+						highestyplatform = yplatform[i][level];
+						highestplatform = i;
 					}
 				}
+		}
+
+		if (highestplatform > -1)
+		{
+			ykirby = yplatform[highestplatform][level] - kirbyheight;
+			onplatform = 1;
+			platform = highestplatform;
+			jumpstarted = 0;
+			jumpleft = 0;jumpright = 0; //v2
+			t = 0;
+			vy = v0y;
+			if (movingplatform[highestplatform][level]) 
+			{
+				onmovingplatform = 1;
+			}
 		}
 		// end jump on platform
 
