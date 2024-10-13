@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 22.0
+v 23.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -15,11 +15,19 @@ const KEY_LEFT = 37;
 const KEY_CTRL = 17;
 const KEY_SPACE = 32;
 
+const KEY_A = 65;
+const KEY_D = 68;
+const KEY_SHIFT = 16;
+const KEY_S = 83;
+
 
 var groundy = 525; //375
 var v0yinitial = -75;
+var v0ybinitial = -75;
 var gameKeys; 
 var speedx=0;
+
+var speedxb = 0;
 
 var world = 1;
 
@@ -30,6 +38,10 @@ var kirbyFrozen = false;
 var kirbyFrozenCounter = 0;
 var kirbyAspires;
 
+var bandanaFrozen = 0;
+var bandaninitialheight = 54;
+var bandanaFrozenCounter = 0;
+var bandanaAspires;
 
 //var angleE = 0;
 var angleK = new Array(0,0,0,0,0,0,0,0,0,0);
@@ -126,8 +138,13 @@ var startspitting = []; //5
     var hashat=0;
 	var hasbomb = 0;
 	var hasice = 0;
+
+	var bandanahashat = 0;
+	var bandanahasbomb = 0;
+	var bandanahasice = 0;
+
 	  var kirbywidth = 75;
-	  var bandanawidth =75;
+	  //var bandanawidth =75;
 	 
 	  var screenwidth = 800;//marire 640
     
@@ -149,6 +166,7 @@ var startspitting = []; //5
 
 	var xinit = 15; //0  
 	var yinit = groundy - kirbyinitialheight;//321;
+	//var yinitbandana = groundy - bandanainitialheight;
 
   // kirby
 	var xkirby = xinit;
@@ -172,14 +190,15 @@ var onmovingplatform = 0;
 	var coinsTaken = 0;
 
    // bandana
-	var xb = screenwidth - 75;
-	var yb0 = groundy - bandanaheight;
-	var yb = yb0;
-	var vb0y = -75; // 75
-	var vby = vb0y;
+	// = screenwidth - bandanawidth;
+	var y0b = groundy - bandanaheight;
+	var ybandana = y0b;
+	var v0yb = -75; // 75
+	var vbandanay = v0yb;
 
-	var xbinit = screenwidth - 75;
+	var xbinit = screenwidth - bandanawidth-50;
 	var ybinit = groundy - bandanaheight;
+	var xbandana = xbinit;
 
   
     
@@ -284,6 +303,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 	var jumpleftb = 0;
 	var jumprightb = 0;
 	var tb = 0;
+	var idlingb = 0;
 	var idletimeb = 0;
 	var onplatformb = 1;
 	var fallstartb = 0;
@@ -476,7 +496,7 @@ function kirbyMovementEvents()
 			*/
 		bool_moveRight = 1;
 		speedx = 10;		  
-} 
+	} 
 
 //move left
 	if (!jumpleft && !jumpstarted)
@@ -560,6 +580,196 @@ function kirbyMovementEvents()
 		_DoMovement();
 
 	}
+}
+
+function bandanaMovementEvents()
+{
+	if (!bandanaFrozen)
+{
+//move right
+	if (!jumprightb && !jumpstartedb)
+	if (gameKeys && !gameKeys[KEY_SHIFT] && gameKeys[KEY_D]) 
+	{
+		idlingb = false;
+		idletimeb = 0;
+
+		bandanadirection = 1;
+		setBandanaCurrentImage(bandanaAspires); 
+		/*
+		
+			*/
+		bool_moveRightb = 1;
+		speedxb = 10;		  
+	} 
+
+//move left
+	if (!jumpleftb && !jumpstartedb)
+	if (gameKeys && !gameKeys[KEY_CTRL] && gameKeys[KEY_A]) 
+          {
+			idlingb = false;
+			idletimeb = 0;
+
+            bandanadirection = -1;
+			setBandanaCurrentImage(bandanaAspires); 
+			bool_moveLeftb = 1;
+			speedxb = -10;
+          }
+
+   //jump right
+		 //  if (!jumpstarted && !fallstart)
+		 if (!jumprightb)
+          if (gameKeys && gameKeys[KEY_D] && gameKeys[KEY_SHIFT] || gameKeys && gameKeys[KEY_SHIFT] && bool_moveRightb) 
+          {
+			idlingb = false;
+			idletimeb = 0;
+
+              bandanadirection = 1;
+              v0yb = v0ybinitial;
+              y0b = ybandana;
+
+			  setBandanaCurrentImage(bandanaAspires);
+              jumpstartedb = 1;
+              jumprightb = 1;
+              jumpleftb = 0;
+              if (onplatformb)
+                jumpfromplatformb = 1;
+              else
+                jumpfromplatformb = 0;
+          		//Sorina playSound("jump.wav");
+		      }
+
+  //jump left
+		 // if (!jumpstarted && !fallstart)
+		 if (!jumpleftb )
+          if (gameKeys && gameKeys[KEY_SHIFT] && gameKeys[KEY_A] || gameKeys && gameKeys[KEY_SHIFT] && bool_moveLeftb) 
+          {
+				idlingb = false;
+				idletimeb = 0;
+
+                bandanadirection = -1;
+                v0yb = v0ybinitial;
+                y0b = ybandana;
+
+				setBandanaCurrentImage(bandanaAspires); 
+                jumpstartedb = 1;
+                jumpleftb = 1;
+                jumprightb = 0;
+                if (onplatformb)
+                  jumpfromplatformb = 1;
+                else
+                  jumpfromplatformb = 0;
+          }
+
+		  //jump vertically
+		if (!jumpstartedb && !fallstartb && !jumpleftb && !jumprightb)
+		if (gameKeys && gameKeys[KEY_SHIFT] && !gameKeys[KEY_A] && !gameKeys[KEY_D])
+		{
+				idlingb = false;
+				idletimeb = 0;
+
+				bandanadirection = -1;
+                v0yb = v0ybinitial;
+                y0b= ybandana;
+
+				jumpstartedb = 1;
+                jumpleftb = 0;
+                jumprightb = 0;
+                if (onplatformb)
+                  jumpfromplatformb = 1;
+                else
+                  jumpfromplatformb = 0;
+
+		}
+
+		_DoMovementb();
+
+	}
+}
+
+function setBandanaCurrentImage(aspiring)
+{
+	//TODO
+	if (bandanaFrozen)
+	{
+		imgCurrentBandana = "imgBandanaFrozen";
+		return;
+	}
+	if (aspiring)
+	{
+		if (bandanadirection == 1)
+		{
+			imgCurrentBandana = "imgBandanaAspiringRight";
+		}
+		else
+		{
+			imgCurrentBandana = "imgBandanaAspiringLeft";
+		}
+		return;
+	}
+
+	if (bandanadirection == 0)
+	{
+			if(!bandanahashat && !bandanahasbomb && !bandanahasice)
+			{
+				imgCurrentBandana = "imgBandana";
+			}
+
+			if (bandanahashat) 
+			{
+				imgCurrentBandana = "imgBandanaFire";
+			}
+			if (bandanahasbomb)
+			{
+			
+				imgCurrentBandana = "imgBandanaBomb";
+			}
+			if(bandanahasice)
+			{
+		
+				imgCurrentBandana = "imgBandanaIce";
+			}
+	}
+
+	if (bandanadirection == 1)
+	{
+		if (!bandanahashat && !bandanahasbomb && !bandanahasice)
+		{	
+			imgCurrentBandana = "imgBandanaRight";
+		}
+		if (bandanahashat)
+		{
+			imgCurrentBandana = "imgBandanaFireRight";
+		}
+		if (bandanahasbomb)
+		{
+			imgCurrentBandana = "imgBandanaBombRight";
+		}
+		if (bandanahasice)
+		{
+			imgCurrentBandana = "imgBandanaIceRight";
+		}
+	}
+
+	if (bandanadirection == -1)
+	{
+		if (!bandanahashat && !bandanahasbomb && !bandanahasice)
+		{	
+			imgCurrentBandana = "imgBandanaLeft";
+		}
+		if (bandanahashat)
+		{
+			imgCurrentBandana = "imgBandanaFireLeft";
+		}
+		if (bandanahasbomb)
+		{
+			imgCurrentBandana = "imgBandanaBombLeft";
+		}
+		if (bandanahasice)
+		{
+			imgCurrentBandana = "imgBandanaIceLeft";
+		}
+	}
+
 }
 
 function setKirbyCurrentImage(aspiring)
@@ -652,8 +862,10 @@ function gameLoop()
 
 	//
 	speedx = 0;
+	speedxb = 0;
 
 	kirbyMovementEvents();
+	bandanaMovementEvents();
 
 	//clear screen
 			c = document.getElementById("canvas1");
@@ -662,7 +874,7 @@ function gameLoop()
 	//
 
 		// game over
-		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("pbBandana").getAttribute('value') <= 0)
+		if (document.getElementById("lifeKirby").getAttribute('value') <= 0 || document.getElementById("lifeBandana").getAttribute('value') <= 0)
 		{
 			clearInterval(funcSetInterval);
 			timerstopped = 1;
@@ -760,7 +972,8 @@ function gameLoop()
 	
 		
 		// enter bandana
-		drawImage(imgCurrentBandana, xb, yb);
+		xbandana += speedxb;
+		drawImage(imgCurrentBandana, xbandana, ybandana);
 
 		// getting coins
 		gettingCoins();
@@ -790,10 +1003,7 @@ function gettingCoins()
 				{
 			
 					playSound("coin3.wav");
-			
-					
 					coinsTaken++;
-					
 					coinAlive[i][level] = 0;
 					var c = coinsTaken + coinsTakenb;
 					document.getElementById("lblCoins").innerText ="Coins: " + c;
@@ -801,12 +1011,13 @@ function gettingCoins()
 				}
 
 			// bandana
-			if (collision(xb, bandanawidth, coinx[i][level], coinwidth, yb, bandanaheight, coiny[i][level], coinwidth))
+			if (coinAlive[i][level])
+			if (collision(xbandana, bandanawidth, coinx[i][level], coinwidth, ybandana, bandanaheight, coiny[i][level], coinwidth))
 			{
-					playSound("coin3.wav");
+				playSound("coin3.wav");
 				coinsTakenb++;
-				
-				c = coinsTaken + coinsTakenb;
+				coinAlive[i][level] = 0;
+				var c = coinsTaken + coinsTakenb;
 				document.getElementById("lblCoins").innerText ="Coins: " + c;
 			}
 		}
@@ -816,7 +1027,7 @@ function kirbyFindsDoor()
 {
 	if (!jumpstarted && !fallstart && collision(xkirby, kirbywidth, xDoor[level - 1], doorwidth, ykirby, kirbyheight, yDoor[level - 1], doorwidth)
 				||
-			collision(xb, bandanawidth, xDoor[level - 1], doorwidth, yb, bandanaheight, yDoor[level - 1], doorwidth)
+			collision(xbandana, bandanawidth, xDoor[level - 1], doorwidth, ybandana, bandanaheight, yDoor[level - 1], doorwidth)
 				)
 
 			if (level == maxLevel) 
@@ -899,10 +1110,14 @@ function jumpLevel()
 
 					speedx = 0;
 					bool_moveLeft = 0;
+					speedxb = 0;
+					bool_moveLeftb = 0;
+					bool_moveRightb = 0;
 					//Sorina a scos playSound("release.wav"); 
    }
    
-function jumpsfalls() {
+function jumpsfalls() 
+{
 		var yi = 0;
 		var yib = 0;
 
@@ -911,12 +1126,13 @@ function jumpsfalls() {
 		if (jumpstarted)
 			jumpkirby();
 
-     
+   //TODO
+	
 		if (fallstartb)
 			fallbandana();
 		if (jumpstartedb)
 			jumpbandana();
-
+	
 		
 	if(hashat)
 		kirbyfire();
@@ -924,7 +1140,7 @@ function jumpsfalls() {
 		kirbybomb();
 	if(hasice)
 		kirbyice();
-	}
+}
 
 function kirbyfire()
 	{
@@ -1168,113 +1384,153 @@ function kirbybomb()
 					//
 	}
 
- function fallbandana() {
-		var yib = 0;
-
-		onmovingplatformb = 0;
-		onplatformb = 0;
-		
+ function fallbandana() 
+ {
+	var yib = 0;
+		// y+=10;
+		onmovingplatformb = false;
+		onplatformb = false;
+			
 
 		tb = tb + 1;
 		
-		vby = (gravity * tb * tb) / 2;
+		vyb = (gravity * tb * tb) / 2;
 
-		yib = yb;
-		yb = yb0 + vby * tb;
+		yib = ybandana;
+		ybandana = y0b + vyb * tb;
 
 		// fall on a lower platform ?
-		for (var i = 0; i < 4; i++) {
+		for (var i = 0; i <= nrplatforms[level]; i++) {
 			// debug if (platform != i)
-			if ((xb >= xplatform[i][level] - 35) && (xb + kirbywidth <= xplatform[i][level] + platformwidth[i] + 35))
+			if ((xbandana >= xplatform[i][level] - 35)
+					&& (xbandana + bandanawidth <= xplatform[i][level] + platformwidth[i] + 35))
 				// debug if ((y0+vy*t+kirbywidth >=yplatform[i]-35) && (y0+vy*t+kirbywidth <=
 				// yplatform[i]+35))
-				if (yib + bandanaheight <= yplatform[i][level] && yb + bandanaheight >= yplatform[i][level]) {
-					yb = yplatform[i][level] - bandanaheight;
+				if (yib + bandanaheight <= yplatform[i][level] && ybandana + bandanaheight >= yplatform[i][level]) {
+					ybandana = yplatform[i][level] - bandanaheight;
 					onplatformb = 1;
 					platformb = i;
 					jumpstartedb = 0;
+					jumpleftb = 0;jumprightb = 0; //v2
 					fallstartb = 0;
 					tb = 0;
-					vby = vb0y;
+					vyb = v0yb;
 					if (movingplatform[i][level]) {
-						onmovingplatformb = 1;
+						onmovingplatformb = true;
 					}
 				}
 		}
-		//
-
-		drawImage(imgCurrentBandana, xb, yb);
-		return;
+		// end fall on platform
 
 	}
 
-	function jumpbandana() {
+	function jumpbandana() 
+	{
 		var yib = 0;
 
+onmovingplatformb = 0;
+
+onplatformb = 0;
+
+tb = tb + 1;
+vyb = v0yb + (gravity * tb * tb) / 2;
+
+yib = ybandana;
+ybandana = y0b + vyb * tb;
+// y = y+vy*t;
+
+if (jumprightb)
+{
+	if (xbandana + bandanawidth >= screenwidth) 
+	{
+		xbandana = screenwidth - bandanawidth;
+	} else
+		xbandana = xbandana + 35;
+}
+if (jumpleftb) {
+	if (xbandana <= 0) {
+		xbandana = 0;
+	} else
+		xbandana = xbandana - 35;
+}
+
+// jump on enemy ?
+
+// if (platform != i)
+for (var i = 0; i <= 3; i++)
+	if (enemyExists[i][level])
+		if ((xbandana >= xe[i][level] - 35) && (xbandana + bandanawidth <= xe[i][level] + bandanawidth + 35))
+			// debug if ((y0+vy*t+kirbywidth >=yplatform[i]-35) && (y0+vy*t+kirbywidth <=
+			// yplatform[i]+35))
+			if (yib + bandanaheight <= ye[i][level] && ybandana + bandanaheight >= ye[i][level]) {
+				// ?enemyDied = true;
+				enemyExists[i][level] = false;
+				if (enemySpitting[i][level])
+				{
+					startspitting[i] = 0;
+					
+				}
+				
+			
+					playSound("die.wav");
 		
+			}
 
-		onmovingplatformb = false;
-		onplatformb = false;
+// end jump on enemy
 
-		tb = tb + 1;
-		vby = vb0y + (gravity * tb * tb) / 2;
+// jump on platform ?
 
-		yib = yb;
-		yb = yb0 + vby * tb;
-		// y = y+vy*t;
-
-		if (jumprightb) 
+//next 2 lines fixed jump on multiple platforms bug
+var highestyplatform =9999;
+var highestplatform = -1;
+for (var i = 0; i <= nrplatforms[level]; i++) {
+	// if (platform != i)
+	if ((xbandana >= xplatform[i][level] - 35)
+			&& (xbandana + bandanawidth <= xplatform[i][level] + platformwidth[i] + 35))
+		// debug if ((y0+vy*t+kirbywidth >=yplatform[i]-35) && (y0+vy*t+kirbywidth <=
+		// yplatform[i]+35))
+		if (yib + bandanaheight <= yplatform[i][level] && ybandana + bandanaheight >= yplatform[i][level]) 
 		{
-			if (xb + kirbywidth >= screenwidth) 
+			if (yplatform[i][level] < highestyplatform)
 			{
-				xb = screenwidth - kirbywidth;
-			} else
-				xb = xb + 35;
+				highestyplatform = yplatform[i][level];
+				highestplatform = i;
+			}
 		}
-		if (jumpleftb) 
-		{
-			if (xb <= 0) 
-			{
-				xb = 0;
-			} else
-				xb = xb - 35;
+}
+
+if (highestplatform > -1)
+{
+	ybandana = yplatform[highestplatform][level] - bandanaheight;
+	onplatformb = 1;
+	platformb = highestplatform;
+	jumpstartedb = 0;
+	jumpleftb = 0;jumprightb = 0; //v2
+	tb = 0;
+	vyb = v0yb;
+	if (movingplatform[highestplatform][level]) 
+	{
+		onmovingplatformb = 1;
+	}
+}
+// end jump on platform
+
+// jump up into ceiling ?
+for (var i = 0; i <= nrplatforms[level]; i++) {
+	if ((xbandana >= xplatform[i][level] - 35)
+			&& (xbandana + bandanawidth <= xplatform[i][level] + platformwidth[i] + 35))
+		if (yib >= yplatform[i][level] + platformheight && ybandana <= yplatform[i][level] + platformheight) {
+			ybandana = yplatform[i][level] + platformheight;
+			jumpstartedb = 0;
+			jumpleftb = 0;jumprightb = 0; //v2
+			tb = 0;
+			vyb = 0;
+			fallstartb = 1;
 		}
+}
 
-		// jump on platform ?
-		for (var i = 0; i < 4; i++) {
-			// if (platform != i)
-			if ((xb >= xplatform[i][level] - 35) && (xb + bandanawidth <= xplatform[i][level] + platformwidth[i] + 35))
-				// debug if ((y0+vy*t+kirbywidth >=yplatform[i]-35) && (y0+vy*t+kirbywidth <=
-				// yplatform[i]+35))
-				if (yib + bandanaheight <= yplatform[i][level] && yb + bandanaheight >= yplatform[i][level]) {
-					yb = yplatform[i][level] - bandanaheight;
-					onplatformb = 1;
-					platformb = i;
-					jumpstartedb = 0;
-					tb = 0;
-					vby = vb0y;
-					if (movingplatform[i][level]) {
-						onmovingplatformb = 1;
-					}
-				}
-		}
+// end ceiling
 
-		// jump up into ceiling ?
-		for (var i = 0; i < 4; i++) {
-			if ((xb >= xplatform[i][level] - 35) && (xb + bandanawidth <= xplatform[i][level] + platformwidth[i] + 35))
-				if (yib >= yplatform[i][level] + platformheight && yb <= yplatform[i][level] + platformheight) {
-					yb = yplatform[i][level] + platformheight;
-					jumpstartedb = 0;
-					tb = 0;
-					vby = 0;
-					fallstartb = 1;
-				}
-		}
-
-		// end ceiling
-
-		drawImage(imgCurrentBandana, xb, yb);
-		//getContentPane().repaint(); // don't forget to repaint the container
 
 	}
 
@@ -1538,7 +1794,7 @@ function initDoors()
 						xkirby -= 5;
 					}
 					if (onmovingplatformb) {
-						xb -= 5;
+						xbandana -= 5;
 					}
 					if (xplatform[i][level] <= platformminx[i][level]) {
 
@@ -1551,7 +1807,7 @@ function initDoors()
 						xkirby += 5;
 					}
 					if (onmovingplatformb) {
-						xb += 5;
+						xbandana += 5;
 					}
 					if (xplatform[i][level] >= platformmaxx[i][level]) {
 						platformdirection[i][level] = -1;
@@ -1864,10 +2120,17 @@ function getImgPlatformForWorld(world)
 		
 		
 		xkirby = xinit+25; //v10 
+		xbandana = screenwidth - bandanawidth - 25;
 		if (!hashat && !hasbomb && !hasice)
 		{
 			ykirby = yinit;
 		}
+		if (!bandanahashat && !bandanahasbomb && !bandanahasice)
+		{
+			ybandana = ybinit;
+		}
+
+
 		if (hashat ||  hasice) 
 		{
 			ykirby = yinit - (kirbyfireheight - kirbyinitialheight);
@@ -1876,8 +2139,8 @@ function getImgPlatformForWorld(world)
 		{
 			ykirby = yinit - (kirbybombheight - kirbyinitialheight);
 		}
-		xb = xbinit; // screenwidth-kirbywidth;
-		yb = ybinit;
+		xbandana = xbinit; // screenwidth-kirbywidth;
+		ybandana = ybinit;
 		platform = 0;
 		onplatform = 1;
 		
@@ -1900,6 +2163,40 @@ function getImgPlatformForWorld(world)
   			x.play();
 		}
 		
+	}
+
+	function killBandana()
+	{
+		bandanaFrozen = false;
+		bandanaFrozenCounter = 0;
+
+		xbandana = xbinit;
+
+
+		//lose ability when killed ?
+		/*
+		ykirby = yinit;
+		hashat = false; hasice = false; hasbomb = false;
+		kirbyheight = kirbyinitialheight;
+		imgCurrent = "img";
+		*/
+
+		ybandana = ybinit;
+		if (bandanahashat ||  bandanahasice) 
+		{
+			ybandana = ybinit - (bandanafireheight - bandanainitialheight);
+		}
+		if(bandanahasbomb)
+		{
+			ybandana = ybinit - (kirbybombheight - bandanainitialheight);
+		}
+
+		setBandanaCurrentImage(false);
+		currentLifeBandana = document.getElementById("lifeBandana").getAttribute('value');
+		document.getElementById("lifeBandana").setAttribute('value', currentLifeBandana - lifePiece) ;
+						
+		playSound("die.wav");
+
 	}
 
 function killKirby()
@@ -2246,6 +2543,44 @@ function kirbyGetsAbility(i)
 							//
 }
 
+function bandanaGetsAbility(i)
+{
+	//v11
+	if (enemySpitting[i][level] && !enemyBomb[i][level] ) 
+							{
+								bandanahashat = 1;
+								
+								ybandana = ybandana - (bandanafireheight - bandanaheight);
+								bandanaheight = bandanafireheight;
+							}
+							if (enemyBomb[i][level] )
+							{
+								bandanahasbomb = 1;
+								
+								ybandana = ybandana - (bandanabombheight - bandanaheight);
+								bandanaheight = bandanabombheight;
+							}
+							if (enemyIce[i][level] )
+							{
+								
+								
+								
+								if  (!bandanahasice)
+								{
+									ybandana = ybandana - (bandanafireheight - bandanainitialheight);
+								}
+								bandanaheight = bandanafireheight;
+								
+								if (!bandanahasice)
+								{
+									y0b = ybandana; // oare ??
+								}
+									
+								bandanahasice = 1;
+							}
+							//
+}
+
 function enemyShootsKirby(i)
 {
 	if (collision(xkirby, kirbywidth, xspit[i], spitwidth, ykirby, kirbyheight, yspit[i], spitheight))
@@ -2279,20 +2614,32 @@ function enemyShootsKirby(i)
 
 function enemyShootsBandana(i)
 {
-	if (Math.abs(xb + bandanawidth / 2 - xspit[i]) <= 10
-								&& Math.abs(yb + bandanaheight / 2 - yspit[i]) <= 40) 
+	if (collision(xbandana, bandanawidth, xspit[i], spitwidth, ybandana, bandanaheight, yspit[i], spitheight))
 						{
-							
-							xb = xbinit;
-							yb = ybinit;
-						//	pbBandana.setValue(pbBandana.getValue() - 33);
-						currentLifeBandana = document.getElementById("pbBandana").getAttribute('value');
-						document.getElementById("pbBandana").setAttribute('value', currentLifeBandana - lifePiece) ;
-						
-								playSound("die.wav");
-						
-
 							startspitting[i] = false;
+
+							if (enemyIce[i][level]) 
+							{
+								
+								if (bandanahasbomb && !bandanaFrozen)
+								{
+									ybandana = ybandana + (kirbybombheight - bandanainitialheight);
+								}
+								if (bandanahasice && !bandanaFrozen)
+								{
+									ybandana = ybandana + (bandanaiceheight - bandanainitialheight);
+								}	
+								if (bandanahashat && !bandanaFrozen)
+								{
+									ybandana = ybandana + (bandanafireheight - bandanainitialheight);
+								}	
+								bandanaFrozen = true;
+								setBandanaCurrentImage(0);
+							}
+							else 
+							{
+								killBandana();
+							}
 						}
 }
 
@@ -2321,25 +2668,32 @@ function enemyEatsKirby(i)
 
 function enemyEatsBandana(i)
 {
-	if (yb + bandanaheight == ye[i][level] + enemyheight)
-						if ((xe[i][level] <= xb + bandanawidth + 5 && xe[i][level] >= xb - 5)
-								|| (xe[i][level] + bandanawidth >= xb - 5 && xe[i][level] + bandanawidth <= xb + 5)) {
-							if (imgCurrentBandana == "imgBandana")
-								drawImage(imgBlankE, xb, yb, null);
-							else
-								drawImage(imgBlankB, xb, yb, null);
-							xb = screenwidth - bandanawidth;
-							yb = 300;
-							pbBandana.setValue(pbBandana.getValue() - lifePiece);
-							
-								playSound("die.wav");
-					
+	if (collision(xbandana, bandanawidth, xe[i][level], enemywidth, ybandana, bandanaheight, ye[i][level], enemyheight))
+						{
+							if (!enemyFrozen[i][level])
+							{
+								killBandana();
+							} 
+							else //move frozen enemy
+							{
+								if (xe[i][level] <= xbandana + bandanawidth + 5 && xe[i][level] >= xbandana - 5)
+								{
+									xe[i][level] = xbandana+bandanawidth;
+								}
+								if (xe[i][level] + bandanawidth >= xbandana - 5
+										&& xe[i][level] + kirbywidth <= xbandana + 5)
+								{
+									xe[i][level] = xbandana - enemywidth;
+								}
+							}
 						} // end eat bandana
 }
 
+
+
 function enemyAspired(i)
 {
-	if (aspiring[i]) 
+	if (aspiring[i] == 1) 
 				{
 
 					
@@ -2394,6 +2748,59 @@ function enemyAspired(i)
 						}
 					}
 				}
+
+	if (aspiring[i] == 2) 
+	{
+		if (xbandana <= xe[i][level] ) 
+					{
+						if (xe[i][level] <= xbandana + bandanawidth + 5)
+						 {
+							aspiring[i] = 0;
+							bandanaAspires = 0;
+
+							////////
+							bandanaGetsAbility(i);
+							////////
+							
+							enemyExists[i][level] = false;
+							if (enemySpitting[i][level])
+							{
+								startspitting[i] = 0;
+								
+							}
+							setBandanaCurrentImage(bandanaAspires);
+
+						
+								playSound("die.wav");
+					
+						} else 
+						{
+							xe[i][level] -= 15;
+						}
+					} else 
+					{
+						if (xe[i][level] + bandanawidth >= xbandana - 5) 
+						{
+							aspiring[i] = 0;
+							bandanaAspires = 0;
+							//
+							bandanaGetsAbility(i);
+							//
+							enemyExists[i][level] = false;
+							if (enemySpitting[i][level])
+							{
+								startspitting[i] = 0;
+							}
+							setBandanaCurrentImage(bandanaAspires);
+						
+								playSound("die.wav");
+						
+						} else 
+						{
+							xe[i][level] += 15;
+						}
+					}
+	}
 }
 
 function initenemies() {
@@ -2811,11 +3218,11 @@ function setIceMonsterImage()
 
 
 // kirby hits bandana left
-if (ykirby + kirbyheight == yb + bandanaheight)
+if (ykirby + kirbyheight == ybandana + bandanaheight)
   // if ((xkirby<=xb+bandanawidth +5 && xkirby >= xb-5)||(xkirby+kirbywidth >=xb -
   // 5 && xkirby+kirbywidth <= xb + 5))
   // if ((xkirby <= xb +bandanawidth + 5) && (xkirby >= xb + bandanawidth - 5))
-  if (Math.abs(xkirby - xb - bandanawidth) <= 5) {
+  if (Math.abs(xkirby - xbandana - bandanawidth) <= 5) {
    // drawImage(imgCurrent, xkirby, ykirby);
     //getContentPane().repaint(); // don't forget to repaint the container
     return;
@@ -2863,17 +3270,17 @@ else
 
 }
 
-       function MoveRight()
-        {
+    function MoveRight()
+    {
       
 
      
 
         // kirby hits bandana right
-        if (ykirby + kirbyheight == yb + bandanaheight)
+        if (ykirby + kirbyheight == ybandana + bandanaheight)
           // if ((xkirby<=xb+bandanawidth +5 && xkirby >= xb-5)||(xkirby+kirbywidth >=xb -
           // 5 && xkirby+kirbywidth <= xb + 5))
-          if (Math.abs(xkirby + kirbywidth - xb) <= 5)
+          if (Math.abs(xkirby + kirbywidth - xbandana) <= 5)
           // if (xkirby < xb-kirbywidth)
           // if (Math.abs(xkirby+kirbywidth/2 - (xb+bandanawidth/2))<=25)
           {
@@ -2915,90 +3322,122 @@ else
 		  
        
                 
-        }
+    }
     
       
 
-function MoveLeftb() {
+function MoveLeftb() 
+{
 
 
-
-// bandana hits kirby left
-if (ykirby + kirbyheight == yb + bandanaheight)
+// kirby hits bandana left
+if (ykirby + kirbyheight == ybandana + bandanaheight)
   // if ((xkirby<=xb+bandanawidth +5 && xkirby >= xb-5)||(xkirby+kirbywidth >=xb -
   // 5 && xkirby+kirbywidth <= xb + 5))
-  // if ((xb <= xkirby +kirbywidth + 5) && (xb >= xkirby + kirbywidth - 5))
-  if (Math.abs(xb - xkirby - kirbywidth) <= 5) {
-    drawImage(imgCurrentBandana, xb, yb);
+  // if ((xkirby <= xb +bandanawidth + 5) && (xkirby >= xb + bandanawidth - 5))
+  if (Math.abs(xkirby - xbandana - bandanawidth) <= 5) {
+   // drawImage(imgCurrent, xkirby, ykirby);
     //getContentPane().repaint(); // don't forget to repaint the container
     return;
   } // end kirby hits banana left
 
+  //kirby hits platform
 for (var i = 1; i < 4; i++)
-  if (yb <= yplatform[i][level] + platformheight && yb >= yplatform[i][level]
-      && xb <= xplatform[i][level] + platformwidth[i] + 5
-      && xb >= xplatform[i][level] + platformwidth[i] - 5) {
-    drawImage(imgCurrentBandana, xb, yb);
-    //getContentPane().repaint(); // don't forget to repaint the container
-    return;
-  }
-
-if (xb > 0) {
-  xb -= 10;
-  if ((onplatformb) && (xb + bandanawidth <= xplatform[platformb][level] - 5)) {
-    fallstartb = 1;
-    yb = yb0;
-    vb0y = 0;
-  }
-}
-drawImage(imgCurrentBandana, xb, yb);
-//getContentPane().repaint(); // don't forget to repaint the container
-}
-
-function MoveRightb() {
-
-if (imgCurrentBandana == "imgBandana"){}
-  // drawimage("imgBlankE", xb, yb);
-else{}
-  // drawimage("imgBlankE", xb, yb);
-//getContentPane().repaint(); // don't forget to repaint the container
-
-// kirby hits bandana right
-if (ykirby + kirbyheight == yb + bandanaheight)
-  // if ((xkirby<=xb+bandanawidth +5 && xkirby >= xb-5)||(xkirby+kirbywidth >=xb -
-  // 5 && xkirby+kirbywidth <= xb + 5))
-  if ((xb + bandanawidth >= xkirby - 5) && (xb + bandanawidth <= xkirby + 5))
-  // if (xkirby < xb-kirbywidth)
-  // if (Math.abs(xkirby+kirbywidth/2 - (xb+bandanawidth/2))<=25)
+  if (ybandana <= yplatform[i][level] + platformheight && ybandana >= yplatform[i][level]
+      && xbandana <= xplatform[i][level] + platformwidth[i] + 5
+      && xbandana >= xplatform[i][level] + platformwidth[i] - 5) 
   {
-    // xkirby = xkirby - 25;
-    drawImage(imgCurrentBandana, xb, yb);
-    //getContentPane().repaint(); // don't forget to repaint the container
-    return;
-  } // end kirby hits banana
-
-if (xb > screenwidth - kirbywidth) {
-  // TODO
-}
-
-for (var i = 1; i < 4; i++)
-  if (yb <= yplatform[i][level] + platformheight && yb >= yplatform[i][level]
-      && xb + kirbywidth >= xplatform[i][level] - 5 && xb + kirbywidth <= xplatform[i][level] + 5) {
-    drawImage(imgCurrentBandana, xb, yb);
-    //getContentPane().repaint(); // don't forget to repaint the container
+	xbandana += 10;
     return;
   }
-if (xb < screenwidth - kirbywidth) {
-  xb += 10;
 
-  if ((onplatformb) && (xb >= xplatform[platformb][level] + platformwidth[platformb] + 5)) {
-    fallstartb = true;
-    yb = yb0;
-    vb0y = 0;
+if (xbandana > 0) 
+{
+  //xkirby -= 10;
+  if ((onplatformb) && (xbandana + bandanawidth <= xplatform[platformb][level] - 5)) 
+  {
+    fallstartb = 1;
+    ybandana = y0b;
+    v0yb = 0;
   }
 }
-drawImage(imgCurrentBandana, xb, yb);
+else
+		{
+			/*
+			bool_moveLeft = 0;
+			speedx = 0;
+			*/
+			//oare ?
+			if (level>1)
+			{
+				level--;
+				jumpLevel();
+				xbandana = screenwidth - kirbywidth;
+			}
+			else
+			{
+				bool_moveLeftb = 0;
+				speedxb = 0;
+			}
+		}
 
+
+}
+
+function MoveRightb() 
+{
+	
+
+     
+
+        // kirby hits bandana right
+        if (ykirby + kirbyheight == ybandana + bandanaheight)
+          // if ((xkirby<=xb+bandanawidth +5 && xkirby >= xb-5)||(xkirby+kirbywidth >=xb -
+          // 5 && xkirby+kirbywidth <= xb + 5))
+          if (Math.abs(xkirby + kirbywidth - xbandana) <= 5)
+          // if (xkirby < xb-kirbywidth)
+          // if (Math.abs(xkirby+kirbywidth/2 - (xb+bandanawidth/2))<=25)
+          {
+            // xkirby = xkirby - 25;
+          //  drawImage(imgCurrent, xkirby, ykirby);
+          //	getContentPane().repaint(); // don't forget to repaint the container
+            return;
+          } // end kirby hits banana
+
+        if (xbandana > screenwidth - bandanawidth) 
+		{
+          // TODO
+        }
+
+		//kirby hits platform
+        for (var i = 1; i < 4; i++)
+          if (ybandana <= yplatform[i][level] + platformheight && ybandana >= yplatform[i][level]
+              && xbandana + bandanawidth >= xplatform[i][level] - 5
+              && xbandana + bandanawidth <= xplatform[i][level] + 5) 
+		  {
+			xbandana -= 10;
+            return;
+          }
+
+        if (xbandana < screenwidth - bandanawidth) 
+		{
+          //xkirby += 10;
+
+          if ((onplatformb) && (xbandana >= xplatform[platformb][level] + platformwidth[platformb] + 5)) 
+		  {
+            fallstartb = 1;
+            ybandana = y0b;
+            v0yb = 0;
+          }
+        }
+		else
+		{
+			bool_moveRightb = 0;
+			speedxb = 0;
+		}
+		  
+       
+      
 }
 
         
@@ -3031,12 +3470,16 @@ document.addEventListener('keyup', function(event)
 			bool_moveLeft = 0;
 			speedx = 0;
 		  }
-          if (event.keyCode == 65) {
+          if (event.keyCode == KEY_A) 
+		  {
 			bool_moveLeftb = false;
+			speedxb = 0;
 		}
 
-		if (event.keyCode == 68) {
+		if (event.keyCode == KEY_D) 
+		{
 			bool_moveRightb = false;
+			speedxb = 0;
 
 		}
 
@@ -3051,61 +3494,12 @@ gameKeys = (gameKeys || []);
 gameKeys[event.keyCode] = (event.type == "keydown");
 ////
 
-			if  (timerstopped)
-			{
-				return;
-			}
-//bandana
-		if (event.keyCode == 65  && !event.shiftKey) {
-			imgCurrentBandana = "imgBandanaLeft";
-			bool_moveLeftb = true;
+if  (timerstopped)
+{
+	return;
+}
 
-		}
-		if (event.keyCode == 68 && !event.shiftKey) {
-			imgCurrentBandana = "imgBandanaRight";
-			bool_moveRightb = true;
-
-		}
-
-    if (event.keyCode == 68 && event.shiftKey || event.keyCode == 16 && bool_moveRightb) {
-			vb0y = -75;
-			yb0 = yb;
-			if (imgCurrentBandana == "imgBandana"){}
-				// drawimage("imgBlankE", xb, yb);
-			else{}
-				// drawimage("imgBlankE", xb, yb);
-			imgCurrentBandana = "imgBandanaRight";
-			jumpstartedb = 1;
-			jumprightb = 1;
-			jumpleftb = 0;
-			if (onplatformb)
-				jumpfromplatformb = 1;
-			else
-				jumpfromplatformb = 0;
-			
-			//Sorina	playSound("jump.wav");
 		
-			return;
-		}
-
-		if (event.keyCode == 65 && event.shiftKey || event.keyCode == 16 && bool_moveLeftb) {
-			vb0y = -75;
-			yb0 = yb;
-				
-			imgCurrentBandana = "imgBandanaLeft";
-			jumpstartedb = 1;
-			jumpleftb = 1;
-			jumprightb = 0;
-			if (onplatformb)
-				jumpfromplatformb = 1;
-			else
-				jumpfromplatformb = 0;
-			
-			//Sorina	playSound("jump.wav");
-			
-			return;
-		}
-
 //kirby
 		if (kirbyFrozen)
 		{
@@ -3201,6 +3595,34 @@ gameKeys[event.keyCode] = (event.type == "keydown");
 
 			}
 
+			 //aspire bandana
+			 if (event.keyCode == KEY_S) 
+			//can't aspire if it has ability
+			if (!bandanahashat && !bandanahasbomb && !bandanahasice)
+			for (var i = 0; i <= 3; i++)
+		   {
+				if (
+					enemyExists[i][level] 
+				&& Math.abs(xbandana - xe[i][level]) <= aspiringrange
+				&& (
+					(bandanadirection == 1) && xbandana <= xe[i][level]
+					||
+					(bandanadirection == -1) && xbandana >= xe[1][level] 		
+					)
+				&& Math.abs(ybandana - ye[i][level]) <= 25
+				) 
+				{
+					aspiring[i] = 2;
+					bandanaAspires = 1;
+					
+					//setEnemyImage(i, level, 0, 1, 0, 1);
+					setBandanaCurrentImage(bandanaAspires);
+					
+					break;
+				}
+
+			}
+
           _DoMovement();
 		 _DoMovementb();
 });
@@ -3212,8 +3634,8 @@ function start()
   document.getElementById('lblLifeKirby').removeAttribute('hidden');
   document.getElementById('lifeKirby').removeAttribute('hidden');
 
-  document.getElementById('lblpbBandana').removeAttribute('hidden');
-  document.getElementById('pbBandana').removeAttribute('hidden');
+  document.getElementById('lblLifeBandana').removeAttribute('hidden');
+  document.getElementById('lifeBandana').removeAttribute('hidden');
   
   document.getElementById('lblLevel').removeAttribute('hidden');
   document.getElementById('lblCoins').removeAttribute('hidden');
@@ -3244,9 +3666,9 @@ function start()
 </tr>
 
 <tr><td>
-  <label id="lblpbBandana" for="pbBandanafile" hidden>Life Bandana:</label>
+  <label id="lblLifeBandana" for="LifeBandanafile" hidden>Life Bandana:</label>
   </td><td> 
-  <progress id="pbBandana" value="99" max="99" hidden></progress>  
+  <progress id="lifeBandana" value="99" max="99" hidden></progress>  
 </td></tr>
 
 <tr><td colspan="2"><div id="lblLevel" hidden>Level: 1</div></td><td colspan="2"><div id="lblWorld" hidden>World: 1</div></td>
@@ -3294,7 +3716,24 @@ function start()
 <img id="imgKirbyBombLeft" src="images/bombkirbyleftt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgKirbyBombRight" src="images/bombkirbyrightt.png" alt="no" width="640" height="75" top="375" left="0" >
 
+<img id="imgKirbyIceLeft" src="images/icekirbyleftt.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgKirbyIceRight" src="images/icekirbyrightt.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgKirbyIce" src="images/icekirbyt.png" alt="no" width="640" height="75" top="375" left="0" >
 
+<img id="imgBandanaFire" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaFireLeft" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaFireRight" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgBandanaBomb" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaBombLeft" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaBombRight" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgBandanaIceLeft" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaIceRight" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaIce" src="images/bandanat.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgBandanaAspiringLeft" src="images/bandanaleftt.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgBandanaAspiringRight" src="images/bandanarightt.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgFireLeft" src="images/fireleft.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgFireRight" src="images/fireright.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -3331,9 +3770,6 @@ function start()
 <img id="imgChillyRight" src="images/chillyrightt.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgChillyHorizontal" src="images/chillyhorizontalt.png" alt="no" width="640" height="75" top="375" left="0" >
 
-<img id="imgKirbyIceLeft" src="images/icekirbyleftt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgKirbyIceRight" src="images/icekirbyrightt.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgKirbyIce" src="images/icekirbyt.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgLeftFrozen" src="images/enemylefttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgRightFrozen" src="images/enemyrighttFrozen.png" alt="no" width="640" height="75" top="375" left="0" >
