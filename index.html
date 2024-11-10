@@ -20,6 +20,8 @@ const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
 
+var xStaticBomb;
+var yStaticBomb;
 
 var groundy = 525; //375
 var v0yinitial = -75;
@@ -213,6 +215,8 @@ var onmovingplatform = 0;
 
 var coinAlive = [];
 coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
+
+var staticBombAlive = true;
 
     var platformrange = 200;
 
@@ -924,6 +928,7 @@ function gameLoop()
 
 		doors();
 		coins();
+		staticBomb();
 
 		// caged waddle dee
 		cagedWaddleeDee();
@@ -977,6 +982,7 @@ function gameLoop()
 
 		// getting coins
 		gettingCoins();
+		gettingBomb();
 
 		// release waddlee dee
 		kirbyReleasesWaddleeDee();
@@ -1021,6 +1027,19 @@ function gettingCoins()
 				document.getElementById("lblCoins").innerText ="Coins: " + c;
 			}
 		}
+}
+
+function gettingBomb()
+{
+	if (staticBombAlive)
+	if (collision(xkirby, kirbywidth, xStaticBomb, bombwidth, ykirby, kirbyheight, yStaticBomb, bombwidth))
+	{
+		playSound("coin.wav");
+		staticBombAlive = false;
+		hasbomb = 1;
+		ykirby = ykirby - (kirbybombheight - kirbyheight);
+		kirbyheight = kirbybombheight;
+	}
 }
 
 function kirbyFindsDoor()
@@ -1326,6 +1345,7 @@ function kirbybomb()
 						}
 						
 						//shoot ice monster
+						if (iceMonsterAlive)
 						if (level == secondworldmaxlevel)
 						{
 							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
@@ -1700,6 +1720,22 @@ function coins()
 function doors()
 {
 	drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+}
+
+function staticBomb()
+{
+	if (level >= 8)
+	if (staticBombAlive)
+	{
+		drawImage("imgBombK0", xStaticBomb, yStaticBomb);
+	}
+}
+
+function initStaticBomb()
+{
+		staticBombAlive = true;
+		xStaticBomb = 600;
+		yStaticBomb = groundy - bombheight;
 }
 
 function initDoors() 
@@ -2117,7 +2153,7 @@ function getImgPlatformForWorld(world)
 	
 		
 		//bombNo = 0;
-		
+		staticBombAlive = true;
 		
 		xkirby = xinit+25; //v10 
 		xbandana = screenwidth - bandanawidth - 25;
@@ -2162,6 +2198,13 @@ function getImgPlatformForWorld(world)
 			x.setAttribute("src", "sounds/dangerous.mp3")
   			x.play();
 		}
+		 if (level == firstworldmaxlevel + 1)
+		 {
+			x = document.getElementById('mySound');
+			x.pause();
+			x.setAttribute("src", "sounds/froststreet.mp3")
+  			x.play();
+		 }
 		
 	}
 
@@ -2238,7 +2281,14 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 	{
 		if (world == 2)
 		{
-			imgEnemyCurrent[i] = "imgPokeson";
+			if (level == 8)
+			{
+				imgEnemyCurrent[i] = "imgPokeson";
+			}
+			else
+			{
+				imgEnemyCurrent[i] = "imgRedMonster";
+			}
 			return;
 		}
 
@@ -2351,7 +2401,14 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 		}
 		if (world == 2)
 		{
-			imgEnemyCurrent[i] = "imgPokesonHorizontal";
+			if (level == 8)
+			{
+				imgEnemyCurrent[i] = "imgPokesonHorizontal";
+			}
+			else
+			{
+				imgEnemyCurrent[i] = "imgRedMonsterHorizontal";
+			}
 		}
 	}
 
@@ -3168,6 +3225,7 @@ function setIceMonsterImage()
 	initDoors();
     initcoins();
 	initenemies();
+	initStaticBomb();
 
     level5();
 	level6();
@@ -3788,6 +3846,9 @@ function start()
 
 <img id="imgPokeson" src="images/pokeson.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgPokesonHorizontal" src="images/pokesonhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgRedMonster" src="images/redmonster.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgRedMonsterHorizontal" src="images/redmonsterhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgIceMonster" src="images/icemonster.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgIceMonster2" src="images/icemonster2.png" alt="no" width="640" height="75" top="375" left="0" >
