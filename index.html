@@ -216,7 +216,7 @@ var onmovingplatform = 0;
 var coinAlive = [];
 coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 
-var staticBombAlive = true;
+var staticBombAlive = new Array(0,0,0,0,0,0,1,1,1,1);
 
     var platformrange = 200;
 
@@ -1031,11 +1031,11 @@ function gettingCoins()
 
 function gettingBomb()
 {
-	if (staticBombAlive)
+	if (staticBombAlive[level])
 	if (collision(xkirby, kirbywidth, xStaticBomb, bombwidth, ykirby, kirbyheight, yStaticBomb, bombwidth))
 	{
 		playSound("coin.wav");
-		staticBombAlive = false;
+		staticBombAlive[level] = 0;
 		hasbomb = 1;
 		ykirby = ykirby - (kirbybombheight - kirbyheight);
 		kirbyheight = kirbybombheight;
@@ -1724,8 +1724,7 @@ function doors()
 
 function staticBomb()
 {
-	if (level >= 8)
-	if (staticBombAlive)
+	if (staticBombAlive[level])
 	{
 		drawImage("imgBombK0", xStaticBomb, yStaticBomb);
 	}
@@ -1733,7 +1732,7 @@ function staticBomb()
 
 function initStaticBomb()
 {
-		staticBombAlive = true;
+		//staticBombAlive = 1;
 		xStaticBomb = 600;
 		yStaticBomb = groundy - bombheight;
 }
@@ -2153,7 +2152,6 @@ function getImgPlatformForWorld(world)
 	
 		
 		//bombNo = 0;
-		staticBombAlive = true;
 		
 		xkirby = xinit+25; //v10 
 		xbandana = screenwidth - bandanawidth - 25;
