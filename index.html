@@ -1309,10 +1309,9 @@ function kirbybomb()
 
 					if (startspittingkirby) 
 					for (var k = 1; k<=bombNo;k++)
+					
 					if (bombAlive[k])
 					{
-						
-
 						xbombkirby[k] += 10 * bombdirectionkirby[k];
 
 						angleK[k] += 20*bombdirectionkirby[k];
@@ -1333,7 +1332,9 @@ function kirbybomb()
 							if ((xbombkirby[k] + bombwidth/2) >= xwhispytree)
 							{
 								playSound("explosion.wav"); 
-								startspittingkirby[k] = false;
+							//	bombNo--;
+						//	if (bombNo == 0) 
+						//			startspittingkirby = false;
 								bombAlive[k] = 0;
 								whispyLife --;
 							}
@@ -1350,8 +1351,10 @@ function kirbybomb()
 						{
 							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
 							{
-								
-								startspittingkirby[k] = false;
+							//	bombNo--;
+							//if (bombNo == 0) 
+							//		startspittingkirby = false;
+								//startspittingkirby[k] = false;
 								bombAlive[k] = 0;
 								iceMonsterLife --;
 								xicemonster += 15;
@@ -1386,7 +1389,7 @@ function kirbybomb()
 							
 							//bombNo--;
 							//if (bombNo == 0) 
-							startspittingkirby = false;
+							//	startspittingkirby = false;
 							bombAlive[k] = 0;
 						}
 					}
@@ -1396,7 +1399,7 @@ function kirbybomb()
 						{
 							//bombNo--;
 							//if (bombNo == 0) 
-								startspittingkirby = false;
+							//		startspittingkirby = false;
 								bombAlive[k] = 0;
 						}
 
@@ -3573,10 +3576,11 @@ if  (timerstopped)
 				spitdirectionkirby = kirbydirection;	
 			}
 			if (hasbomb)
-			if (bombAlive[1] == 0)
+			//if (bombAlive[1] == 0)
+			//if (bombNo <5)
 			{
-				//bombNo++;
-				bombNo = 1;
+				bombNo++;
+				//bombNo = 1;
 				bombAlive[bombNo] = 1;
 				angleK[bombNo] = 0;
 				startspittingkirby = 1;
