@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 25.0
+v 26.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -2566,7 +2566,7 @@ function enemy() {
 function kirbyGetsAbility(i)
 {
 	//v11
-	if (enemySpitting[i][level] && !enemyBomb[i][level] ) 
+	if ((enemySpitting[i][level] && !enemyBomb[i][level])||(world == 2 && level == 9) ) 
 							{
 								hashat = 1;
 								
@@ -3852,8 +3852,8 @@ function start()
 <img id="imgRedMonster" src="images/redmonster.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgRedMonsterHorizontal" src="images/redmonsterhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
-<img id="imgIceMonster" src="images/icemonster.png" alt="no" width="640" height="75" top="375" left="0" >
-<img id="imgIceMonster2" src="images/icemonster2.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceMonster" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgIceMonster2" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
