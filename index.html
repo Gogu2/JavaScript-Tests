@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 27.0
+v 28.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -1035,7 +1035,7 @@ function gameLoop()
 		{
 			whispywoods();
 		}
-		if (level == secondworldmaxlevel)
+		if (level == secondworldmaxlevel - 1)
 		{
 			icemonster();
 		}
@@ -1171,13 +1171,13 @@ function gettingCoins()
 
 function gettingBomb()
 {
-	if (!(hashat || hasice))
+	if (!(hasbomb || hasice))
 	if (staticBombAlive[level])
 	if (collision(xkirby, kirbywidth, xStaticBomb, bombwidth, ykirby, kirbyheight, yStaticBomb, bombwidth))
 	{
 		playSound("coin.wav");
 		staticBombAlive[level] = 0;
-		hasbomb = 1;
+		hashat = 1;
 		ykirby = ykirby - (kirbybombheight - kirbyheight);
 		kirbyheight = kirbybombheight;
 	}
@@ -1355,7 +1355,7 @@ function kirbyfire()
 						}
 
 					//shoot ice monster
-					if (level == secondworldmaxlevel)
+					if (level == secondworldmaxlevel-1)
 						{
 							if (xkirby+kirbywidth+firewidth+5 >= xicemonster)
 							{
@@ -1530,7 +1530,7 @@ function kirbybomb()
 						
 						//shoot ice monster
 						if (iceMonsterAlive)
-						if (level == secondworldmaxlevel)
+						if (level == secondworldmaxlevel - 1)
 						{
 							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
 							{
@@ -2015,6 +2015,12 @@ function initDoors()
 		if (ilevel == 10)
 		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
+			yDoor[ilevel - 1] = groundy - doorHeight;		
+		}
+
+		if (ilevel == 11)
+		{
+			xDoor[ilevel - 1] = screenwidth -250; // screenwidth - 75;
 			yDoor[ilevel - 1] = groundy - doorHeight;		
 		}
 	}
