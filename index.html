@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 26.0
+v 27.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -21,7 +21,7 @@ const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
 
-
+var iceblockinitialwidth = 75;
 var startKirbyRotate = 0;
 var angleKirby = 0;
 
@@ -163,6 +163,7 @@ var startspitting = []; //5
     var applewidth = 89;
 	var appleheight = 84;
 	var coinwidth = 75;
+	
 	var kirbywidth = 47;// 75;
 	var bandanawidth = 50;
 	var bandanaheight = 75;
@@ -219,14 +220,21 @@ var onmovingplatform = 0;
     //var ye = 300;
 
    // var maxLevel = 3;
-   var maxLevel = 10;
+   var maxLevel = 11;
    var firstworldmaxlevel = 7;
-   var secondworldmaxlevel = 10;
+   var secondworldmaxlevel = 11;
+
+
+
+
 
 var coinAlive = [];
 coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 
-var staticBombAlive = new Array(0,0,0,0,0,0,1,1,1,1);
+var iceBlockAlive = [];
+iceBlockAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
+
+var staticBombAlive = new Array(0,0,0,0,0,0,1,1,1,1, 0);
 
     var platformrange = 200;
 
@@ -237,8 +245,9 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 
     var angleE = new Array(0,0,0,0);
-    const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3);
-	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0);
+          const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0);
+	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0);
+	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 1);
 
     var movingplatform = [];
     movingplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
@@ -290,6 +299,13 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   coiny =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   var coinx = [];
   coinx =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+
+  var iceblocky = [];
+  iceblocky =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+  var iceblockx = [];
+  iceblockx =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+  var iceblockwidth = [];
+  iceblockwidth =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(iceblockinitialwidth));
     
     const xDoor = new Array(0,0,0);
     const yDoor = new Array(0,0,0);
@@ -386,6 +402,14 @@ function sleep(miliseconds) {
   ctx.drawImage(img, xdraw, ydraw);
 }
 
+function drawImageSize(idImage, xdraw, ydraw, width, height)
+{
+  const c = document.getElementById("canvas1");
+  const ctx = c.getContext("2d");
+  const img = document.getElementById(idImage);
+  ctx.drawImage(img, xdraw, ydraw, width, height);
+}
+
 function drawRotatedBombK(xdraw, ydraw, angle)
 {
 	const c = document.getElementById("canvas1");
@@ -441,6 +465,12 @@ function drawImageAngle(idImage, xdraw, ydraw, height,  angle)
 	ctx.restore();
 }
 
+function shrinkObject(idImage, xdraw, ydraw, width)
+{
+	drawImageSize(idImage, xdraw, ydraw, width*0.5, width*0.5);
+	drawImageSize(idImage, xdraw, ydraw, width*0.25, width*0.25);
+	drawImageSize(idImage, xdraw, ydraw, width*0.125, width*0.125);
+}
 
 //var TO_RADIANS = Math.PI/180; 
 /*
@@ -889,6 +919,7 @@ function gameLoop()
     {
 
 		
+
 		if (startKirbyRotate)
 		{
 			angleKirby+=45;
@@ -992,6 +1023,7 @@ function gameLoop()
 		doors();
 		coins();
 		staticBomb();
+		iceBlocks();
 
 		// caged waddle dee
 		cagedWaddleeDee();
@@ -1139,6 +1171,7 @@ function gettingCoins()
 
 function gettingBomb()
 {
+	if (!(hashat || hasice))
 	if (staticBombAlive[level])
 	if (collision(xkirby, kirbywidth, xStaticBomb, bombwidth, ykirby, kirbyheight, yStaticBomb, bombwidth))
 	{
@@ -1287,6 +1320,8 @@ function kirbyfire()
 			{
 				drawImage("imgFireLeft", xkirby-firewidth, ykirby+enemymouthy /*+enemymouthy*/);	
 			}
+
+			//shoot enemy
 				for (var i = 0;i<=3;i++) 
 				{
 					if(enemyExists[i][level])
@@ -1318,6 +1353,46 @@ function kirbyfire()
 								whispyAlive = false;
 							}
 						}
+
+					//shoot ice monster
+					if (level == secondworldmaxlevel)
+						{
+							if (xkirby+kirbywidth+firewidth+5 >= xicemonster)
+							{
+								playSound("die.wav"); 
+								iceMonsterLife --;
+							}
+							if (iceMonsterLife <= 0)
+							{
+								iceMonsterAlive = 0;
+							}
+						}
+
+				//shoot ice block
+				for (var i = 0;i<=nriceblocks[level];i++) 
+				{
+					if(iceBlockAlive[i][level])
+					{
+						if (kirbydirection == 1)
+							xfire = xkirby+kirbywidth;
+						else
+							xfire = xkirby;
+						yfire = ykirby+kirbyheight/2; 
+						
+						if (collision(xfire, firewidth, iceblockx[i][level], iceblockinitialwidth, yfire, fireheight, iceblocky[i][level], iceblockinitialwidth))
+						{
+							iceblockwidth[i][level] -=10;
+							iceblocky[i][level] += 10;
+							
+							if (iceblockwidth[i][level] < 10)
+							{
+								iceBlockAlive[i][level] = false;
+							}
+							
+							playSound("die.wav");
+						}
+					}	
+				}
 
 			
 			
@@ -1500,7 +1575,9 @@ function kirbybomb()
 							//	startspittingkirby = false;
 							bombAlive[k] = 0;
 						}
-					}
+						}
+
+
 
 						
 						if (xbombkirby[k] < 0 || xbombkirby[k] > screenwidth) 
@@ -1842,6 +1919,15 @@ function doors()
 	drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
 }
 
+function iceBlocks()
+{
+	for (var i = 0; i < nriceblocks[level]; i++) 
+	if (iceBlockAlive[i][level])
+		{
+			drawImageSize("imgIceBlock", iceblockx[i][level], iceblocky[i][level], iceblockwidth[i][level], iceblockwidth[i][level]);
+		}
+}
+
 function staticBomb()
 {
 	if (staticBombAlive[level])
@@ -2018,6 +2104,20 @@ function getImgPlatformForWorld(world)
 		res = "imgPlatformIce";
 
 	return res;
+}
+
+function initIceBlocks()
+{
+	iceblockx[0][11] = 400;
+	iceblocky[0][11] = groundy-iceblockinitialwidth;
+
+	
+	for (j = 1;j<=maxLevel;j++)
+		for (var i = 0;i<nriceblocks[level];i++)
+		{
+			iceBlockAlive[i][j] = 1;
+			iceblockwidth[i][j] = iceblockinitialwidth;
+		}
 }
 
   function initcoins() {
@@ -3207,6 +3307,11 @@ function initenemies() {
 		enemyExists[2][10] = false;	
 	}
 
+	function level11()
+	{
+
+	}
+
 
   function copylevel(levelSource, levelDest, platforms) 
   {
@@ -3342,6 +3447,7 @@ function setIceMonsterImage()
 	initplatforms();
 	initDoors();
     initcoins();
+	initIceBlocks();
 	initenemies();
 	initStaticBomb();
 
@@ -3351,6 +3457,7 @@ function setIceMonsterImage()
 	level8();
 	level9();
 	level10();
+	level11();
    
    
 	idling = false;
@@ -3984,6 +4091,8 @@ function start()
 
 <img id="imgIceMonster" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgIceMonster2" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
+
+<img id="imgIceBlock" src="images/iceblock.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
