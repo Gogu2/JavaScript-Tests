@@ -7,6 +7,7 @@ const gameSpeed = 60;//60
 const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
+const gamekirbySlideTime = 20;
 
 const KEY_DELETE = 46;
 const KEY_ENTER = 13;
@@ -19,6 +20,15 @@ const KEY_A = 65;
 const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
+
+
+var startKirbyRotate = 0;
+var angleKirby = 0;
+
+var timer_right = 0;
+var timer_right_started = 0;
+var timer_left = 0;
+var timer_left_started = 0;
 
 var xStaticBomb;
 var yStaticBomb;
@@ -361,6 +371,13 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
     
     var level; 
     
+function sleep(miliseconds) {
+   var currentTime = new Date().getTime();
+
+   while (currentTime + miliseconds >= new Date().getTime()) {
+   }
+}
+
   function drawImage(idImage, xdraw, ydraw)
 {
   const c = document.getElementById("canvas1");
@@ -411,7 +428,7 @@ function drawRotatedBombE(xdraw, ydraw, angle)
 }
 
 
-function drawImageAngle(idImage, xdraw, ydraw, angle)
+function drawImageAngle(idImage, xdraw, ydraw, height,  angle)
 {
 	const c = document.getElementById("canvas1");
     const ctx = c.getContext("2d");
@@ -419,7 +436,7 @@ function drawImageAngle(idImage, xdraw, ydraw, angle)
     ctx.save();
 	ctx.translate(xdraw, ydraw);
 	ctx.rotate(angle);
-	ctx.translate(-(xdraw+bombheight/2),-(ydraw+bombheight/2));
+	ctx.translate(-(xdraw+height/2),-(ydraw+height/2));
 	ctx.drawImage(img,xdraw, ydraw);
 	ctx.restore();
 }
@@ -452,7 +469,14 @@ function drawRotatedImage_old(idImage, x, y, angle)
 }
 */
 
-   
+function kirbyRotate()
+{
+	for (var i = 0;i<=180;i+=20)
+	{
+		drawImageAngle("img", xkirby, ykirby, i);
+	}
+}   
+
 function collision_old(x1, width1, x2, width2, y1, height1, y2, height2)
   {
 	var res = (
@@ -864,8 +888,47 @@ function setKirbyCurrentImage(aspiring)
 function gameLoop() 
     {
 
-	//
-	speedx = 0;
+		
+		if (startKirbyRotate)
+		{
+			angleKirby+=45;
+			
+			if  (angleKirby >= 360)
+			{
+				angleKirby = 0;
+				startKirbyRotate = 0;
+			}
+		}
+			
+	if (world == 2)
+	 {
+	if (timer_right_started)
+	{
+		timer_right++;
+	}
+	if (timer_left_started)
+	{
+		timer_left++;
+	}
+
+
+	if (timer_right >= gamekirbySlideTime)
+	{	
+		timer_right_started = 0;
+		timer_right = 0;
+		speedx = 0;
+	}
+	if (timer_left >= gamekirbySlideTime)
+	{	
+		timer_left_started = 0;
+		timer_left = 0;
+		speedx = 0;
+	}
+}
+	else
+	{
+		speedx = 0;
+	}
 	speedxb = 0;
 
 	kirbyMovementEvents();
@@ -973,7 +1036,14 @@ function gameLoop()
 
 		
 		xkirby+=speedx;
-		drawImage(imgCurrent, xkirby, ykirby);
+		if (angleKirby != 0)
+		{
+			drawImageAngle(imgCurrent, xkirby, ykirby, kirbyheight, angleKirby);
+		}
+		else
+		{	
+			drawImage(imgCurrent, xkirby, ykirby);		
+		}
 	
 		
 		// enter bandana
@@ -1323,7 +1393,7 @@ function kirbybomb()
 						
 						
 						//drawRotatedBombK( xbombkirby[k], ybombkirby[k], angleK[k]);
-						drawImageAngle("imgBombK0",  xbombkirby[k], ybombkirby[k], angleK[k])
+						drawImageAngle("imgBombK0",  xbombkirby[k], ybombkirby[k], bombheight, angleK[k])
 
 						
 						//shoot whispywoods
@@ -1616,6 +1686,8 @@ function jumpkirby()
 		ykirby = y0 + vy * t;
 		// y = y+vy*t;
 
+		
+
 		if (jumpright)
 		{
 			if (xkirby + kirbywidth >= screenwidth) 
@@ -1708,6 +1780,13 @@ function jumpkirby()
 
 		// end ceiling
 
+
+		
+		//	timerstopped = 1;	
+		startKirbyRotate = 1;
+		
+		//	timerstopped = 0;
+		
 	}
 
 
@@ -2551,7 +2630,7 @@ function enemy() {
 							angleE[i] = 0;
 						}
 						//drawRotatedBombE( xspit[i], yspit[i], angleE[i]);
-						drawImageAngle("imgBombE0", xspit[i], yspit[i], angleE[i])
+						drawImageAngle("imgBombE0", xspit[i], yspit[i], bombheight, angleE[i])
 					}
 					setEnemyImage(i, level, enemydirection[i][level], aspiring[i], enemyFrozen[i][level]);
 					drawImage(imgEnemyCurrent[i], xe[i][level], ye[i][level]);
@@ -3520,14 +3599,23 @@ document.addEventListener('keyup', function(event)
 
           if (event.keyCode == KEY_RIGHT) 
           {
+			if (world == 2)
+			{
+				timer_right_started = 1;
+			}
+			//speedx = 0;
 			bool_moveRight = 0;
-			speedx = 0;
+			
 		  }
 
           if (event.keyCode == KEY_LEFT) 
           {
+			if (world == 2)
+			{
+				timer_left_started = 1;
+			}
 			bool_moveLeft = 0;
-			speedx = 0;
+			//speedx = 0;
 		  }
           if (event.keyCode == KEY_A) 
 		  {
