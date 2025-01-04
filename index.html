@@ -1045,7 +1045,8 @@ function gameLoop()
 			drawImage(imgCurrent, xkirby, ykirby);		
 		}
 	
-		
+		kirbyCheckMargins();
+
 		// enter bandana
 		xbandana += speedxb;
 		drawImage(imgCurrentBandana, xbandana, ybandana);
@@ -1066,8 +1067,45 @@ function gameLoop()
 
 		jumpsfalls();
 
-
+		
+	
    } //end gameLoop()
+
+function kirbyCheckMargins()
+{
+	if ((onplatform) && 
+	(
+	(xkirby + kirbywidth <= xplatform[platform][level] - 5)
+	||
+	(xkirby >= xplatform[platform][level] + platformwidth[platform] + 5)
+	)
+	) 
+	{
+		fallstart = 1;
+		ykirby = y0;
+		v0y = 0;
+	}
+
+	if (xkirby <=0)
+	{
+			/*
+			bool_moveLeft = 0;
+			speedx = 0;
+			*/
+			//oare ?
+			if (level>1)
+			{
+				level--;
+				jumpLevel();
+				xkirby = screenwidth - kirbywidth;
+			}
+			else
+			{
+				bool_moveLeft = 0;
+				speedx = 0;
+			}
+		}
+}
 
 function gettingCoins()
 {
@@ -3379,31 +3417,33 @@ for (var i = 1; i < 4; i++)
 if (xkirby > 0) 
 {
   //xkirby -= 10;
+  /* kirbyCheckMargins()
   if ((onplatform) && (xkirby + kirbywidth <= xplatform[platform][level] - 5)) 
   {
     fallstart = 1;
     ykirby = y0;
     v0y = 0;
   }
+	*/
 }
 else
 		{
-			/*
-			bool_moveLeft = 0;
-			speedx = 0;
-			*/
-			//oare ?
-			if (level>1)
-			{
-				level--;
-				jumpLevel();
-				xkirby = screenwidth - kirbywidth;
-			}
-			else
-			{
-				bool_moveLeft = 0;
-				speedx = 0;
-			}
+			// /*
+			// bool_moveLeft = 0;
+			// speedx = 0;
+			// */
+			// //oare ?
+			// if (level>1)
+			// {
+			// 	level--;
+			// 	jumpLevel();
+			// 	xkirby = screenwidth - kirbywidth;
+			// }
+			// else
+			// {
+			// 	bool_moveLeft = 0;
+			// 	speedx = 0;
+			// }
 		}
 
 }
@@ -3445,12 +3485,14 @@ else
         if (xkirby < screenwidth - kirbywidth) 
 		{
           //xkirby += 10;
-
-          if ((onplatform) && (xkirby >= xplatform[platform][level] + platformwidth[platform] + 5)) {
+			/* kirbyCheckMargins()
+          if ((onplatform) && (xkirby >= xplatform[platform][level] + platformwidth[platform] + 5))
+		   {
             fallstart = 1;
             ykirby = y0;
             v0y = 0;
           }
+			*/
         }
 		else
 		{
