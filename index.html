@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 28.0
+v 29.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -20,6 +20,9 @@ const KEY_A = 65;
 const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
+
+var flagCollisionRight = 0;
+var flagCollisionLeft = 0;
 
 var iceblockinitialwidth = 75;
 var startKirbyRotate = 0;
@@ -918,8 +921,6 @@ function setKirbyCurrentImage(aspiring)
 function gameLoop() 
     {
 
-		
-
 		if (startKirbyRotate)
 		{
 			angleKirby+=45;
@@ -931,31 +932,31 @@ function gameLoop()
 			}
 		}
 			
-	if (world == 2)
+	if (world == 2) //debugstefan
 	 {
-	if (timer_right_started)
-	{
-		timer_right++;
-	}
-	if (timer_left_started)
-	{
-		timer_left++;
-	}
+		if (timer_right_started)
+		{
+			timer_right++;
+		}
+		if (timer_left_started)
+		{
+			timer_left++;
+		}
 
 
-	if (timer_right >= gamekirbySlideTime)
-	{	
-		timer_right_started = 0;
-		timer_right = 0;
-		speedx = 0;
+		if (timer_right >= gamekirbySlideTime)
+		{	
+			timer_right_started = 0;
+			timer_right = 0;
+			speedx = 0;
+		}
+		if (timer_left >= gamekirbySlideTime)
+		{	
+			timer_left_started = 0;
+			timer_left = 0;
+			speedx = 0;
+		}
 	}
-	if (timer_left >= gamekirbySlideTime)
-	{	
-		timer_left_started = 0;
-		timer_left = 0;
-		speedx = 0;
-	}
-}
 	else
 	{
 		speedx = 0;
@@ -1178,8 +1179,8 @@ function gettingBomb()
 		playSound("coin.wav");
 		staticBombAlive[level] = 0;
 		hashat = 1;
-		ykirby = ykirby - (kirbybombheight - kirbyheight);
-		kirbyheight = kirbybombheight;
+		ykirby = ykirby - (kirbyfireheight - kirbyheight);
+		kirbyheight = kirbyfireheight;
 	}
 }
 
@@ -1386,7 +1387,7 @@ function kirbyfire()
 							
 							if (iceblockwidth[i][level] < 10)
 							{
-								iceBlockAlive[i][level] = false;
+								iceBlockAlive[i][level] = 0;
 							}
 							
 							playSound("die.wav");
@@ -1879,6 +1880,8 @@ function jumpkirby()
 		}
 		// end jump on platform
 
+		
+
 		// jump up into ceiling ?
 		for (var i = 0; i <= nrplatforms[level]; i++) {
 			if ((xkirby >= xplatform[i][level] - 35)
@@ -1932,7 +1935,7 @@ function staticBomb()
 {
 	if (staticBombAlive[level])
 	{
-		drawImage("imgBombK0", xStaticBomb, yStaticBomb);
+		drawImageSize("imgExplosion", xStaticBomb, yStaticBomb, 45, 45);
 	}
 }
 
@@ -2247,6 +2250,13 @@ function initIceBlocks()
 		xplatform[1][9] = 150;
 		xplatform[2][9] = 430;
 		xplatform[3][9] = 430;
+
+		//level 10
+		yplatform[0][10] = groundy;
+		xplatform[0][10] = 0;
+		//level 11
+		yplatform[0][11] = groundy;
+		xplatform[0][11] = 0;
 
 
 
@@ -3447,7 +3457,7 @@ function setIceMonsterImage()
     function InitGame()
      {  
      
-    level = 1; //1 debugstefan 
+    level = 9; //1 debugstefan 
 	
 	
 	initplatforms();
@@ -3527,6 +3537,21 @@ for (var i = 1; i < 4; i++)
     return;
   }
 
+   //kirby hits ice block
+   for (var i = 0; i < nriceblocks[level]; i++)
+		  if (iceBlockAlive[i][level])
+		if (collision(xkirby, kirbywidth, iceblockx[i][level], iceblockinitialwidth
+		, ykirby, kirbyheight, iceblocky[i][level], iceblockinitialwidth))
+		  {
+			xkirby += 20;
+			timer_left_started = 0;
+			timer_left = 0;
+			flagCollisionLeft = 1;
+			speedx = 0;
+			bool_moveLeft = 0;
+            return;
+          }
+
 if (xkirby > 0) 
 {
   //xkirby -= 10;
@@ -3594,6 +3619,22 @@ else
 			xkirby -= 10;
             return;
           }
+
+		  //kirby hits ice block
+		  for (var i = 0; i < nriceblocks[level]; i++)
+		  if (iceBlockAlive[i][level])
+		if (collision(xkirby, kirbywidth, iceblockx[i][level], iceblockinitialwidth
+		, ykirby, kirbyheight, iceblocky[i][level], iceblockinitialwidth))
+		  {
+			xkirby -= 20;
+			timer_right_started = 0;
+			timer_right = 0;
+			flagCollisionRight = 1;
+			speedx = 0;
+			bool_moveRight = 0;
+            return;
+          }
+
 
         if (xkirby < screenwidth - kirbywidth) 
 		{
@@ -3754,9 +3795,16 @@ document.addEventListener('keyup', function(event)
 
           if (event.keyCode == KEY_RIGHT) 
           {
-			if (world == 2)
+			if (world == 2 && !flagCollisionRight)
 			{
 				timer_right_started = 1;
+				flagCollisionLeft = 0;
+			}
+			if (world == 2 && flagCollisionRight)
+			{
+				timer_right_started = 0;
+				timer_right = 0;
+				speedx = 0;
 			}
 			//speedx = 0;
 			bool_moveRight = 0;
@@ -3765,12 +3813,19 @@ document.addEventListener('keyup', function(event)
 
           if (event.keyCode == KEY_LEFT) 
           {
-			if (world == 2)
+			if (world == 2 && !flagCollisionLeft)
 			{
 				timer_left_started = 1;
+				flagCollisionRight = 0;
 			}
-			bool_moveLeft = 0;
+			if (world == 2 && flagCollisionLeft)
+			{
+				timer_left_started = 0;
+				timer_left = 0;
+				speedx = 0;
+			}
 			//speedx = 0;
+			bool_moveLeft = 0;
 		  }
           if (event.keyCode == KEY_A) 
 		  {
