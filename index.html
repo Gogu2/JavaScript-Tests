@@ -1,13 +1,16 @@
 <html></html>
 <head>
-v 29.0
+v 30.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
 const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
-const gamekirbySlideTime = 20;
+const gamekirbySlideTime = 40;
+const gameKirbyRotatedJump = 1;
+
+
 
 const KEY_DELETE = 46;
 const KEY_ENTER = 13;
@@ -21,6 +24,7 @@ const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
 
+var whispyLife = 10;
 var flagCollisionRight = 0;
 var flagCollisionLeft = 0;
 
@@ -71,7 +75,7 @@ var timerexplosion = 0;
 var lifePiece = 10;
 var whispyAlive = true;
 var iceMonsterAlive = 1;
-var whispyLife = 3;
+
 var whispyFrozen = 0;
 
    var soundObject = null;
@@ -237,7 +241,7 @@ coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 var iceBlockAlive = [];
 iceBlockAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 
-var staticBombAlive = new Array(0,0,0,0,0,0,1,1,1,1, 0);
+var staticBombAlive = new Array(0,0,0,0,0,0,0,0,0,0, 0);
 
     var platformrange = 200;
 
@@ -1491,7 +1495,7 @@ function sleep(miliseconds)
 function kirbybomb()
 	{
 
-					if (startspittingkirby) 
+					//if (startspittingkirby) 
 					for (var k = 1; k<=bombNo;k++)
 					
 					if (bombAlive[k])
@@ -1901,7 +1905,10 @@ function jumpkirby()
 
 		
 		//	timerstopped = 1;	
-		startKirbyRotate = 1;
+		if (gameKirbyRotatedJump)
+		{
+			startKirbyRotate = 1;
+		}
 		
 		//	timerstopped = 0;
 		
@@ -3465,7 +3472,7 @@ function setIceMonsterImage()
     initcoins();
 	initIceBlocks();
 	initenemies();
-	initStaticBomb();
+	//initStaticBomb();
 
     level5();
 	level6();
@@ -3921,6 +3928,8 @@ if  (timerstopped)
 			hashat = 0;
 			hasbomb = 0;
 			hasice = 0;
+
+			startspittingkirby = 0;
 
 			return;
 		}
