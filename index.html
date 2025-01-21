@@ -7,9 +7,10 @@ const gameSpeed = 60;//60
 const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
-const gamekirbySlideTime = 40;
+const gamekirbySlideTime = 20;
 const gameKirbyRotatedJump = 1;
-
+const gameGravity = 3; //3
+const gameStartLevel = 1; //debug
 
 
 const KEY_DELETE = 46;
@@ -216,9 +217,10 @@ var onmovingplatform = 0;
 	var v0yb = -75; // 75
 	var vbandanay = v0yb;
 
-	var xbinit = screenwidth - bandanawidth-50;
+	var xbinit = xinit + 50;//screenwidth - bandanawidth-150;//50
 	var ybinit = groundy - bandanaheight;
 	var xbandana = xbinit;
+	var bandanadirection = 0;
 
   
     
@@ -241,6 +243,9 @@ coinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 var iceBlockAlive = [];
 iceBlockAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
 
+var spinAlive = [];
+spinAlive = new Array(4).fill(1).map(() => new Array(maxLevel + 1).fill(1));
+
 var staticBombAlive = new Array(0,0,0,0,0,0,0,0,0,0, 0);
 
     var platformrange = 200;
@@ -255,6 +260,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
           const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0);
 	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0);
 	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 1);
+	  const nrspins = new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0);
 
     var movingplatform = [];
     movingplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
@@ -307,6 +313,11 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   var coinx = [];
   coinx =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
+  var ySpin = [];
+  ySpin =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+  var xSpin = [];
+  xSpin =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
+
   var iceblocky = [];
   iceblocky =  new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   var iceblockx = [];
@@ -319,7 +330,12 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
     var doorwidth = 75;
     var platform=0;
     var platformb = 0;
-  
+
+	//spins
+	//const xSpin = new Array(0,0,0);
+	//const ySpin = new Array(0,0,0);
+    const spinwidth = 70;
+	const spinheight = 60;
     
     //kirby
     var booljumpstarted = 0;
@@ -354,7 +370,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
   
     
     
-    var gravity = 3; //10
+    
     
     
    
@@ -1029,6 +1045,7 @@ function gameLoop()
 		coins();
 		staticBomb();
 		iceBlocks();
+		spins();
 
 		// caged waddle dee
 		cagedWaddleeDee();
@@ -1096,6 +1113,8 @@ function gameLoop()
 		kirbyReleasesWaddleeDee();
 		//
 		
+		checkSpins();
+
 		if (kirbyFindsDoor())
 		{
 			return;
@@ -1107,6 +1126,15 @@ function gameLoop()
 		
 	
    } //end gameLoop()
+
+function checkSpins()
+{
+	for  (var i = 0;i<nrspins[level];i++)
+	if (!jumpstarted && !fallstart && collision(xkirby, kirbywidth, xSpin[i][level], spinwidth, ykirby, kirbyheight, ySpin[i][level], spinwidth))
+	{
+		killKirby();
+	}
+}
 
 function kirbyCheckMargins()
 {
@@ -1235,7 +1263,7 @@ function cagedWaddleeDee()
 
 		if (cagedExists) 
 		{
-			xcaged = xDoor[level - 1] + 150;
+			xcaged = xDoor[level - 1] - 250;
 			ycaged = yDoor[level - 1];
 			drawImage(imgCurrentWaddle, xcaged, ycaged);
 		}
@@ -1607,7 +1635,7 @@ function kirbybomb()
 
 		tb = tb + 1;
 		
-		vyb = (gravity * tb * tb) / 2;
+		vyb = (gameGravity * tb * tb) / 2;
 
 		yib = ybandana;
 		ybandana = y0b + vyb * tb;
@@ -1646,7 +1674,7 @@ onmovingplatformb = 0;
 onplatformb = 0;
 
 tb = tb + 1;
-vyb = v0yb + (gravity * tb * tb) / 2;
+vyb = v0yb + (gameGravity * tb * tb) / 2;
 
 yib = ybandana;
 ybandana = y0b + vyb * tb;
@@ -1758,7 +1786,7 @@ for (var i = 0; i <= nrplatforms[level]; i++) {
 
 		t = t + 1;
 		
-		vy = (gravity * t * t) / 2;
+		vy = (gameGravity * t * t) / 2;
 
 		yi = ykirby;
 		ykirby = y0 + vy * t;
@@ -1800,7 +1828,7 @@ function jumpkirby()
 		onplatform = 0;
 
 		t = t + 1;
-		vy = v0y + (gravity * t * t) / 2;
+		vy = v0y + (gameGravity * t * t) / 2;
 
 		yi = ykirby;
 		ykirby = y0 + vy * t;
@@ -1924,9 +1952,18 @@ function coins()
 		}
 }
 
+function spins()
+{
+	for (var i = 0; i < nrspins[level]; i++) 
+	if (spinAlive[i][level])
+		{
+			drawImage("imgSpin", xSpin[i][level], ySpin[i][level]);
+		}
+}
+
 function doors()
 {
-	drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
+		drawImage("imgDoor", xDoor[level - 1], yDoor[level - 1]);
 }
 
 function iceBlocks()
@@ -1951,6 +1988,26 @@ function initStaticBomb()
 		//staticBombAlive = 1;
 		xStaticBomb = 600;
 		yStaticBomb = groundy - bombheight;
+}
+
+function initSpins()
+{
+	xSpin[0][2] = 500;
+	ySpin[0][2] = groundy-spinheight;
+
+	xSpin[1][2] = 500+spinwidth;
+	ySpin[1][2] = groundy-spinheight;
+
+	xSpin[2][2] = 500+2*spinwidth;
+	ySpin[2][2] = groundy-spinheight;
+
+	
+
+	for (j = 1;j<=maxLevel;j++)
+		for (var i = 0;i<nrspins[level];i++)
+		{
+			spinAlive[i][j] = 1;
+		}
 }
 
 function initDoors() 
@@ -2006,7 +2063,7 @@ function initDoors()
 
 		if (ilevel == 7) 
 		{
-			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
+			xDoor[ilevel - 1] = screenwidth - 150; //screenwidth/2 // screenwidth - 75;
 			yDoor[ilevel - 1] = groundy - doorHeight;			
 		}
 
@@ -3464,10 +3521,11 @@ function setIceMonsterImage()
     function InitGame()
      {  
      
-    level = 1; //1 debugstefan 
+    level = gameStartLevel; //1 debugstefan 
 	
 	
 	initplatforms();
+	initSpins();
 	initDoors();
     initcoins();
 	initIceBlocks();
@@ -4164,6 +4222,8 @@ function start()
 <img id="imgIceMonster2" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgIceBlock" src="images/iceblock.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgSpin" src="images/spint.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
