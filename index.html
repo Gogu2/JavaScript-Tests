@@ -1,13 +1,13 @@
 <html></html>
 <head>
-v 31.0
+v 32.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
 const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
-const gamekirbySlideTime = 20;
+const gamekirbySlideTime = 20; //20
 const gameKirbyRotatedJump = 1;
 const gameGravity = 3; //3
 const gameStartLevel = 1; //debug
@@ -1147,7 +1147,15 @@ function kirbyCheckMargins()
 	) 
 	{
 		fallstart = 1;
-		ykirby = y0;
+		
+		if (!hashat && !hasice && !hasbomb)
+			ykirby = y0;
+		if (hashat)
+			ykirby = y0 - (kirbyfireheight - kirbyinitialheight);
+		if (hasice)
+			ykirby = y0 - (kirbyiceheight - kirbyinitialheight);
+		if (hasbomb)
+			ykirby = y0 - (kirbybombheight - kirbyinitialheight);
 		v0y = 0;
 	}
 
