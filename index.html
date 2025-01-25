@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 32.0
+v 33.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -10,7 +10,7 @@ const gameKirbyFrozenTime = 20;
 const gamekirbySlideTime = 20; //20
 const gameKirbyRotatedJump = 1;
 const gameGravity = 3; //3
-const gameStartLevel = 1; //debug
+const gameStartLevel = 6; //debug
 
 
 const KEY_DELETE = 46;
@@ -24,6 +24,13 @@ const KEY_A = 65;
 const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
+
+var groundy = 525; //375
+
+var shopwidth = 231;
+var shopheight = 262;
+var xshop=400;
+var yshop=groundy - shopheight;
 
 var whispyLife = 10;
 var flagCollisionRight = 0;
@@ -41,7 +48,7 @@ var timer_left_started = 0;
 var xStaticBomb;
 var yStaticBomb;
 
-var groundy = 525; //375
+
 var v0yinitial = -75;
 var v0ybinitial = -75;
 var gameKeys; 
@@ -229,9 +236,9 @@ var onmovingplatform = 0;
     //var ye = 300;
 
    // var maxLevel = 3;
-   var maxLevel = 11;
+   var maxLevel = 12;
    var firstworldmaxlevel = 7;
-   var secondworldmaxlevel = 11;
+   var secondworldmaxlevel = 12;
 
 
 
@@ -259,7 +266,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
     var angleE = new Array(0,0,0,0);
           const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0);
 	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0);
-	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 1);
+	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 1, 0);
 	  const nrspins = new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0);
 
     var movingplatform = [];
@@ -1057,9 +1064,14 @@ function gameLoop()
 		{
 			whispywoods();
 		}
-		if (level == secondworldmaxlevel - 1)
+		if (level == secondworldmaxlevel)
 		{
 			icemonster();
+		}
+
+		if (level == secondworldmaxlevel - 1)
+		{
+			shop();
 		}
 
 		// enter kirby
@@ -1396,7 +1408,7 @@ function kirbyfire()
 						}
 
 					//shoot ice monster
-					if (level == secondworldmaxlevel-1)
+					if (level == secondworldmaxlevel)
 						{
 							if (xkirby+kirbywidth+firewidth+5 >= xicemonster)
 							{
@@ -1571,7 +1583,7 @@ function kirbybomb()
 						
 						//shoot ice monster
 						if (iceMonsterAlive)
-						if (level == secondworldmaxlevel - 1)
+						if (level == secondworldmaxlevel)
 						{
 							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
 							{
@@ -2095,7 +2107,13 @@ function initDoors()
 
 		if (ilevel == 11)
 		{
-			xDoor[ilevel - 1] = screenwidth -250; // screenwidth - 75;
+			xDoor[ilevel - 1] = screenwidth -100; // screenwidth - 75;
+			yDoor[ilevel - 1] = groundy - doorHeight;		
+		}
+
+		if (ilevel == 12)
+		{
+			xDoor[ilevel - 1] = screenwidth -100; // screenwidth - 75;
 			yDoor[ilevel - 1] = groundy - doorHeight;		
 		}
 	}
@@ -2189,8 +2207,8 @@ function getImgPlatformForWorld(world)
 
 function initIceBlocks()
 {
-	iceblockx[0][11] = 400;
-	iceblocky[0][11] = groundy-iceblockinitialwidth;
+	iceblockx[0][10] = 400;
+	iceblocky[0][10] = groundy-iceblockinitialwidth;
 
 	
 	for (j = 1;j<=maxLevel;j++)
@@ -3400,6 +3418,11 @@ function initenemies() {
 
 	}
 
+	function level12()
+	{
+
+	}
+
 
   function copylevel(levelSource, levelDest, platforms) 
   {
@@ -3492,6 +3515,37 @@ function whispywoods()
 		
 	}
 
+function kirbyincreaselife()
+{
+	if (coinsTaken == 0)
+	return;
+
+	currentLifeKirby = -(-document.getElementById("lifeKirby").getAttribute('value'));
+	if (coinsTaken*lifePiece + currentLifeKirby < 99)
+	{
+		currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
+		document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby + coinsTaken*lifePiece) ;
+		coinsTaken = 0;
+		document.getElementById("lblCoins").innerText ="Coins: 0";
+	}
+	else
+	{
+		document.getElementById("lifeKirby").setAttribute('value', 99) ;
+		coinsTaken = 0;
+		document.getElementById("lblCoins").innerText ="Coins: 0";
+	}
+		
+}
+
+function shop()
+{
+	if (collision(xkirby, kirbywidth, xshop, shopwidth, ykirby, kirbyheight, yshop, shopheight))
+			{
+				kirbyincreaselife();
+			} 
+	drawImage("imgShop", xshop, yshop);
+}
+
 function icemonster()
 {
 	if (iceMonsterAlive)
@@ -3547,7 +3601,7 @@ function setIceMonsterImage()
 	level9();
 	level10();
 	level11();
-   
+    level12();
    
 	idling = false;
 	idletime = 0;
@@ -4232,6 +4286,8 @@ function start()
 <img id="imgIceBlock" src="images/iceblock.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <img id="imgSpin" src="images/spint.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgShop" src="images/shop2.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
