@@ -1,6 +1,6 @@
 <html></html>
 <head>
-v 33.0
+v 34.0
 <script type="text/javascript">
 
 const gameSpeed = 60;//60
@@ -8,9 +8,9 @@ const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
 const gamekirbySlideTime = 20; //20
-const gameKirbyRotatedJump = 1;
+const gameKirbyRotatedJump = 0; //1
 const gameGravity = 3; //3
-const gameStartLevel = 1; //debug
+const gameStartLevel = 6; //debug
 
 
 const KEY_DELETE = 46;
@@ -26,11 +26,24 @@ const KEY_SHIFT = 16;
 const KEY_S = 83;
 
 var groundy = 525; //375
+var platformheight =53;
+
 
 var shopwidth = 231;
 var shopheight = 262;
 var xshop=400;
 var yshop=groundy - shopheight;
+
+var foodwidth = 70;
+var foodheight = 54;
+
+var xfood1 = xshop + 20;
+var xfood2 = xfood1 + 80;
+var xfood3 = xfood2 + 80;
+
+var yfood1 = yshop +70;
+var yfood2 = yshop + 70;
+var yfood3 = yshop + 70;
 
 var whispyLife = 10;
 var flagCollisionRight = 0;
@@ -264,10 +277,10 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 
     var angleE = new Array(0,0,0,0);
-          const nrcoins = new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0);
-	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0);
-	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 1, 0);
-	  const nrspins = new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0);
+      const nrcoins =     new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0, 0);
+	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0, 0);
+	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 1, 0, 0);
+	  const nrspins =     new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0);
 
     var movingplatform = [];
     movingplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
@@ -312,7 +325,7 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
    enemyFrozen = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
     
-    var platformheight =53;
+    
    
     
   var coiny = [];
@@ -1414,6 +1427,7 @@ function kirbyfire()
 							{
 								playSound("die.wav"); 
 								iceMonsterLife --;
+								xicemonster += 15;
 							}
 							if (iceMonsterLife <= 0)
 							{
@@ -2347,6 +2361,9 @@ function initIceBlocks()
 		//level 11
 		yplatform[0][11] = groundy;
 		xplatform[0][11] = 0;
+
+		yplatform[1][11] = 300;
+		xplatform[1][11] = 400;
 
 
 
@@ -3515,35 +3532,82 @@ function whispywoods()
 		
 	}
 
-function kirbyincreaselife()
+function kirbyincreaselife(foodNo)
 {
 	if (coinsTaken == 0)
 	return;
 
 	currentLifeKirby = -(-document.getElementById("lifeKirby").getAttribute('value'));
-	if (coinsTaken*lifePiece + currentLifeKirby < 99)
+
+	//max food
+	if (foodNo == 1)
 	{
-		currentLifeKirby = document.getElementById("lifeKirby").getAttribute('value');
-		document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby + coinsTaken*lifePiece) ;
-		coinsTaken = 0;
-		document.getElementById("lblCoins").innerText ="Coins: 0";
+		if (coinsTaken >=  10)
+		{
+			coinsTaken = 0;
+			currentLifeKirby = 99;
+		}
 	}
-	else
+
+	//medium food
+	if (foodNo == 2)
 	{
-		document.getElementById("lifeKirby").setAttribute('value', 99) ;
-		coinsTaken = 0;
-		document.getElementById("lblCoins").innerText ="Coins: 0";
+		if (coinsTaken >=  5)
+		{
+			coinsTaken = 0;
+			currentLifeKirby = currentLifeKirby+30;
+			if (currentLifeKirby > 99)
+			{
+				currentLifeKirby  = 99;
+			}
+		}
 	}
-		
+
+	//small food
+	if (foodNo == 3)
+	{
+		if (coinsTaken >=  1)
+		{
+			coinsTaken = 0;
+			currentLifeKirby = currentLifeKirby+10;
+			if (currentLifeKirby > 99)
+			{
+				currentLifeKirby  = 99;
+			}
+		}
+	}
+
+	document.getElementById("lblCoins").innerText ="Coins: " + coinsTaken;
+	document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby);
+	
 }
 
 function shop()
 {
-	if (collision(xkirby, kirbywidth, xshop, shopwidth, ykirby, kirbyheight, yshop, shopheight))
-			{
-				kirbyincreaselife();
-			} 
 	drawImage("imgShop", xshop, yshop);
+	drawImage("imgFood1", xfood1, yfood1);
+	drawImage("imgFood2", xfood2, yfood2);
+	drawImage("imgFood3", xfood3, yfood3);
+
+	//get food 1
+	if (collision(xkirby, kirbywidth, xfood1, foodwidth, ykirby, kirbyheight, yfood1, foodheight))
+	{
+		kirbyincreaselife(1);
+	} 
+
+	//get food 2
+	if (collision(xkirby, kirbywidth, xfood1, foodwidth, ykirby, kirbyheight, yfood1, foodheight))
+	{
+		kirbyincreaselife(2);
+	} 
+
+	//get food 3
+	if (collision(xkirby, kirbywidth, xfood1, foodwidth, ykirby, kirbyheight, yfood1, foodheight))
+	{
+		kirbyincreaselife(3);
+	} 
+	
+	
 }
 
 function icemonster()
@@ -4288,6 +4352,10 @@ function start()
 <img id="imgSpin" src="images/spint.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <img id="imgShop" src="images/shop2.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgFood1" src="images/food1.png" alt="no" width="75" height="75" top="375" left="0" >
+<img id="imgFood2" src="images/food2.png" alt="no" width="75" height="75" top="375" left="0" >
+<img id="imgFood3" src="images/food3.png" alt="no" width="75" height="75" top="375" left="0" >
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
