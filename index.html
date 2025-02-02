@@ -8,7 +8,7 @@ const gameExplosionDuration = 20;
 const gameKirbyIdlingTime = 20;
 const gameKirbyFrozenTime = 20;
 const gamekirbySlideTime = 20; //20
-const gameKirbyRotatedJump = 0; //1
+const gameKirbyRotatedJump = 1; //1
 const gameGravity = 3; //3
 const gameStartLevel = 1; //debug
 
@@ -1077,12 +1077,12 @@ function gameLoop()
 		{
 			whispywoods();
 		}
-		if (level == secondworldmaxlevel)
+		if (level == secondworldmaxlevel - 1)
 		{
 			icemonster();
 		}
 
-		if (level == secondworldmaxlevel - 1)
+		if (level == secondworldmaxlevel)
 		{
 			shop();
 		}
@@ -1450,7 +1450,7 @@ function kirbyfire()
 						}
 
 					//shoot ice monster
-					if (level == secondworldmaxlevel)
+					if (level == secondworldmaxlevel - 1)
 						{
 							if (xkirby+kirbywidth+firewidth+5 >= xicemonster)
 							{
@@ -1626,7 +1626,7 @@ function kirbybomb()
 						
 						//shoot ice monster
 						if (iceMonsterAlive)
-						if (level == secondworldmaxlevel)
+						if (level == secondworldmaxlevel - 1)
 						{
 							if ((xbombkirby[k] + bombwidth/2) >= xicemonster)
 							{
@@ -2394,7 +2394,9 @@ function initIceBlocks()
 		yplatform[1][11] = 300;
 		xplatform[1][11] = 400;
 
-
+		//level 12
+		yplatform[0][12] = groundy;
+		xplatform[0][12] = 0;
 
 		// level 1
 		movingplatform[0][1] = false;
@@ -3608,6 +3610,7 @@ function kirbyincreaselife(foodNo)
 
 	document.getElementById("lblCoins").innerText ="Coins: " + coinsTaken;
 	document.getElementById("lifeKirby").setAttribute('value', currentLifeKirby);
+	playSound("food.wav");
 	
 }
 
