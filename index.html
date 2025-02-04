@@ -25,6 +25,10 @@ const KEY_D = 68;
 const KEY_SHIFT = 16;
 const KEY_S = 83;
 
+var holeincrement = 1;
+var holewidth = 10;
+var xhole = 0;
+
 var groundy = 525; //375
 var platformheight =53;
 
@@ -249,10 +253,10 @@ var onmovingplatform = 0;
     //var ye = 300;
 
    // var maxLevel = 3;
-   var maxLevel = 12;
+   var maxLevel = 15;
    var firstworldmaxlevel = 7;
    var secondworldmaxlevel = 12;
-
+   var thirdworldmaxlevel = 15;
 
 
 
@@ -277,10 +281,10 @@ yplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
 
 
     var angleE = new Array(0,0,0,0);
-      const nrcoins =     new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0, 0);
-	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0, 0);
-	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 1, 0, 0);
-	  const nrspins =     new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0);
+      const nrcoins =     new Array( 0, 3, 3, 3, 0, 0, 0, 0 , 3, 3, 0, 0, 0, 0, 0, 0);
+	  const nrplatforms = new Array( 0, 3, 3, 3, 3, 3, 3 , 0, 3, 3, 0, 0, 0, 3, 3, 0);
+	  const nriceblocks = new Array( 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 1, 0, 0, 0, 0, 0);
+	  const nrspins =     new Array( 0, 0, 3, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0);
 
     var movingplatform = [];
     movingplatform = new Array(4).fill(0).map(() => new Array(maxLevel + 1).fill(0));
@@ -961,6 +965,17 @@ function setKirbyCurrentImage(aspiring)
 function gameLoop() 
     {
 
+		//fall throught the hole
+		if (ykirby > 2000)
+		{
+			killKirby();
+			idling = 0;
+			kirbydirection = 1;
+			xhole = 9999;
+			holewidth = 10;
+			holeincrement = 1;
+		}
+
 		if (startKirbyRotate)
 		{
 			angleKirby+=45;
@@ -1032,16 +1047,30 @@ function gameLoop()
 			}
 		}
 
-		
+		if (world == 1)
+			drawImage("imgGround", 0, groundy);
+		if (world == 2)
+			drawImage("imgWorld2", 0, groundy);
+		if (world == 3)
+			drawImage("imgWorld3", 0, groundy);
+
 		// idling
 		idletime++;
 		idletimeb++;
+
+		if (idling && world == 3 && platform == 0)
+		{
+			xhole = xkirby + kirbywidth/2;
+			hole();
+		}
+
 		if (!kirbyFrozen)
 		if (idletime == gameKirbyIdlingTime)
 		 {
 			idling = true;
 			kirbydirection = 0; //v11
 			setKirbyCurrentImage(0);
+			
 		}
 
 		idletimeb++;
@@ -1056,10 +1085,7 @@ function gameLoop()
 		var yy = 0;
 		var yyb = 0;
 
-		if (world == 1)
-			drawImage("imgGround", 0, groundy);
-		if (world == 2)
-			drawImage("imgWorld2", 0, groundy);
+		
 
 		doors();
 		coins();
@@ -1086,6 +1112,11 @@ function gameLoop()
 		{
 			shop();
 		}
+
+		//if  (level == thirdworldmaxlevel)
+		//{
+	//		hole();
+	//	}
 
 		// enter kirby
 
@@ -1126,6 +1157,7 @@ function gameLoop()
 	
 		kirbyCheckMargins();
 		kirbyCheckIceBlock();
+		kirbyCheckHole();
 
 		// enter bandana
 		xbandana += speedxb;
@@ -1152,6 +1184,17 @@ function gameLoop()
 		
 	
    } //end gameLoop()
+
+function kirbyCheckHole()
+{
+	if (holewidth >= 20)
+	if (collision(xkirby, kirbywidth, xhole, holewidth, ykirby, kirbyheight, groundy, 75 ))
+	{
+		fallstart = 1;
+		ykirby = ykirby +5;
+		y0 = ykirby;
+	}
+}
 
 function kirbyCheckIceBlock()
 {
@@ -1223,7 +1266,7 @@ function kirbyCheckMargins()
 			if (level>1)
 			{
 				level--;
-				jumpLevel();
+				initlevel();
 				xkirby = screenwidth - kirbywidth;
 			}
 			else
@@ -1299,14 +1342,14 @@ function kirbyFindsDoor()
 					if (cagedReleased)
 					{
 						level++;
-						jumpLevel();
+						initlevel();
 						return 1;
 					}
 				}	
 				else
 				{
 					level++;
-					jumpLevel();
+					initlevel();
 					return 1;
 				}
 			}
@@ -1347,29 +1390,6 @@ function kirbyReleasesWaddleeDee()
 				playSound("release.wav"); 
 			}
 }
-
-function jumpLevel()
-   {
-					if (level >= firstworldmaxlevel+1)
-					{
-						world = 2;
-					}
-					else
-					{
-						world = 1;
-					}
-					initlevel();
-				
-					displayLevel((level-7*(world-1)));
-					document.getElementById("lblWorld").innerText ="World: " + world;
-
-					speedx = 0;
-					bool_moveLeft = 0;
-					speedxb = 0;
-					bool_moveLeftb = 0;
-					bool_moveRightb = 0;
-					//Sorina a scos playSound("release.wav"); 
-   }
    
 function jumpsfalls() 
 {
@@ -2080,7 +2100,7 @@ function initDoors()
 
 	
 	if (ilevel == 1) 
-	{
+		{
 			xDoor[ilevel - 1] = screenwidth / 2; // screenwidth - 75;
 			yDoor[ilevel - 1] = groundy - doorHeight;
 			
@@ -2159,6 +2179,25 @@ function initDoors()
 			xDoor[ilevel - 1] = screenwidth -100; // screenwidth - 75;
 			yDoor[ilevel - 1] = groundy - doorHeight;		
 		}
+
+		if (ilevel == 13)
+		{
+			xDoor[ilevel - 1] = xplatform[2][ilevel] + platformwidth[2]/2;
+			yDoor[ilevel - 1] = yplatform[2][ilevel] - doorHeight;		
+		}
+
+		if (ilevel == 14)
+		{
+			xDoor[ilevel - 1] = xplatform[2][ilevel] + platformwidth[2]/2;
+			yDoor[ilevel - 1] = yplatform[2][ilevel] - doorHeight;		
+		}
+
+		if (ilevel == 15)
+		{
+			xDoor[ilevel - 1] = screenwidth -100; // screenwidth - 75;
+			yDoor[ilevel - 1] = groundy - doorHeight;		
+		}
+
 	}
 
 	}
@@ -2244,9 +2283,13 @@ function getImgPlatformForWorld(world)
 		res = "imgPlatform";
 	if (world == 2)
 		res = "imgPlatformIce";
+	if (world == 3)
+		res = "imgPlatformSand";
 
 	return res;
 }
+
+
 
 function initIceBlocks()
 {
@@ -2306,6 +2349,20 @@ function initIceBlocks()
 		{
 			coinx[i][9] = -25 + xplatform[i+1][9]+platformwidth[i+1]/2; //first platorm is platform 0
 			coiny[i][9] = yplatform[i+1][9] - coinwidth;
+		}
+
+		//level 13
+		for (var i=0;i<nrcoins[13];i++)
+		{
+			coinx[i][13] = -25 + xplatform[i+1][13]+platformwidth[i+1]/2; //first platorm is platform 0
+			coiny[i][13] = yplatform[i+1][13] - coinwidth;
+		}
+
+		//level 14
+		for (var i=0;i<nrcoins[14];i++)
+		{
+			coinx[i][14] = -25 + xplatform[i+1][14]+platformwidth[i+1]/2; //first platorm is platform 0
+			coiny[i][14] = yplatform[i+1][14] - coinwidth;
 		}
 
 		for (j = 1;j<=maxLevel;j++)
@@ -2397,6 +2454,35 @@ function initIceBlocks()
 		//level 12
 		yplatform[0][12] = groundy;
 		xplatform[0][12] = 0;
+
+		//level 13
+		yplatform[0][13] = groundy;
+		yplatform[1][13] = 225+120;
+		yplatform[2][13] = 75+120;
+		yplatform[3][13] = 225+120;
+
+		xplatform[0][13] = 0;
+		xplatform[1][13] = 150;
+		xplatform[2][13] = 150;
+		xplatform[3][13] = 430;
+
+
+		//level 14
+		yplatform[0][14] = groundy;
+		yplatform[1][14] = 225+120;
+		yplatform[2][14] = 75+120;
+		yplatform[3][14] = 225+120;
+
+		xplatform[0][14] = 0;
+		xplatform[1][14] = 150;
+		xplatform[2][14] = 430;
+		xplatform[3][14] = 430;
+
+		//level 15
+		yplatform[0][15] = groundy;
+		xplatform[0][15] = 0;
+
+
 
 		// level 1
 		movingplatform[0][1] = false;
@@ -2512,7 +2598,21 @@ function initIceBlocks()
 
 
   function initlevel() {
-	if (world == 2)
+	if (level >= firstworldmaxlevel+1)
+	{
+		world = 2;
+	}
+	else
+	{
+		world = 1;
+	}
+	if (level >= secondworldmaxlevel+1)
+	{
+		world = 3;
+	}
+
+
+	if (world == 2 || world == 3)
 	{
 	var c = document.getElementById("canvas1");
 	c.setAttribute("style","background-color:#C0E0FF;top:0;left:0;");	
@@ -2570,7 +2670,7 @@ function initIceBlocks()
 			x.setAttribute("src", "sounds/dangerous.mp3")
   			x.play();
 		}
-		 if (level == firstworldmaxlevel + 1)
+		 if (level >= firstworldmaxlevel + 1 && level <=secondworldmaxlevel)
 		 {
 			x = document.getElementById('mySound');
 			x.pause();
@@ -2578,6 +2678,28 @@ function initIceBlocks()
   			x.play();
 		 }
 		
+		 if (level > secondworldmaxlevel)
+		 {
+			x = document.getElementById('mySound');
+			x.pause();
+			x.setAttribute("src", "sounds/canyon.mp3")
+  			x.play();
+		 }
+
+
+		displayLevel((level-7*(world-1)));
+		if (world == 3)
+		{
+			displayLevel(level - 12);
+		}
+		document.getElementById("lblWorld").innerText ="World: " + world;
+
+		speedx = 0;
+		bool_moveLeft = 0;
+		speedxb = 0;
+		bool_moveLeftb = 0;
+		bool_moveRightb = 0;
+		//Sorina a scos playSound("release.wav"); 
 	}
 
 	function killBandana()
@@ -2651,6 +2773,25 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 {
 	if  (!aspiring)
 	{
+		if  (world == 3)
+		{
+			if (level == 13)
+			{
+				if (direction == -1)
+					imgEnemyCurrent[i] = "imgSandman";
+				else
+					imgEnemyCurrent[i] = "imgSandmanRight";		
+			}
+			else
+			{
+				if (direction == 1)
+					imgEnemyCurrent[i] = "imgSandman"; //TODO
+				else
+				imgEnemyCurrent[i] = "imgSandmanRight"; //TODO
+			}
+			return;
+		}
+
 		if (world == 2)
 		{
 			if (level == 8)
@@ -2659,7 +2800,10 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 			}
 			else
 			{
-				imgEnemyCurrent[i] = "imgRedMonster";
+				if (direction == -1)
+					imgEnemyCurrent[i] = "imgRedMonster";
+				else
+					imgEnemyCurrent[i] = "imgRedMonsterRight";
 			}
 			return;
 		}
@@ -2782,6 +2926,19 @@ function setEnemyImage(i, level, direction, aspiring, frozen)
 				imgEnemyCurrent[i] = "imgRedMonsterHorizontal";
 			}
 		}
+
+		if (world == 3)
+		{
+			if (level == 13)
+			{
+				imgEnemyCurrent[i] = "imgSandmanHorizontal";
+			}
+			else
+			{
+				imgEnemyCurrent[i] = "imgSandmanHorizontal"; //TODO
+			}
+		}
+
 	}
 
 }
@@ -3471,6 +3628,21 @@ function initenemies() {
 
 	}
 
+	function level13()
+	{
+		copyEnemies(4, 13);
+	}
+
+	function level14()
+	{
+		copyEnemies(4, 14);
+	}
+
+	function level15()
+	{
+
+	}
+
 
   function copylevel(levelSource, levelDest, platforms) 
   {
@@ -3614,6 +3786,18 @@ function kirbyincreaselife(foodNo)
 	
 }
 
+function hole()
+{
+	holewidth += holeincrement;
+	if (holewidth == 50 || holewidth == 2)
+	{
+		holeincrement = -holeincrement;
+	}
+	
+	//xhole = 500-holewidth/2;
+	drawImageSize("imgHole", xhole - holewidth/2, groundy, holewidth, 75);
+}
+
 function shop()
 {
 	drawImage("imgShop", xshop, yshop);
@@ -3698,6 +3882,9 @@ function setIceMonsterImage()
 	level10();
 	level11();
     level12();
+	level13();
+	level14();
+	//level15();
    
 	idling = false;
 	idletime = 0;
@@ -3708,10 +3895,10 @@ function setIceMonsterImage()
     imgCurrentWaddle = "imgCaged";
     
 	
-  
-   displayLevel(level);
+    initlevel();
+    //displayLevel(level);
 
-   funcSetInterval = setInterval(gameLoop, gameSpeed);//60 //100
+    funcSetInterval = setInterval(gameLoop, gameSpeed);//60 //100
          
    }
 
@@ -3907,7 +4094,7 @@ else
 			if (level>1)
 			{
 				level--;
-				jumpLevel();
+				initlevel();
 				xbandana = screenwidth - kirbywidth;
 			}
 			else
@@ -4353,6 +4540,7 @@ function start()
 <img id="imgPokesonHorizontal" src="images/pokesonhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgRedMonster" src="images/redmonster.png" alt="no" width="640" height="75" top="375" left="0" >
+<img id="imgRedMonsterRight" src="images/redmonsterright.png" alt="no" width="640" height="75" top="375" left="0" >
 <img id="imgRedMonsterHorizontal" src="images/redmonsterhorizontal.png" alt="no" width="640" height="75" top="375" left="0" >
 
 <img id="imgIceMonster" src="images/monstruworld2v2.png" alt="no" width="640" height="75" top="375" left="0" >
@@ -4367,6 +4555,16 @@ function start()
 <img id="imgFood1" src="images/food1.png" alt="no" width="75" height="75" top="375" left="0" >
 <img id="imgFood2" src="images/food2.png" alt="no" width="75" height="75" top="375" left="0" >
 <img id="imgFood3" src="images/food3.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgWorld3" src="images/world3.png" alt="no" width="75" height="75" top="375" left="0" >
+<img id="imgPlatformSand" src="images/platformsandt.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgSandman" src="images/sandmant.png" alt="no" width="75" height="75" top="375" left="0" >
+<img id="imgSandmanRight" src="images/sandmanrightt.png" alt="no" width="75" height="75" top="375" left="0" >
+<img id="imgSandmanHorizontal" src="images/sandmanhorizontalt.png" alt="no" width="75" height="75" top="375" left="0" >
+
+<img id="imgHole" src="images/hole.png" alt="no" width="75" height="75" top="375" left="0" >
+
 
 <audio controls id="mySound" loop>
   <source src="sounds/tunnel.mp3" type="audio/mp3" /> 
