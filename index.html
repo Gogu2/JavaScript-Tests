@@ -1199,6 +1199,7 @@ function gameLoop()
 
 function kirbyCheckMovingSand()
 {
+	if (world == 3)
 	if (collision(xkirby, kirbywidth, xmovingsand, movingSandWidth, ykirby, kirbyheight, groundy, movingsandheight ))
 	{
 		fallstart = 1;
@@ -1290,7 +1291,7 @@ function kirbyCheckMargins()
 			if (level>1)
 			{
 				level--;
-				initlevel();
+				initlevel(level + 1, world);
 				xkirby = screenwidth - kirbywidth;
 			}
 			else
@@ -1366,14 +1367,14 @@ function kirbyFindsDoor()
 					if (cagedReleased)
 					{
 						level++;
-						initlevel();
+						initlevel(level - 1, world);
 						return 1;
 					}
 				}	
 				else
 				{
 					level++;
-					initlevel();
+					initlevel(level - 1, world);
 					return 1;
 				}
 			}
@@ -2621,7 +2622,36 @@ function initIceBlocks()
 	}
 
 
-  function initlevel() {
+  function setMusic(previousLevel, level, previousWorld)
+  {
+	
+	if (world == previousWorld && level!=7)
+	{
+		return "";
+	}
+	
+	if (level == 7)
+	{
+		return "sounds/dangerous.mp3";
+	}
+
+	if (world == 1)
+	{
+		return "sounds/tunnel.mp3";
+	}
+
+	if (world == 2)
+	{
+		return "sounds/froststreet.mp3";
+	}
+
+	if  (world == 3)
+	{
+		return "sounds/canyon.mp3";
+	}
+  }	
+
+  function initlevel(previousLevel, previousWorld) {
 	if (level >= firstworldmaxlevel+1)
 	{
 		world = 2;
@@ -2687,6 +2717,17 @@ function initIceBlocks()
 			setEnemyImage(i, level, enemydirection[i][level], 0, enemyFrozen[i][level]);
 		}
 
+		
+		var music = setMusic(previousLevel, level, previousWorld);
+		if (music != "")
+		{
+			x = document.getElementById('mySound');
+			x.pause();
+			x.setAttribute("src", music)
+  			x.play();
+		}
+
+		/*
 		if (world == 1 && level != 7)
 		{
 			x = document.getElementById('mySound');
@@ -2694,7 +2735,7 @@ function initIceBlocks()
 			x.setAttribute("src", "sounds/tunnel.mp3")
   			x.play();
 		}
-
+		
 		if (level == 7) 
 		{
 			x = document.getElementById('mySound');
@@ -2717,6 +2758,7 @@ function initIceBlocks()
 			x.setAttribute("src", "sounds/canyon.mp3")
   			x.play();
 		 }
+			*/
 
 
 		displayLevel((level-7*(world-1)));
@@ -3932,7 +3974,7 @@ function setIceMonsterImage()
     imgCurrentWaddle = "imgCaged";
     
 	
-    initlevel();
+    initlevel(0, 0);
     //displayLevel(level);
 
     funcSetInterval = setInterval(gameLoop, gameSpeed);//60 //100
@@ -4131,7 +4173,7 @@ else
 			if (level>1)
 			{
 				level--;
-				initlevel();
+				initlevel(level + 1, world);
 				xbandana = screenwidth - kirbywidth;
 			}
 			else
