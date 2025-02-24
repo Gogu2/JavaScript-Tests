@@ -648,6 +648,7 @@ function kirbyMovementEvents()
 		 if (!jumpleft )
           if (gameKeys && gameKeys[KEY_CTRL] && gameKeys[KEY_LEFT] || gameKeys && gameKeys[KEY_CTRL] && bool_moveLeft) 
           {
+			
 				idling = false;
 				idletime = 0;
 
@@ -669,6 +670,7 @@ function kirbyMovementEvents()
 		if (!jumpstarted && !fallstart && !jumpleft && !jumpright)
 		if (gameKeys && gameKeys[KEY_CTRL] && !gameKeys[KEY_LEFT] && !gameKeys[KEY_RIGHT])
 		{
+			
 				idling = false;
 				idletime = 0;
 
@@ -1168,7 +1170,7 @@ function gameLoop()
 	
 		kirbyCheckMargins();
 		kirbyCheckIceBlock();
-		//kirbyCheckHole();
+		
 		
 
 		// enter bandana
@@ -1208,18 +1210,13 @@ function kirbyCheckMovingSand()
 		gameGravity = 0.01;
 		t = 0;
 	}
-}
-
-function kirbyCheckHole()
-{
-	if (holewidth >= 20)
-	if (collision(xkirby, kirbywidth, xhole, holewidth, ykirby, kirbyheight, groundy, 75 ))
+	else
 	{
-		fallstart = 1;
-		ykirby = ykirby +5;
-		y0 = ykirby;
+		gameGravity = 3;
 	}
 }
+
+
 
 function kirbyCheckIceBlock()
 {
@@ -4471,38 +4468,44 @@ function start()
 
   document.getElementById('btnStart').setAttribute('hidden', 'true');
   document.getElementById('canvas1').removeAttribute('hidden');
+
+  document.getElementById('tblEnvGame').removeAttribute('hidden');
+
   x = document.getElementById('mySound');
   x.play();
 }
 
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
 </head>
 <body onload="InitGame();" >
   
   <table>
-	<tr><td colspan="2"><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent" >
+	<tr><td colspan="1"><div style="border: 1px;border-color: black;border-style: solid;caret-color: transparent" >
 		Kirby : arrows to move, CTRL+arrow to jump, SPACE to aspire enemy, ENTER to fire.</br>
 		DELETE to drop ability.</br>
 		Bandana: A, D to move, SHIFT to jump.</br>
 		Kill enemies by aspiring them or jumping on them.</br>
 	</div></td></tr>
-
+</table>
+<table style="background-color:lightgreen;font-family:'Cedarville Cursive', 'Arial Narrow', Arial, sans-serif;font-size: 20;font-weight: bold;" hidden id="tblEnvGame">
 	<tr><td>
-  <label id="lblLifeKirby" for="lifeKirbyfile" hidden>Life Kirby:</label> 
+  <label id="lblLifeKirby" for="lifeKirbyfile" hidden >Life Kirby:</label> 
   </td><td>
   <progress id="lifeKirby" value="99" max="99" hidden></progress>   
   </td>
 </tr>
 
 <tr><td>
-  <label id="lblLifeBandana" for="LifeBandanafile" hidden>Life Bandana:</label>
+  <label id="lblLifeBandana" for="LifeBandanafile" hidden >Life Bandana:</label>
   </td><td> 
   <progress id="lifeBandana" value="99" max="99" hidden></progress>  
 </td></tr>
 
-<tr><td colspan="2"><div id="lblLevel" hidden>Level: 1</div></td><td colspan="2"><div id="lblWorld" hidden>World: 1</div></td>
+<tr><td colspan="2"><div id="lblLevel" hidden >Level: 1</div></td><td colspan="2">
+	<div id="lblWorld" hidden >World: 1</div></td>
 </tr> 
-<tr><td colspan="2"><div id="lblCoins" hidden>Coins: 0</div></td><td></td>
+<tr><td colspan="2"><div id="lblCoins" hidden >Coins: 0</div></td><td></td>
 </tr> 
 
 </table>
